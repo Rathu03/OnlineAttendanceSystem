@@ -4,12 +4,12 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const StudentLogin = () => {
 
-    const [username,setUsername] = useState("");
+    const [rollnumber,setRollnumber] = useState("");
     const [password,setPassword] = useState("");
     const navigate = useNavigate();
 
-    const handleUsername = (event) => {
-        setUsername(event.target.value);
+    const handleRollnumber = (event) => {
+        setRollnumber(event.target.value);
     }
 
     const handlePassword = (event) => {
@@ -20,8 +20,32 @@ const StudentLogin = () => {
         navigate(path);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
+        try{
+            const body = {rollnumber,password};
+            const response = await fetch(`http://localhost:5000/loginstudent`,{
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify(body)
+            });
+            const data = await response.json()
+            console.log(data);
+            if(data.success == true){
+                console.log('Login Successful');
+                toggleClick('../student-dashboard');
+            }
+            else{
+                console.log('Invalid credentials');
+            }
+            localStorage.setItem("rollnumber",rollnumber);
+            localStorage.setItem("token",data.token);
+        }
+        catch(err){
+            console.log(err);
+        }
     }
 
 
@@ -39,8 +63,8 @@ const StudentLogin = () => {
                         name='username'
                         id='username'
                         placeholder='Enter Roll number'
-                        value={username}
-                        onChange={handleUsername}
+                        value={rollnumber}
+                        onChange={handleRollnumber}
                     /></div>
                 </div>
                 <div className='login'>
