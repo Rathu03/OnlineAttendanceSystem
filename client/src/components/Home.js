@@ -34,16 +34,15 @@ const Home = () => {
         toggle('student-dashboard');
       }
       if (data.decoded.type == "staff") {
-        // TODO
+        toggle('staff-dashboard');
       }
     }
   }
 
   //Authentication
-  {/*useEffect(() => {
+ useEffect(() => {
     tokenCheck();
   }, [])
-   */}
 
   return (
     <div className='main-body'>

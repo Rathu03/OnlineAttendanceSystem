@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const StudentRegister = () => {
+
+    const navigate = useNavigate();
 
     const [rollnumber,setRollnumber] = useState('');
     const [username,setUsername] = useState("");
@@ -42,8 +44,11 @@ const StudentRegister = () => {
                 body:JSON.stringify(body)
             });
 
-            if(response.status == 201){
+            const data = await response.json();
+
+            if(data.success == 1){
                 alert("Registered Successfully");
+                navigate('../student-login');
             }
 
             else{

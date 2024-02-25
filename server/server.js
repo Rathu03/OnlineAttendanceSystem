@@ -32,12 +32,12 @@ app.post('/registerstudent', async (req, res) => {
     const query = `INSERT INTO users VALUES($1,$2,$3,$4,$5);`;
     try {
         await pool.query(query, [rollnumber, username, password, email, year_of_joining]);
-        res.status(201).json({ message: "Student Registered Successfully" });
+        res.status(201).json({success: 1 });
 
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal Server Error" });
+        res.status(500).json({ success: 0});
     }
 })
 
@@ -63,6 +63,46 @@ app.post('/loginstudent', async (req, res) => {
     catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
+    }
+})
+
+app.post('/registerstaff',async(req,res) => {
+    const {teacher_name,password,email} = req.body;
+    const query = `INSERT INTO teachers(teacher_name,password,email) VALUES($1,$2,$3)`;
+    try{
+        await pool.query(query,[teacher_name,password,email])
+        res.status(201).json({success: 1})
+    }
+    catch(err){
+        console.log(err);
+        res.status(401).json({success: 0})
+    }
+})
+
+app.post('/loginstaff',async(req,res) => {
+    const {email,password} = req.body;
+    const query = `SELECT * from teachers WHERE email=$1 AND password=$2`;
+    try{
+        const result = await pool.query(query,[email,password]);
+        console.log(result.rows.length)
+        if(result.rows.length > 0){
+            console.log("Staff Logged in: "+result.rows[0].email);
+
+            const token = jwt.sign({
+                email,
+                type: "staff"
+            }, "secret", {
+                expiresIn: 60 * 60
+            })
+            res.status(201).json({success: true,token})
+        }
+        else{
+            res.status(401).json({success:false})
+        }
+    }
+    catch(err){
+        console.log(err.message);
+        res.status(500).json({success:"Internal Server Error"})
     }
 })
 

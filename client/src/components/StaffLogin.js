@@ -1,22 +1,49 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 const StaffLogin = () => {
 
-    const [staffId,setStaffId] = useState("");
+    const navigate = useNavigate();
+
+    const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
 
-    const handleStaff = (event) => {
-        setStaffId(event.target.value);
+    const handleEmail = (event) => {
+        setEmail(event.target.value);
     }
 
     const handlePassword = (event) => {
         setPassword(event.target.value);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
+        try{
+            const body = {email,password};
+            const response = await fetch(`http://localhost:5000/loginstaff`,{
+                method:"POST",
+                headers: {
+                    "Content-type":"application/json"
+                },
+                body: JSON.stringify(body)
+            });
+            const data = await response.json()
+            console.log(data)
+            if(data.success){
+                navigate('../staff-dashboard')
+            }
+            else{
+                alert('Invalid credentials');
+                return;
+            }
+            localStorage.setItem('email',email);
+            localStorage.setItem('token',data.token);
+
+        }
+        catch(err){
+            console.log(err)
+        }
     }
 
 
@@ -25,14 +52,14 @@ const StaffLogin = () => {
         <div className='login-container'>
             <form className='form-cont' onSubmit={handleSubmit}>
                 <div className='login'>
-                    <label htmlFor='staff-id'>Staff Id</label>
+                    <label htmlFor='email'>EmailId</label>
                     <input 
-                        type='text'
-                        name='staff-id'
-                        id='staff-id'
-                        placeholder='Enter Staff Id'
-                        value={staffId}
-                        onChange={handleStaff}
+                        type='email'
+                        name='email'
+                        id='email'
+                        placeholder='Enter email'
+                        value={email}
+                        onChange={handleEmail}
                     />
                 </div>
                 <div className='login'>

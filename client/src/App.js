@@ -7,6 +7,7 @@ import AdminLogin from './components/AdminLogin'
 import StudentRegister from './components/StudentRegister'
 import StudentDashboard from './components/StudentDashboard'
 import StaffRegister from './components/StaffRegister'
+import StaffDashboard from './components/StaffDashboard'
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
         <Route path='student-register' element={<StudentRegister />}/>
         <Route path='staff-register' element={<StaffRegister />}/>
         <Route path='student-dashboard' element={<StudentDashboard />} />
+        <Route path='staff-dashboard' element={<StaffDashboard />}/>
       </Routes>
     </Router>
   )

@@ -25,7 +25,7 @@ CREATE TABLE teachers (
     teacherId SERIAL PRIMARY KEY,
     teacher_name VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL
+    email VARCHAR(255) NOT NULL UNIQUE
 );
 
 --Relation between Students and Teachers

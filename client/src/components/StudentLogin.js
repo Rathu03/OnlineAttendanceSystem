@@ -38,7 +38,8 @@ const StudentLogin = () => {
                 toggleClick('../student-dashboard');
             }
             else{
-                console.log('Invalid credentials');
+                alert('Invalid credentials');
+                return;
             }
             localStorage.setItem("rollnumber",rollnumber);
             localStorage.setItem("token",data.token);
