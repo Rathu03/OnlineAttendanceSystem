@@ -187,3 +187,57 @@ body{
   display: inline-flex;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
+
+.staff-dashboard {
+
+  box-shadow: rgba(91, 90, 90, 0.282) 0px 5px 15px;
+  border-radius: 6px;
+  margin: 50px; 
+  font-size: 30px;
+  padding: 35px;
+  
+}
+
+.staff-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+.plus-icon {
+  transform: scale(1.5);
+  cursor: pointer;
+}
+
+.list-room {
+  display: flex;
+  flex-direction: column;
+  /* box-shadow: rgba(91, 90, 90, 0.282) 0px 5px 15px; */
+  margin: 40px;
+  /* background-color: rgb(106, 117, 117); */
+  padding: 10px;
+}
+
+.rooms {
+  font-size: 20px;
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+  padding: 30px;
+  border-color: gray;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 6px;
+  row-gap: 20px;
+  cursor: pointer;
+}
+
+.rooms:hover {
+  transform: scale(1.002);
+}
+
+.room-header {
+  display: flex;
+  justify-content: space-between; 
+}
