@@ -145,7 +145,7 @@ app.post('/get-data', async (req, res) => {
             
             data.push({staff_name,subject_code,subject_name,credit});
         }
-        //console.log(data);
+        
         res.status(201).json(data);
     }
     catch (err) {
