@@ -15,31 +15,31 @@ const StudentDashboard = () => {
     subject_code : "IT 5402",
     subject_name : "Data analytics and cloud computing",
     credits: 3,
-    teacher_name: "Swami"
+    teacher_name: "Staff"
   },
   {
     subject_code : "IT 5402",
     subject_name : "Data analytics and cloud computing",
     credits: 3,
-    teacher_name: "Swami"
+    teacher_name: "Staff"
   },
   {
     subject_code : "IT 5402",
     subject_name : "Data analytics and cloud computing",
     credits: 3,
-    teacher_name: "Swami"
+    teacher_name: "Staff"
   },
   {
     subject_code : "IT 5402",
     subject_name : "Data analytics and cloud computing",
     credits: 3,
-    teacher_name: "Swami"
+    teacher_name: "Staff"
   },
   {
     subject_code : "IT 5402",
     subject_name : "Data analytics and cloud computing",
     credits: 3,
-    teacher_name: "Swami"
+    teacher_name: "Staff"
   } 
 ]
 

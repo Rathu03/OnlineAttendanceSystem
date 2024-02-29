@@ -1,5 +1,7 @@
 import React from 'react'
 import temp from '../images/temp.png';
+import image2 from '../images/image2.png'
+import image3 from '../images/image3.png'
 import SimpleImageSlider from "react-simple-image-slider";
 
 
@@ -8,7 +10,7 @@ const Header = ({onClick}) => {
   return (
     <div>
         <div className='nav-container'>
-            <h1>IST ATTENDANCE PORTAL</h1>
+            <h1>ATTENDANCE PORTAL</h1>
             <ul>
                 <li>HOME</li>
                 <li onClick={onClick}>SERVICES</li>
@@ -22,8 +24,8 @@ const Header = ({onClick}) => {
 function Image()  {
     const images = [
         {url: temp},
-        {url: "https://kinsta.com/wp-content/uploads/2020/08/media-queries.png"},
-        {url: "https://kinsta.com/wp-content/uploads/2020/08/media-queries.png"}
+        {url: image3},
+        {url: image2}
     ];
     const newImages = [];
 
