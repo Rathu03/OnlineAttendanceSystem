@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CiCirclePlus } from "react-icons/ci";
 
 const StudentDashboard = () => {
+
+  
+  const rollnumber = localStorage.getItem('rollnumber');
+  const [data,setData] = useState([])
+
+
   const navigate = useNavigate();
   const handleClick = () => {
     localStorage.removeItem('rollnumber');
@@ -10,38 +15,23 @@ const StudentDashboard = () => {
     navigate('../')
   }
 
-  const data = [
-    {
-    subject_code : "IT 5402",
-    subject_name : "Data analytics and cloud computing",
-    credits: 3,
-    teacher_name: "Staff"
-  },
-  {
-    subject_code : "IT 5402",
-    subject_name : "Data analytics and cloud computing",
-    credits: 3,
-    teacher_name: "Staff"
-  },
-  {
-    subject_code : "IT 5402",
-    subject_name : "Data analytics and cloud computing",
-    credits: 3,
-    teacher_name: "Staff"
-  },
-  {
-    subject_code : "IT 5402",
-    subject_name : "Data analytics and cloud computing",
-    credits: 3,
-    teacher_name: "Staff"
-  },
-  {
-    subject_code : "IT 5402",
-    subject_name : "Data analytics and cloud computing",
-    credits: 3,
-    teacher_name: "Staff"
-  } 
-]
+  useEffect(() => {
+    const getData = async() => {
+      const body = {rollnumber};
+      console.log(body)
+      const response = await fetch(`http://localhost:5000/get-data`,{
+        method:"POST",
+        headers:{
+          "Content-type":"application/json"
+        },
+        body:JSON.stringify(body)
+      })
+
+      const temp = await response.json()
+      setData(temp);
+    }
+    getData()
+  },[rollnumber])
 
   return (
     <div className='main-body'>
@@ -56,7 +46,7 @@ const StudentDashboard = () => {
           <h1>Attendance List</h1>
         </div>
         <div style={{ borderTop: "1px solid white" }}></div>
-        {data.map((item,index) => (
+        { data.map((item,index) => (
           <div className='list-room' key={index}>
           <div className='rooms'>
             <div className='room-header'>
@@ -64,8 +54,8 @@ const StudentDashboard = () => {
               <div>{item.subject_name}</div>
             </div>
             <div className='room-header'>
-              <div>Staff: {item.teacher_name}</div>
-              <div>Credits: {item.credits}</div>
+              <div>Staff: {item.staff_name}</div>
+              <div>Credits: {item.credit}</div>
             </div>
           </div> 
         </div>

@@ -39,7 +39,7 @@ const StaffLogin = () => {
             }
             localStorage.setItem('email',email);
             localStorage.setItem('token',data.token);
-
+            
         }
         catch(err){
             console.log(err)
