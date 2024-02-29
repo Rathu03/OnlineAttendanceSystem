@@ -30,11 +30,12 @@ CREATE TABLE teachers (
 
 --Relation between Students and Teachers
 CREATE TABLE enrolledsubjects (
-    student_roll_number INT,
-    subject_code VARCHAR(50),
+    student_roll_number INT NOT NULL,
+    subject_code VARCHAR(50) NOT NULL,
     attendance INT DEFAULT 0,
-    teacherId INT,
+    teacher_email VARCHAR(255) NOT NULL,
     PRIMARY KEY (student_roll_number, subject_code),
     FOREIGN KEY (subject_code) REFERENCES subjects(subject_code),
-    FOREIGN KEY (teacherId) REFERENCES teachers(teacherId)
+    FOREIGN KEY (teacher_email) REFERENCES teachers(email)
 );
+

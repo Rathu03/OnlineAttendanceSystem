@@ -106,4 +106,22 @@ app.post('/loginstaff',async(req,res) => {
     }
 })
 
+
+app.post('/create-room',async(req,res) => {
+    const body = req.body;
+    console.log("hi")
+    const query = `INSERT INTO enrolledsubjects(student_roll_number,subject_code,teacher_email) VALUES($1,$2,$3)`;
+    try{
+        for(const obj of body) {
+            console.log("hello")
+            await pool.query(query,[obj.rollnumber,obj.subject_code,obj.teacher_email])
+        }
+        res.status(201).json({success:"Enrolled successdully"})
+    }
+    catch(err){
+        console.log(err)
+        res.status(401).json({success:"Failed to enroll"})
+    }
+})
+
 app.listen(5000, () => console.log("Server listening on port: 5000"));
