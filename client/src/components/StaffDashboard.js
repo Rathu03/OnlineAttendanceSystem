@@ -10,19 +10,11 @@ const StaffDashboard = () => {
     navigate('../')
   }
 
+  const handleCreate = () => {
+    navigate('../create-room')
+  }
+
   const data = [
-    {
-    subject_code : "IT 5402",
-    subject_name : "Data analytics and cloud computing",
-    credits: 3,
-    sem : 6
-  },
-  {
-    subject_code : "IT 5402",
-    subject_name : "Data analytics and cloud computing",
-    credits: 3,
-    sem : 6
-  },
   {
     subject_code : "IT 5402",
     subject_name : "Data analytics and cloud computing",
@@ -43,6 +35,7 @@ const StaffDashboard = () => {
   } 
 ]
 
+
   return (
     <div className='main-body'>
       <div className='nav-container'>
@@ -54,7 +47,7 @@ const StaffDashboard = () => {
       <div className='staff-dashboard'>
         <div className='staff-header'>
           <h1>Attendance List</h1>
-          <CiCirclePlus className='plus-icon' />
+          <CiCirclePlus className='plus-icon' onClick = {handleCreate}/>
         </div>
         <div style={{ borderTop: "1px solid white" }}></div>
         {data.map((item,index) => (
