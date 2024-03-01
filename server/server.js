@@ -109,13 +109,17 @@ app.post('/loginstaff', async (req, res) => {
 
 app.post('/create-room', async (req, res) => {
     const body = req.body;
-    console.log("hi")
-    const query = `INSERT INTO enrolledsubjects(student_roll_number,subject_code,teacher_email) VALUES($1,$2,$3)`;
+    const query1 = `INSERT INTO enrolledsubjects(student_roll_number,subject_code,teacher_email) VALUES($1,$2,$3)`;
+    const query2 = `INSERT INTO sem values($1,$2)`;
     try {
         for (const obj of body) {
-            console.log("hello")
-            await pool.query(query, [obj.rollnumber, obj.subject_code, obj.teacher_email])
+            await pool.query(query1, [obj.rollnumber, obj.subject_code, obj.teacher_email])
         }
+
+        const sem_number = body[0].sem_number;
+        const subject_code = body[0].subject_code;
+        await pool.query(query2,[subject_code,sem_number]);
+
         res.status(201).json({ success: "Enrolled successdully" })
     }
     catch (err) {
@@ -124,7 +128,7 @@ app.post('/create-room', async (req, res) => {
     }
 })
 
-app.post('/get-data', async (req, res) => {
+app.post('/student-get-data', async (req, res) => {
     const { rollnumber } = req.body;
     const query1 = `SELECT teacher_email,subject_code from enrolledsubjects WHERE student_roll_number = $1`;
     const query2 = `SELECT subject_name,credits from subjects WHERE subject_code = $1`;
@@ -151,6 +155,35 @@ app.post('/get-data', async (req, res) => {
     catch (err) {
         console.log(err)
         res.status(401).json({error:"Failed to fetch data"})
+    }
+})
+
+app.post('/staff-get-data',async(req,res) => {
+    const {email} = req.body;
+    const query1 = `SELECT DISTINCT subject_code from enrolledsubjects WHERE teacher_email = $1`;
+    const query2 = `SELECT subject_name,credits from subjects WHERE subject_code = $1`;
+    const query3 = `SELECT sem_number from sem WHERE subject_code = $1`;
+    try{
+        const result1 = await pool.query(query1,[email]);
+        const data = []
+        for(const row of result1.rows){
+            const subject_code = row.subject_code;
+            
+            const result2 = await pool.query(query2,[subject_code]);
+            const subject_name = result2.rows[0].subject_name;
+            const credits = result2.rows[0].credits;
+            
+            const result3 = await pool.query(query3,[subject_code]);
+            const sem = result3.rows[0].sem_number; 
+
+            data.push({subject_code,subject_name,credits,sem})
+        }
+
+        res.status(201).json(data);
+    }
+    catch(err){
+        console.log(err);
+        res.status(401).json({error:"Failed to fetch data"});
     }
 })
 

@@ -1,8 +1,12 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CiCirclePlus } from "react-icons/ci";
 
 const StaffDashboard = () => {
+
+  const email = localStorage.getItem('email');
+  const [data,setData] = useState([]);
+
   const navigate = useNavigate();
   const handleClick = () => {
     localStorage.removeItem('email');
@@ -14,26 +18,24 @@ const StaffDashboard = () => {
     navigate('../create-room')
   }
 
-  const data = [
-  {
-    subject_code : "IT 5402",
-    subject_name : "Data analytics and cloud computing",
-    credits: 3,
-    sem : 6
-  },
-  {
-    subject_code : "IT 5402",
-    subject_name : "Data analytics and cloud computing",
-    credits: 3,
-    sem : 6
-  },
-  {
-    subject_code : "IT 5402",
-    subject_name : "Data analytics and cloud computing",
-    credits: 3,
-    sem : 6
-  } 
-]
+
+  useEffect(() => {
+    const getData = async() => {
+      const body = {email};
+      const response = await fetch(`http://localhost:5000/staff-get-data`,{
+        method:"POST",
+        headers: {
+          "Content-type":"application/json"
+        },
+        body:JSON.stringify(body)
+      })
+      const temp = await response.json()
+      setData(temp);
+    }
+
+    getData()
+    
+  },[email]) 
 
 
   return (
@@ -47,24 +49,24 @@ const StaffDashboard = () => {
       <div className='staff-dashboard'>
         <div className='staff-header'>
           <h1>Attendance List</h1>
-          <CiCirclePlus className='plus-icon' onClick = {handleCreate}/>
+          <CiCirclePlus className='plus-icon' onClick={handleCreate} />
         </div>
         <div style={{ borderTop: "1px solid white" }}></div>
-        {data.map((item,index) => (
+        {data.map((item, index) => (
           <div className='list-room' key={index}>
-          <div className='rooms'>
-            <div className='room-header'>
-              <div>{item.subject_code}</div>
-              <div>{item.subject_name}</div>
+            <div className='rooms'>
+              <div className='room-header'>
+                <div>{item.subject_code}</div>
+                <div>{item.subject_name}</div>
+              </div>
+              <div className='room-header'>
+                <div>Sem: {item.sem}</div>
+                <div>Credits: {item.credits}</div>
+              </div>
             </div>
-            <div className='room-header'>
-              <div>Sem: {item.sem}</div>
-              <div>Credits: {item.credits}</div>
-            </div>
-          </div> 
-        </div>
+          </div>
         ))}
-        
+
       </div>
     </div>
   )

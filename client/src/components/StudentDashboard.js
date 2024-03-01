@@ -18,8 +18,7 @@ const StudentDashboard = () => {
   useEffect(() => {
     const getData = async() => {
       const body = {rollnumber};
-      console.log(body)
-      const response = await fetch(`http://localhost:5000/get-data`,{
+      const response = await fetch(`http://localhost:5000/student-get-data`,{
         method:"POST",
         headers:{
           "Content-type":"application/json"

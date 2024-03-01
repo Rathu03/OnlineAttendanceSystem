@@ -5,7 +5,8 @@ const CreateRoom = () => {
 
     const [selectedFile, setSelectedFile] = useState(null);
     const [extractedData, setExtractedData] = useState(null);
-    const [subject_code,setSubject_code] = useState("");
+    const [subject_code, setSubject_code] = useState("");
+    const [sem,setSem] = useState("");
 
     useEffect(() => {
         const sendData = async () => {
@@ -27,7 +28,7 @@ const CreateRoom = () => {
             }
         }
         sendData();
-    },[extractedData])
+    }, [extractedData])
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -58,7 +59,8 @@ const CreateRoom = () => {
                     rollnumber: row[0],
                     name: row[1],
                     subject_code: subject_code,
-                    teacher_email: email
+                    teacher_email: email,
+                    sem_number: sem
                 }))
                 setExtractedData(extractedData)
                 console.log(extractedData)
@@ -72,10 +74,11 @@ const CreateRoom = () => {
             console.log('Please select an Excel file')
         }
 
-        
+
         setExtractedData(null)
         setSubject_code("")
         setSelectedFile("")
+        setSem("")
     }
     return (
         <div className='main-body1'>
@@ -91,6 +94,19 @@ const CreateRoom = () => {
                                 placeholder='Enter Subject code'
                                 value={subject_code}
                                 onChange={(e) => setSubject_code(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className='login'>
+                        <div className='l1'><label htmlFor='sem'>Sem</label></div>
+                        <div className='l2'>
+                            <input
+                                type='text'
+                                name='sem'
+                                id='sem'
+                                placeholder='Enter Sem'
+                                value={sem}
+                                onChange={(e) => setSem(e.target.value)}
                             />
                         </div>
                     </div>
