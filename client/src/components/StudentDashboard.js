@@ -45,8 +45,10 @@ const StudentDashboard = () => {
           <h1>Attendance List</h1>
         </div>
         <div style={{ borderTop: "1px solid white" }}></div>
-        { data.map((item,index) => (
-          <div className='list-room' key={index}>
+        {data.length > 0 ? 
+        <>
+          { data.map((item,index) => (
+          <div className='list-room' key={index} onClick={() => console.log(item)}>
           <div className='rooms'>
             <div className='room-header'>
               <div>{item.subject_code}</div>
@@ -59,6 +61,12 @@ const StudentDashboard = () => {
           </div> 
         </div>
         ))}
+        </>: 
+        <div style={{fontSize:"25px",padding:"30px"}}>
+          No room found
+        </div>
+        }
+        
         
       </div>
     </div>

@@ -32,7 +32,8 @@ CREATE TABLE teachers (
 CREATE TABLE enrolledsubjects (
     student_roll_number INT NOT NULL,
     subject_code VARCHAR(50) NOT NULL,
-    attendance INT DEFAULT 0,
+    class_attended INT DEFAULT 0,
+    class_taken INT DEFAULT 0,
     teacher_email VARCHAR(255) NOT NULL,
     PRIMARY KEY (student_roll_number, subject_code),
     FOREIGN KEY (subject_code) REFERENCES subjects(subject_code),

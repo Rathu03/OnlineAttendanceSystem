@@ -52,7 +52,9 @@ const StaffDashboard = () => {
           <CiCirclePlus className='plus-icon' onClick={handleCreate} />
         </div>
         <div style={{ borderTop: "1px solid white" }}></div>
-        {data.map((item, index) => (
+        {data.length > 0 ? 
+        <>
+                {data.map((item, index) => (
           <div className='list-room' key={index}>
             <div className='rooms'>
               <div className='room-header'>
@@ -66,6 +68,12 @@ const StaffDashboard = () => {
             </div>
           </div>
         ))}
+        </>:
+        <div style={{fontSize:"25px",padding:"30px"}}>
+          No room found
+        </div> 
+        }
+
 
       </div>
     </div>
