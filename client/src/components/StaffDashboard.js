@@ -40,7 +40,16 @@ const StaffDashboard = () => {
   useEffect(() => {
     const handleRoom = async(value) => {
       value.email = email;
-      console.log(value)
+      const response = await fetch(`http://localhost:5000/get-staff-data`,{
+        method:"POST",
+        headers:{
+          "Content-type":"application/json"
+        },
+        body:JSON.stringify(value)
+      })
+      const data = await response.json();
+      console.log(data);
+      setRoomdata(data);
     }
     if(isClicked){
       handleRoom(isClicked)
@@ -95,7 +104,7 @@ const StaffDashboard = () => {
                 <input 
                   type='checkbox'
                 />
-                {obj.name}
+                {obj.student_name}
               </label>
             </div>
           ))}
