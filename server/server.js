@@ -187,4 +187,19 @@ app.post('/staff-get-data',async(req,res) => {
     }
 })
 
+app.post('/student-room',async(req,res) => {
+    const {staff_name,subject_code,subject_name,credit,rollnumber} = req.body;
+    const query = `SELECT class_attended,class_taken FROM enrolledsubjects WHERE student_roll_number = $1 AND subject_code = $2`;
+    try{
+        const result = await pool.query(query,[rollnumber,subject_code]);
+        const class_attended = result.rows[0].class_attended;
+        const class_taken = result.rows[0].class_taken;
+        res.status(201).json({staff_name,subject_code,subject_name,credit,rollnumber,class_taken,class_attended});
+    }
+    catch(err){
+        console.log(err);
+        res.status(401).json({error:"Failed to fetch"})
+    }
+})
+
 app.listen(5000, () => console.log("Server listening on port: 5000"));
