@@ -230,4 +230,33 @@ app.post('/get-staff-data',async(req,res) => {
     }
 })
 
+app.post('/attendance',async(req,res) => {
+    const {selectedStudentsData,notSelectedStudentsData,numofhours} = req.body;
+    const query1 = `SELECT class_taken,class_attended from enrolledsubjects WHERE student_roll_number = $1 AND subject_code = $2`;
+    const query2 = `UPDATE enrolledsubjects SET class_taken = $1, class_attended = $2 WHERE student_roll_number = $3 AND subject_code = $4`;
+    try{
+        for(const obj of selectedStudentsData) {
+            const result1 = await pool.query(query1,[obj.rollnumber,obj.subject_code]);
+            
+            const class_taken = result1.rows[0].class_taken;
+            const class_attended = result1.rows[0].class_attended;
+
+            await pool.query(query2,[parseInt(class_taken)+parseInt(numofhours),parseInt(class_attended)+parseInt(numofhours),obj.rollnumber,obj.subject_code]);
+        }
+        for(const obj of notSelectedStudentsData) {
+            const result1 = await pool.query(query1,[obj.rollnumber,obj.subject_code]);
+            
+            const class_taken = result1.rows[0].class_taken;
+            const class_attended = result1.rows[0].class_attended;
+            console.log(parseInt(class_taken)+parseInt(numofhours))
+            await pool.query(query2,[parseInt(class_taken)+parseInt(numofhours),parseInt(class_attended),obj.rollnumber,obj.subject_code]);
+        }
+        res.status(201).json({success: "1"})
+    }
+    catch(err){
+        console.log(err);
+        res.status(401).json({success: "0"})
+    }
+})
+
 app.listen(5000, () => console.log("Server listening on port: 5000"));
