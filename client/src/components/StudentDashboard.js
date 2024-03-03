@@ -15,6 +15,11 @@ const StudentDashboard = () => {
     navigate('../')
   }
 
+  const calculateAttendance = (obj) => {
+    const attend = ((obj.class_attended / obj.class_taken)*100).toFixed(2);
+    return attend;
+  }
+
   useEffect(() => {
     const getData = async () => {
       const body = { rollnumber };
@@ -113,7 +118,7 @@ const StudentDashboard = () => {
           </div>
           <div className='room-data'>
             <div style={{width:"30%"}}>Attendance percentage: </div>
-            <div>{0}</div>
+            <div>{calculateAttendance(roomdata)}</div>
           </div>
           <div className='room-data' >
             <div className='submit-button' onClick={() => setIsClicked(null)} style={{justifyContent:"center",textAlign:"center",paddingTop:"7px"}} >
