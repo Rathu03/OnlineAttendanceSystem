@@ -3,17 +3,22 @@ import { useNavigate } from 'react-router-dom'
 import { CiCirclePlus } from "react-icons/ci";
 import { MdCheck } from "react-icons/md";
 
+
 const StaffDashboard = () => {
 
   const email = localStorage.getItem('email');
   const [data, setData] = useState([]);
   const [isClicked, setIsClicked] = useState(null)
   const [roomdata, setRoomdata] = useState([]);
-  const [selectedStudents ,setSelectedStudents] = useState([]);
-  const [numofhours,setNumofhours] = useState("");
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [numofhours, setNumofhours] = useState("");
+  const [selectAll, setSelectAll] = useState(false);
+  const [clickAbsentee,setClickAbsentee] = useState(false);
+  const [absenteeData,setAbsenteeData] = useState([]);
 
   const selectedStudentsData = roomdata.filter(obj => selectedStudents.includes(obj.rollnumber));
   const notSelectedStudentsData = roomdata.filter(obj => !selectedStudents.includes(obj.rollnumber));
+
 
   const navigate = useNavigate();
   const handleClick = () => {
@@ -27,31 +32,59 @@ const StaffDashboard = () => {
   }
 
   const handleCheckboxChange = (rollnumber) => {
-    setSelectedStudents((prevSelectedStudents) => {
-      if(prevSelectedStudents.includes(rollnumber)) {
-        return prevSelectedStudents.filter((student) => student !== rollnumber);
-      }
-      else{
-        return [...prevSelectedStudents,rollnumber];
-      }
-    })
+    if (rollnumber == 'selectAll') {
+      setSelectAll(!selectAll)
+      setSelectedStudents(selectAll ? [] : roomdata.map(obj => obj.rollnumber))
+    }
+    else {
+      setSelectedStudents((prevSelectedStudents) => {
+        if (prevSelectedStudents.includes(rollnumber)) {
+          return prevSelectedStudents.filter((student) => student !== rollnumber);
+        }
+        else {
+          return [...prevSelectedStudents, rollnumber];
+        }
+
+      })
+    }
   }
 
-  const handleSubmit = async(e) => {
+  const handleAbsenteeChange = (e) => {
+    const inputValue = e.target.value;
+    const splitValues = inputValue.split(',').map(value => value.trim());
+    setAbsenteeData(splitValues);
+};
+
+  const handleAbsentSubmit = (e) => {
     e.preventDefault();
-    const body = {selectedStudentsData,notSelectedStudentsData,numofhours};
+    //tempSelect = [];   TODOOOOO
+    for(var i=0;i<absenteeData.length;i++){
+      roomdata.map((obj) => {
+        if(obj.rollnumber!=absenteeData[i]){
+
+        }
+      })
+    }
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const body = { selectedStudentsData, notSelectedStudentsData, numofhours };
     console.log(body)
-    const response = await fetch(`http://localhost:5000/attendance`,{
-      method:"POST",
+    console.log(roomdata)
+    const response = await fetch(`http://localhost:5000/attendance`, {
+      method: "POST",
       headers: {
-        "Content-type":"application/json"
+        "Content-type": "application/json"
       },
-      body:JSON.stringify(body)
+      body: JSON.stringify(body)
     });
-    
+
     setNumofhours("")
     setSelectedStudents([]);
   }
+
+
 
   useEffect(() => {
     const getData = async () => {
@@ -80,14 +113,27 @@ const StaffDashboard = () => {
         body: JSON.stringify(value)
       })
       const data = await response.json();
-      console.log(data);
+      console.log(data)
       setRoomdata(data);
     }
     if (isClicked) {
       handleRoom(isClicked)
     }
+
   }, [isClicked])
 
+  useEffect(() => {
+    if (selectAll) {
+      if (notSelectedStudentsData.length != 0) {
+        setSelectAll(false);
+      }
+    }
+    if (notSelectedStudentsData == 0) {
+      setSelectAll(true)
+    }
+  })
+
+ 
   return (
     <div className='main-body'>
       <div className='nav-container'>
@@ -128,6 +174,8 @@ const StaffDashboard = () => {
           </div>
         </> :
         <>
+        {!clickAbsentee ? 
+        <>
           <form className='attendance-section' onSubmit={handleSubmit}>
             <div className='login'>
               <div className='l1'>
@@ -146,10 +194,19 @@ const StaffDashboard = () => {
             <table className='attendance-list'>
               <thead>
                 <tr>
-                  <th><MdCheck /></th>
+                  <th>
+                    <MdCheck />
+                    <input
+                      type='checkbox'
+                      onChange={() => handleCheckboxChange('selectAll')}
+                      checked={selectAll}
+                    />
+
+                  </th>
                   <th>Roll Number</th>
                   <th>Student Name</th>
                 </tr>
+
               </thead>
               <tbody>
                 {roomdata.map((obj) => (
@@ -170,14 +227,68 @@ const StaffDashboard = () => {
                 ))}
               </tbody>
             </table>
-            <div className='submit-button' onClick={() => setIsClicked(null)} style={{ justifyContent: "center", textAlign: "center", paddingTop: "7px" }} >
-              Back
+
+            <div className='form-footer'>
+              <button className='submit-button' onClick={() => setClickAbsentee(true)}>Absentee</button>
+              <div className='footer'>
+                <button className='submit-button' onClick={() => setIsClicked(null)}   >
+                  Back
+                </button>
+                <button className='submit-button'>
+                  Submit
+                </button>
+                <button className='submit-button'>
+                  View
+                </button>
+              </div>
             </div>
-            <div>
-            <button className='submit-button'>Submit</button>
-            </div>
-            
           </form>
+          </> : 
+          <>
+            <form className='attendance-section' onSubmit={handleAbsentSubmit}>
+              <div className='atten-login-cont'>
+                <div className='login'>
+                  <div className='l1'>
+                    <label htmlFor='numofhours'>Number of hours</label>
+                  </div>
+                  <div className='l2'>
+                    <input 
+                      type='text'
+                      name='numofhours'
+                      id='numofhours'
+                      placeholder='Enter number of hours'
+                      value={numofhours}
+                      onChange={(e) => setNumofhours(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className='text-area'>
+                  <div>
+                    <label htmlFor='absentees'>Enter absentees</label>
+                  </div>
+                  <div >
+                  <textarea 
+                  rows="4" 
+                  cols="50" 
+                  placeholder="Enter your text here"
+                  onChange={handleAbsenteeChange}
+                  ></textarea>
+                  </div>
+                </div>
+              </div>
+              <div className='form-footer'>
+                  <div className='footer'>
+                    <button className='submit-button' onClick={() => setClickAbsentee(false)}>
+                      Back
+                    </button>
+                    <button className='submit-button'>
+                      Submit
+                    </button>
+                  </div>
+              </div>
+            </form>
+          </>
+          }
         </>
       }
 
