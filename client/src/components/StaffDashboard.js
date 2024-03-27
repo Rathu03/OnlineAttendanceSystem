@@ -18,8 +18,10 @@ const StaffDashboard = () => {
   const [absenteeData,setAbsenteeData] = useState([]);
   const [absentStudentData,setAbsentStudentData] = useState([])
   const [presentStudentData,setPresentStudentData] = useState([])
+  const [clickView,setClickView] = useState(false)
   
   
+  var items = {}
   const selectedStudentsData = roomdata.filter(obj => selectedStudents.includes(obj.rollnumber));
   const notSelectedStudentsData = roomdata.filter(obj => !selectedStudents.includes(obj.rollnumber));
 
@@ -31,6 +33,24 @@ const StaffDashboard = () => {
     localStorage.removeItem('email');
     localStorage.removeItem('token');
     navigate('../')
+  }
+  
+  const handleView = async() => {
+    const body = isClicked;
+    const response = await fetch(`http://localhost:5000/attendance-view`,{
+      method:"POST",
+      headers:{
+        "Content-type":"application/json"
+      },
+      body:JSON.stringify(body)
+    });
+
+    const data = await response.json();
+    const class_taken = data.class_taken.class_taken;
+    setIsClicked((prevObj) => {
+      return {...prevObj,class_taken:class_taken}
+    })
+    setClickView(true)
   }
 
   const handleCreate = () => {
@@ -134,6 +154,15 @@ const handleAbsentSubmit = async(e) => {
     setSelectedStudents([]);
   }
 
+  const calculateAttendance = (obj) => {
+    const attend = ((obj.class_attended / obj.class_taken)*100).toFixed(2);
+    return attend;
+  }
+
+  useEffect(() => {
+    
+  },[clickView])
+
 
 
   useEffect(() => {
@@ -226,6 +255,16 @@ const handleAbsentSubmit = async(e) => {
         <>
         {!clickAbsentee ? 
         <>
+          {!clickView ? <>
+            <div className='attendance-header'>
+            <h1>Attendance </h1>
+            <button 
+              className='submit-button'
+              onClick={handleView}
+              >
+              View
+            </button>
+          </div>
           <form className='attendance-section' onSubmit={handleSubmit}>
             <div className='login'>
               <div className='l1'>
@@ -240,6 +279,7 @@ const handleAbsentSubmit = async(e) => {
                   value={numofhours}
                   onChange={(e) => setNumofhours(e.target.value)}
                 /></div>
+              
             </div>
             <table className='attendance-list'>
               <thead>
@@ -287,16 +327,37 @@ const handleAbsentSubmit = async(e) => {
                 <button className='submit-button'>
                   Submit
                 </button>
-                <button 
-                className='submit-button'
-                onClick={() =>navigate('attendance-view') }
-                >
-                  View
-                </button>
               </div>
             </div>
           </form>
           </> : 
+          <>
+            <div className='attendance-view-header'>
+              <h1>View Attendance</h1>
+              <button className='submit-button' onClick={() => setClickView(false)}>Back</button>      
+            </div>  
+            <div className='room-data-container'>
+                  <div className='room-data'>
+                    <div style={{width:"30%"}}>Subject code: </div>
+                    <div>{isClicked.subject_code}</div>
+                  </div>
+                  <div className='room-data'>
+                    <div style={{width:"30%"}}>Sem: </div>
+                    <div>{isClicked.sem}</div>
+                  </div>
+                  <div className='room-data'>
+                    <div style={{width:"30%"}}>Credits: </div>
+                    <div>{isClicked.credits}</div>
+                  </div>
+                  <div className='room-data'>
+                    <div style={{width:"30%"}}>Class taken: </div>
+                    <div>{isClicked.class_taken}</div>
+                  </div>
+            </div>      
+          </>
+          }
+          </>
+           : 
           <>
             <form className='attendance-section' onSubmit={handleAbsentSubmit}>
               <div className='atten-login-cont'>

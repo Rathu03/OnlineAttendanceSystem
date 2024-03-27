@@ -40,6 +40,7 @@ const StudentDashboard = () => {
   useEffect(() => {
     const handleRoom = async (value) => {
       value.rollnumber = rollnumber;
+      
       const response = await fetch(`http://localhost:5000/student-room`, {
         method: "POST",
         headers: {

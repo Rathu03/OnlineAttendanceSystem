@@ -288,4 +288,17 @@ app.post('/attendance1',async(req,res) => {
     }
 })
 
+app.post('/attendance-view',async(req,res) => {
+    const {subject_code,email} = req.body;
+    const query1 = `SELECT class_taken from enrolledsubjects WHERE subject_code = $1 AND teacher_email = $2`;
+    try{
+        const result = await pool.query(query1,[subject_code,email]);
+        const class_taken = result.rows[0];
+        res.status(201).json({class_taken:class_taken})
+    }
+    catch(err){
+        res.status(401).json({message:"Error in viewing"})
+    }
+})
+
 app.listen(5000, () => console.log("Server listening on port: 5000"));
