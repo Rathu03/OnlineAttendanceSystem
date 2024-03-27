@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useDebugValue, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CiCirclePlus } from "react-icons/ci";
 import { MdCheck } from "react-icons/md";
@@ -12,13 +12,19 @@ const StaffDashboard = () => {
   const [roomdata, setRoomdata] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [numofhours, setNumofhours] = useState("");
+  const [textarea,setTextarea] = useState("");
   const [selectAll, setSelectAll] = useState(false);
   const [clickAbsentee,setClickAbsentee] = useState(false);
   const [absenteeData,setAbsenteeData] = useState([]);
-
+  const [absentStudentData,setAbsentStudentData] = useState([])
+  const [presentStudentData,setPresentStudentData] = useState([])
+  
+  
   const selectedStudentsData = roomdata.filter(obj => selectedStudents.includes(obj.rollnumber));
   const notSelectedStudentsData = roomdata.filter(obj => !selectedStudents.includes(obj.rollnumber));
 
+  // const absentStudentData = roomdata.filter(obj => absentStudents.includes(obj.rollnumber));
+  // const presentStudentData = roomdata.filter(obj => !absentStudents.includes(obj.rollnumber));
 
   const navigate = useNavigate();
   const handleClick = () => {
@@ -51,21 +57,57 @@ const StaffDashboard = () => {
 
   const handleAbsenteeChange = (e) => {
     const inputValue = e.target.value;
+    setTextarea(inputValue);
     const splitValues = inputValue.split(',').map(value => value.trim());
     setAbsenteeData(splitValues);
 };
 
-  const handleAbsentSubmit = (e) => {
-    e.preventDefault();
-    //tempSelect = [];   TODOOOOO
-    for(var i=0;i<absenteeData.length;i++){
-      roomdata.map((obj) => {
-        if(obj.rollnumber!=absenteeData[i]){
 
-        }
-      })
-    }
+const handleAbsentSubmit = async(e) => {
+  e.preventDefault();  
+
+  var absent = [];
+
+  absenteeData.map(item => (
+    absent.push(roomdata.filter(obj => item.includes(obj.rollnumber))[0])
+  ))
+
+  var absentroll = []
+  for(var i=0;i<absent.length;i++){
+    absentroll.push(absent[i].rollnumber)
   }
+
+  console.log(absentroll)
+  const absentStudents = roomdata.filter(obj => absentroll.includes(obj.rollnumber));
+  const presentStudents = roomdata.filter(obj => !absentroll.includes(obj.rollnumber));
+
+
+  setAbsentStudentData(absentStudents)
+  setPresentStudentData(presentStudents)
+  
+  const body = {presentStudentData,absentStudentData,numofhours}
+  console.log(body)
+
+  const response = await fetch(`http://localhost:5000/attendance1`,{
+    method:"POST",
+    headers: {
+      "Content-type": "application/json"
+    },
+    body:JSON.stringify(body)
+  });
+
+  const data = await response.json();
+  if(!data.success){
+    alert("Error in entering absentees")
+  }
+  else{
+    alert("Marked successfully")
+  }
+
+  setNumofhours("");
+  setTextarea("")
+ 
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,6 +121,14 @@ const StaffDashboard = () => {
       },
       body: JSON.stringify(body)
     });
+
+    const data = await response.json();
+    if(!data.success){
+      alert("Error in entering absentees")
+    }
+    else{
+      alert("Marked successfully")
+    }
 
     setNumofhours("")
     setSelectedStudents([]);
@@ -237,7 +287,10 @@ const StaffDashboard = () => {
                 <button className='submit-button'>
                   Submit
                 </button>
-                <button className='submit-button'>
+                <button 
+                className='submit-button'
+                onClick={() =>navigate('attendance-view') }
+                >
                   View
                 </button>
               </div>
@@ -271,6 +324,7 @@ const StaffDashboard = () => {
                   rows="4" 
                   cols="50" 
                   placeholder="Enter your text here"
+                  value={textarea}
                   onChange={handleAbsenteeChange}
                   ></textarea>
                   </div>

@@ -9,6 +9,7 @@ import StudentDashboard from './components/StudentDashboard'
 import StaffRegister from './components/StaffRegister'
 import StaffDashboard from './components/StaffDashboard'
 import CreateRoom from './components/CreateRoom'
+import AttendanceView from './components/AttendanceView'
 
 
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
         <Route path='student-dashboard' element={<StudentDashboard />} />
         <Route path='staff-dashboard' element={<StaffDashboard />}/>
         <Route path='create-room' element={<CreateRoom />}/>
+        <Route path='staff-dashboard/attendance-view' element={<AttendanceView />}/>
       </Routes>
     </Router>
   )
