@@ -301,4 +301,44 @@ app.post('/attendance-view',async(req,res) => {
     }
 })
 
+app.post('/search/:id',async(req,res) => {
+    const {email,subjectcode} = req.body;
+    const query1 = `SELECT username,rollnumber from users WHERE rollnumber::text LIKE $1 AND rollnumber in (SELECT student_roll_number from enrolledsubjects WHERE teacher_email=$2 AND subject_code=$3)`;
+    const query2 = `SELECT class_taken,class_attended from enrolledsubjects WHERE student_roll_number = $1 AND teacher_email = $2 AND subject_code = $3`;
+    const data = []
+    try{
+        const roll = req.params.id;
+        var rtemp = "%";
+        rtemp+=roll;
+        rtemp+="%";
+        console.log(rtemp)
+        const result1 = await pool.query(query1,[rtemp,email,subjectcode]);
+        console.log(result1.rows)
+        
+        var t=0;
+
+        for(const obj of result1.rows){
+            t=1;
+            const student_name = obj.username;
+            const rollnumber = obj.rollnumber;
+            const result2 = await pool.query(query2,[rollnumber,email,subjectcode]);
+            const class_taken = result2.rows[0].class_taken
+            const class_attended = result2.rows[0].class_attended
+
+            data.push({rollnumber,student_name,subjectcode,email,class_taken,class_attended});
+        }
+
+        if(t==1){
+            res.status(201).json(data);
+        }
+        else{
+            res.status(201).json([]);
+        }
+        
+    }
+    catch(err){
+        res.status(401).json({message:"Internal server error"})
+    }
+})
+
 app.listen(5000, () => console.log("Server listening on port: 5000"));
