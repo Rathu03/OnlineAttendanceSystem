@@ -449,6 +449,7 @@ app.post('/attendance-view', async (req, res) => {
     }
 })
 
+<<<<<<< HEAD
 app.post('/search/:id', async (req, res) => {
     const { email, subjectcode } = req.body;
     //console.log(req.body)
@@ -1039,3 +1040,6 @@ const storage=multer.diskStorage(
     });
   });
 
+=======
+app.listen(5000, () => console.log("Server listening on port: 5000"));
+>>>>>>> parent of c815049 (............)
