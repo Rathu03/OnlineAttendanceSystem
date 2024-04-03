@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Navbar from './Navbar';
 
 const StudentDashboard = () => {
 
@@ -12,6 +13,7 @@ const StudentDashboard = () => {
   const handleClick = () => {
     localStorage.removeItem('rollnumber');
     localStorage.removeItem('token');
+    localStorage.removeItem('student');
     navigate('../')
   }
 
@@ -61,18 +63,13 @@ const StudentDashboard = () => {
 
   return (
     <div className='main-body'>
-      <div className='nav-container'>
-        <h1>Student Dashboard</h1>
-        <ul>
-          <li onClick={handleClick}>Logout</li>
-        </ul>
-      </div>
+      <Navbar />
       {!isClicked ?
         <div className='staff-dashboard'>
           <div className='staff-header'>
             <h1>Attendance List</h1>
           </div>
-          <div style={{ borderTop: "1px solid white" }}></div>
+          <div style={{ borderTop: "1px solid rgb(13,13,13)" }}></div>
           {data.length > 0 ?
             <>
               {data.map((item, index) => (

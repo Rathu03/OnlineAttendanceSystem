@@ -2,6 +2,7 @@ import React, { useDebugValue, useEffect, useState } from 'react'
 import { json, useNavigate } from 'react-router-dom'
 import { CiCirclePlus } from "react-icons/ci";
 import { MdCheck } from "react-icons/md";
+import Navbar from './Navbar';
 
 const StaffDashboard = () => {
 
@@ -32,6 +33,7 @@ const StaffDashboard = () => {
   const handleClick = () => {
     localStorage.removeItem('email');
     localStorage.removeItem('token');
+    localStorage.removeItem('staff');
     navigate('../')
   }
   
@@ -225,12 +227,7 @@ const handleAbsentSubmit = async(e) => {
  
   return (
     <div className='main-body'>
-      <div className='nav-container'>
-        <h1>Staff Dashboard</h1>
-        <ul>
-          <li onClick={handleClick}>Logout</li>
-        </ul>
-      </div>
+      <Navbar />
       {!isClicked ?
         <>
           <div className='staff-dashboard'>

@@ -31,7 +31,7 @@ const StaffLogin = () => {
             const data = await response.json()
             console.log(data)
             if(data.success){
-                navigate('../staff-dashboard')
+                navigate('../staff/attendance')
             }
             else{
                 alert('Invalid credentials');
@@ -39,6 +39,7 @@ const StaffLogin = () => {
             }
             localStorage.setItem('email',email);
             localStorage.setItem('token',data.token);
+            localStorage.setItem('role','staff');
             
         }
         catch(err){

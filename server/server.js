@@ -1,15 +1,44 @@
 const express = require("express");
 const cors = require("cors");
+const mysql = require('mysql');
 const jwt = require('jsonwebtoken');
 const body_parser = require("body-parser");
-const pool = require("./database");
+const multer=require('multer');
+const path=require('path');
+const fs = require('fs');
 
 const app = express();
 
+app.use(express.static('prof-image'));
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', 
+    methods:["POST","GET","PUT","DELETE"],
+    credentials: true 
+  }));
 app.use(body_parser.urlencoded({ extended: true }));
 
+const dbConfig = {
+    host: 'localhost',
+    user: 'root',
+    password: 'password',
+    database: 'istdept'
+};
+
+
+const db = mysql.createConnection({
+    host: dbConfig.host,
+    user: dbConfig.user,
+    password: dbConfig.password,
+    database: dbConfig.database
+});
+
+app.listen(5000, () => console.log("Server listening on port: 5000"));
+
+db.connect((err) => {
+    if (err) throw err;
+    console.log('Connected to MySQL database');
+});
 
 app.post('/tokencheck', async (req, res) => {
     const { token } = req.body;
@@ -28,98 +57,104 @@ app.post('/tokencheck', async (req, res) => {
 app.post('/registerstudent', async (req, res) => {
 
     const { rollnumber, username, password, email, year_of_joining } = req.body;
+    const query = `INSERT INTO students VALUES(?,?,?,?,?);`;
 
-    const query = `INSERT INTO users VALUES($1,$2,$3,$4,$5);`;
-    try {
-        await pool.query(query, [rollnumber, username, password, email, year_of_joining]);
-        res.status(201).json({ success: 1 });
-
-    }
-    catch (error) {
+    db.query(query,[rollnumber, username, password, email, year_of_joining],(error,result) => {
+      if(error){
         console.error(error);
         res.status(500).json({ success: 0 });
-    }
+      }
+      else{
+        res.status(201).json({success:1})
+      }
+    })
+
 })
 
 app.post('/loginstudent', async (req, res) => {
     const { rollnumber, password } = req.body;
-    const query = `SELECT * from users WHERE rollnumber=$1 AND password=$2`;
-    try {
-        const result = await pool.query(query, [rollnumber, password]);
-        if (result.rows.length > 0) {
-            console.log("Student Logged in: " + result.rows[0].username);
-            const token = jwt.sign({
-                rollnumber,
-                type: "student"
-            }, "secret", {
-                expiresIn: 60 * 60
-            })
-            res.status(200).json({ success: true, token });
-        }
-        else {
-            res.status(401).json({ success: false });
-        }
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
+    const query = `SELECT * from students WHERE rollnumber=? AND password=?`;
+    console.log(rollnumber,password)
+    
+        db.query(query,[rollnumber,password],(err,result) => {
+          if(err){
+            console.log(err);
+            res.status(500).json({message:"Internal server error"})
+          }
+          else{
+            if(result.length > 0){
+              console.log("Student Logged in: " + result[0].username);
+              const token = jwt.sign({
+                  rollnumber,
+                  type: "student"
+              }, "secret", {
+                  expiresIn: 60 * 60
+              })
+              res.status(201).json({success: true,token})
+            }
+            else{
+              res.status(401).json({success:false})
+            }
+          }
+        }) 
 })
 
 app.post('/registerstaff', async (req, res) => {
-    const { teacher_name, password, email } = req.body;
-    const query = `INSERT INTO teachers(teacher_name,password,email) VALUES($1,$2,$3)`;
-    try {
-        await pool.query(query, [teacher_name, password, email])
-        res.status(201).json({ success: 1 })
-    }
-    catch (err) {
+    const { firstname,lastname, password, email } = req.body;
+    const query = `INSERT INTO teachers(firstname,lastname,password,email) VALUES(?,?,?,?)`;
+
+    db.query(query,[firstname,lastname, password, email],(error,result) => {
+      if(error){
         console.log(err);
         res.status(401).json({ success: 0 })
-    }
+      }
+      else{
+        res.status(201).json({ success: 1 })
+      }
+    })
 })
 
 app.post('/loginstaff', async (req, res) => {
     const { email, password } = req.body;
-    const query = `SELECT * from teachers WHERE email=$1 AND password=$2`;
-    try {
-        const result = await pool.query(query, [email, password]);
-        console.log(result.rows.length)
-        if (result.rows.length > 0) {
-            console.log("Staff Logged in: " + result.rows[0].email);
+    const query = `SELECT * from teachers WHERE email=? AND password=?`;
 
-            const token = jwt.sign({
-                email,
-                type: "staff"
-            }, "secret", {
-                expiresIn: 60 * 60
-            })
-            res.status(201).json({ success: true, token })
-        }
-        else {
-            res.status(401).json({ success: false })
-        }
-    }
-    catch (err) {
-        console.log(err.message);
+    db.query(query,[email,password],(error,result) => {
+      if(error){
         res.status(500).json({ success: "Internal Server Error" })
-    }
+      }
+      else{
+        if(result.length > 0){
+          console.log("Staff Logged in: " + result[0].email);
+  
+          const token = jwt.sign({
+              email,
+              type: "staff"
+          }, "secret", {
+              expiresIn: 60 * 60
+          })
+          res.status(201).json({ success: true, token })
+        }
+        else{
+          res.status(401).json({ success: false })
+        }
+      } 
+    })
 })
 
 
 app.post('/create-room', async (req, res) => {
     const body = req.body;
-    const query1 = `INSERT INTO enrolledsubjects(student_roll_number,subject_code,teacher_email) VALUES($1,$2,$3)`;
-    const query2 = `INSERT INTO sem values($1,$2)`;
+    const query1 = `INSERT INTO enrolledsubjects(student_roll_number,subjectid,teacher_email) VALUES(?,?,?)`;
     try {
         for (const obj of body) {
-            await pool.query(query1, [obj.rollnumber, obj.subject_code, obj.teacher_email])
-        }
-
-        const sem_number = body[0].sem_number;
-        const subject_code = body[0].subject_code;
-        await pool.query(query2,[subject_code,sem_number]);
-
+            await new Promise((resolve,reject) => {
+              db.query(query1,[obj.rollnumber, obj.subject_code, obj.teacher_email],(error,result) => {
+                if(error) reject (error)
+                else resolve(result)
+              })
+            })
+        }     
+        
         res.status(201).json({ success: "Enrolled successdully" })
     }
     catch (err) {
@@ -130,215 +165,877 @@ app.post('/create-room', async (req, res) => {
 
 app.post('/student-get-data', async (req, res) => {
     const { rollnumber } = req.body;
-    const query1 = `SELECT teacher_email,subject_code from enrolledsubjects WHERE student_roll_number = $1`;
-    const query2 = `SELECT subject_name,credits from subjects WHERE subject_code = $1`;
-    const query3 = `SELECT teacher_name from teachers WHERE email = $1`
+    const query1 = `SELECT teacher_email,subjectid from enrolledsubjects WHERE student_roll_number = ?`;
+    const query2 = `SELECT subjectname,credits from subjects WHERE subjectid = ?`;
+    const query3 = `SELECT teacher_name from teachers WHERE email = ?`
     try {
-        const result1 = await pool.query(query1, [rollnumber]);
+        console.log('aa')
+        const result1 = await new Promise((resolve,reject) => {
+          db.query(query1,[rollnumber],(error,result) => {
+            if(error) reject(error)
+            else resolve(result)
+          })
+        })
+
+        //const result1 = await db.query(query1, [rollnumber]);
         const data = []
-        for (const row of result1.rows) {
+        for (const row of result1) {
             const staff_email = row.teacher_email;
-            const subject_code = row.subject_code;
+            const subject_code = row.subjectid;
 
-            const result2 = await pool.query(query2, [subject_code]);
-            const subject_name = result2.rows[0].subject_name;
-            const credit = result2.rows[0].credits
+            const result2 = await new Promise((resolve,reject) => {
+              db.query(query2,[subject_code],(error,result) => {
+                if(error) reject (error)
+                else resolve(result)
+              })
+            })
+            //const result2 = await db.query(query2, [subject_code]);
+            const subject_name = result2[0].subjectname;
+            const credit = result2[0].credits
 
-            const result3 = await pool.query(query3, [staff_email]);
-            const staff_name = result3.rows[0].teacher_name;
-            
-            data.push({staff_name,subject_code,subject_name,credit});
+            const result3 = await new Promise((resolve,reject) => {
+              db.query(query3,[staff_email],(error,result) => {
+                if(error) reject(error)
+                else resolve(result)
+              })
+            })
+            //const result3 = await db.query(query3, [staff_email]);
+            const staff_name = result3[0].teacher_name;
+
+            data.push({ staff_name, subject_code, subject_name, credit });
         }
-        
+
         res.status(201).json(data);
     }
     catch (err) {
         console.log(err)
-        res.status(401).json({error:"Failed to fetch data"})
+        res.status(401).json({ error: "Failed to fetch data" })
     }
 })
 
-app.post('/staff-get-data',async(req,res) => {
-    const {email} = req.body;
-    const query1 = `SELECT DISTINCT subject_code from enrolledsubjects WHERE teacher_email = $1`;
-    const query2 = `SELECT subject_name,credits from subjects WHERE subject_code = $1`;
-    const query3 = `SELECT sem_number from sem WHERE subject_code = $1`;
-    try{
-        const result1 = await pool.query(query1,[email]);
-        const data = []
-        for(const row of result1.rows){
-            const subject_code = row.subject_code;
-            
-            const result2 = await pool.query(query2,[subject_code]);
-            const subject_name = result2.rows[0].subject_name;
-            const credits = result2.rows[0].credits;
-            
-            const result3 = await pool.query(query3,[subject_code]);
-            const sem = result3.rows[0].sem_number; 
+app.post('/staff-get-data', async (req, res) => {
+  const { email } = req.body;
 
-            data.push({subject_code,subject_name,credits,sem})
-        }
+  const query1 = `SELECT DISTINCT subjectid from enrolledsubjects WHERE teacher_email = ?`;
+  const query2 = `SELECT subjectname, credits, Semester from subjects WHERE subjectid = ?`;
 
-        res.status(201).json(data);
+  try {
+    const result1 = await new Promise((resolve, reject) => {
+      db.query(query1, [email], (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      });
+    });
+
+    const data = [];
+    for (const row of result1) {
+      const subject_code = row.subjectid;
+      const result2 = await new Promise((resolve, reject) => {
+        db.query(query2, [subject_code], (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        });
+      });
+      const subject_name = result2[0].subjectname;
+      const credits = result2[0].credits;
+      const sem = result2[0].Semester;
+      data.push({ subject_code, subject_name, credits, sem });
     }
-    catch(err){
+
+    res.status(201).json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ error: "Failed to fetch data" });
+  }
+});
+
+
+app.post('/student-room', async (req, res) => {
+    const { staff_name, subject_code, subject_name, credit, rollnumber } = req.body;
+    const query = `SELECT class_attended,class_taken FROM enrolledsubjects WHERE student_roll_number = ? AND subjectid = ?`;
+    try {
+        const result = await new Promise((resolve,reject) => {
+          db.query(query,[rollnumber,subject_code],(error,result) => {
+            if(error) reject(error)
+            else resolve(result)
+          })
+        })
+        //const result = await db.query(query, [rollnumber, subject_code]);
+        const class_attended = result[0].class_attended;
+        const class_taken = result[0].class_taken;
+        res.status(201).json({ staff_name, subject_code, subject_name, credit, rollnumber, class_taken, class_attended });
+    }
+    catch (err) {
         console.log(err);
-        res.status(401).json({error:"Failed to fetch data"});
+        res.status(401).json({ error: "Failed to fetch" })
     }
 })
 
-app.post('/student-room',async(req,res) => {
-    const {staff_name,subject_code,subject_name,credit,rollnumber} = req.body;
-    const query = `SELECT class_attended,class_taken FROM enrolledsubjects WHERE student_roll_number = $1 AND subject_code = $2`;
-    try{
-        const result = await pool.query(query,[rollnumber,subject_code]);
-        const class_attended = result.rows[0].class_attended;
-        const class_taken = result.rows[0].class_taken;
-        res.status(201).json({staff_name,subject_code,subject_name,credit,rollnumber,class_taken,class_attended});
-    }
-    catch(err){
-        console.log(err);
-        res.status(401).json({error:"Failed to fetch"})
-    }
-})
-
-app.post('/get-staff-data',async(req,res) => {
-    const {subject_code,subject_name,credits,email} = req.body;
-    const query1 = `SELECT student_roll_number from enrolledsubjects WHERE subject_code = $1 AND teacher_email = $2`;
-    const query2 = `SELECT username from users WHERE rollnumber = $1`;
-    const query3 = `SELECT class_attended,class_taken FROM enrolledsubjects WHERE student_roll_number = $1 AND subject_code = $2`;
+app.post('/get-staff-data', async (req, res) => {
+    const { subject_code, subject_name, credits, email } = req.body;
+    const query1 = `SELECT student_roll_number from enrolledsubjects WHERE subjectid = ? AND teacher_email = ?`;
+    const query2 = `SELECT username from students WHERE rollnumber = ?`;
+    const query3 = `SELECT class_attended,class_taken FROM enrolledsubjects WHERE student_roll_number = ? AND subjectid = ?`;
     const data = []
-    try{
-        const result1 = await pool.query(query1,[subject_code,email]);
-        for(const obj of result1.rows ){
+    try {
+        const result1 = await new Promise((resolve,reject) => {
+          db.query(query1,[subject_code,email],(error,result) => {
+            if(error) reject(error)
+            else resolve(result)
+          })
+        })
+        //const result1 = await db.query(query1, [subject_code, email]);
+        for (const obj of result1) {
             const rollnumber = obj.student_roll_number;
-            
-            const result2 = await pool.query(query2,[rollnumber]);
-            const student_name = result2.rows[0].username;
-            
-            const result3 = await pool.query(query3,[rollnumber,subject_code]);
-            const class_attended = result3.rows[0].class_attended;
-            const class_taken = result3.rows[0].class_taken; 
 
-            data.push({subject_code,subject_name,credits,email,rollnumber,student_name,class_attended,class_taken});
+            const result2 = await new Promise((resolve,reject) => {
+              db.query(query2,[rollnumber],(error,result) => {
+                if(error) reject (error)
+                else resolve(result)
+              })
+            })
+            //const result2 = await db.query(query2, [rollnumber]);
+            const student_name = result2[0].username;
+
+            const result3 = await new Promise((resolve,reject) => {
+              db.query(query3,[rollnumber,subject_code],(error,result) => {
+                if(error) reject(error)
+                else resolve(result)
+              })
+            })
+            //const result3 = await db.query(query3, [rollnumber, subject_code]);
+            const class_attended = result3[0].class_attended;
+            const class_taken = result3[0].class_taken;
+
+            data.push({ subject_code, subject_name, credits, email, rollnumber, student_name, class_attended, class_taken });
         }
         res.status(201).json(data);
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.status(401).json({error:"Failed to fetch"})
+        res.status(401).json({ error: "Failed to fetch" })
     }
 })
 
-app.post('/attendance',async(req,res) => {
-    const {selectedStudentsData,notSelectedStudentsData,numofhours} = req.body;
-    const query1 = `SELECT class_taken,class_attended from enrolledsubjects WHERE student_roll_number = $1 AND subject_code = $2`;
-    const query2 = `UPDATE enrolledsubjects SET class_taken = $1, class_attended = $2 WHERE student_roll_number = $3 AND subject_code = $4`;
-    try{
-        for(const obj of selectedStudentsData) {
-            const result1 = await pool.query(query1,[obj.rollnumber,obj.subject_code]);
+app.post('/attendance', async (req, res) => {
+    const { selectedStudentsData, notSelectedStudentsData, numofhours } = req.body;
+    const query1 = `SELECT class_taken,class_attended from enrolledsubjects WHERE student_roll_number = ? AND subjectid = ?`;
+    const query2 = `UPDATE enrolledsubjects SET class_taken = ?, class_attended = ? WHERE student_roll_number = ? AND subjectid = ?`;
+    try {
+        for (const obj of selectedStudentsData) {
+            console.log(obj.rollnumber)
+            const result1 = await new Promise((resolve,reject) => {
+              db.query(query1,[obj.rollnumber,obj.subject_code],(error,result) => {
+                if(error) reject(error)
+                else resolve(result)
+              })
+            })
+            console.log(result1)
             
-            const class_taken = result1.rows[0].class_taken;
-            const class_attended = result1.rows[0].class_attended;
+            //const result1 = await db.query(query1, [obj.rollnumber, obj.subjectid]);
 
-            await pool.query(query2,[parseInt(class_taken)+parseInt(numofhours),parseInt(class_attended)+parseInt(numofhours),obj.rollnumber,obj.subject_code]);
-        }
-        for(const obj of notSelectedStudentsData) {
-            const result1 = await pool.query(query1,[obj.rollnumber,obj.subject_code]);
             
-            const class_taken = result1.rows[0].class_taken;
-            const class_attended = result1.rows[0].class_attended;
-            console.log(parseInt(class_taken)+parseInt(numofhours))
-            await pool.query(query2,[parseInt(class_taken)+parseInt(numofhours),parseInt(class_attended),obj.rollnumber,obj.subject_code]);
+            const class_taken = result1[0].class_taken;
+            const class_attended = result1[0].class_attended;
+
+            await new Promise((resolve,reject) => {
+              db.query(query2,[parseInt(class_taken) + parseInt(numofhours), parseInt(class_attended) + parseInt(numofhours), obj.rollnumber, obj.subject_code],(error,result) => {
+                if(error) reject(error)
+                else resolve(result)
+              })
+            })
+            //await db.query(query2, [parseInt(class_taken) + parseInt(numofhours), parseInt(class_attended) + parseInt(numofhours), obj.rollnumber, obj.subjectid]);
         }
-        res.status(201).json({success: "1"})
+        for (const obj of notSelectedStudentsData) {
+            const result1 = await new Promise((resolve,reject) => {
+              db.query(query1,[obj.rollnumber,obj.subject_code],(error,result) => {
+                if(error) reject(error)
+                else resolve(result)
+              })
+            })
+            //const result1 = await db.query(query1, [obj.rollnumber, obj.subjectid]);
+
+            const class_taken = result1[0].class_taken;
+            const class_attended = result1[0].class_attended;
+            console.log(parseInt(class_taken) + parseInt(numofhours))
+            
+            await new Promise((resolve,reject) => {
+              db.query(query2,[parseInt(class_taken) + parseInt(numofhours), parseInt(class_attended) , obj.rollnumber, obj.subject_code],(error,result) => {
+                if(error) reject(error)
+                else resolve(result)
+              })
+            })
+            //await db.query(query2, [parseInt(class_taken) + parseInt(numofhours), parseInt(class_attended), obj.rollnumber, obj.subjectid]);
+        }
+        res.status(201).json({ success: "1" })
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.status(401).json({success: "0"})
+        res.status(401).json({ success: "0" })
     }
 })
 
-app.post('/attendance1',async(req,res) => {
-    const {presentStudentData,absentStudentData,numofhours} = req.body;
-    const query1 = `SELECT class_taken,class_attended from enrolledsubjects WHERE student_roll_number = $1 AND subject_code = $2`;
-    const query2 = `UPDATE enrolledsubjects SET class_taken = $1, class_attended = $2 WHERE student_roll_number = $3 AND subject_code = $4`;
-    try{
-        for(const obj of presentStudentData) {
-            const result1 = await pool.query(query1,[obj.rollnumber,obj.subject_code]);
-            
-            const class_taken = result1.rows[0].class_taken;
-            const class_attended = result1.rows[0].class_attended;
+app.post('/attendance1', async (req, res) => {
+    const { presentStudentData, absentStudentData, numofhours } = req.body;
+    const query1 = `SELECT class_taken,class_attended from enrolledsubjects WHERE student_roll_number = ? AND subjectid = ?`;
+    const query2 = `UPDATE enrolledsubjects SET class_taken = ?, class_attended = ? WHERE student_roll_number = ? AND subjectid = ?`;
+    try {
+        for (const obj of presentStudentData) {
 
-            await pool.query(query2,[parseInt(class_taken)+parseInt(numofhours),parseInt(class_attended)+parseInt(numofhours),obj.rollnumber,obj.subject_code]);
+            const result1 = await new Promise((resolve,reject) => {
+              db.query(query1,[obj.rollnumber,obj.subject_code],(error,result) => {
+                if(error) reject(error)
+                else resolve(result)
+              })
+            })
+            //const result1 = await db.query(query1, [obj.rollnumber, obj.subjectid]);
+
+            const class_taken = result1[0].class_taken;
+            const class_attended = result1[0].class_attended;
+
+            await new Promise((resolve,reject) => {
+              db.query(query2,[parseInt(class_taken) + parseInt(numofhours), parseInt(class_attended) + parseInt(numofhours), obj.rollnumber, obj.subject_code],(error,result) => {
+                if(error) reject(error)
+                else resolve(result)
+              })
+            })
+            //await db.query(query2, [parseInt(class_taken) + parseInt(numofhours), parseInt(class_attended) + parseInt(numofhours), obj.rollnumber, obj.subjectid]);
         }
-        for(const obj of absentStudentData) {
-            const result1 = await pool.query(query1,[obj.rollnumber,obj.subject_code]);
-            
-            const class_taken = result1.rows[0].class_taken;
-            const class_attended = result1.rows[0].class_attended;
-            console.log(parseInt(class_taken)+parseInt(numofhours))
-            await pool.query(query2,[parseInt(class_taken)+parseInt(numofhours),parseInt(class_attended),obj.rollnumber,obj.subject_code]);
+        for (const obj of absentStudentData) {
+
+            const result1 = await new Promise((resolve,reject) => {
+              db.query(query1,[obj.rollnumber, obj.subject_code],(error,result) => {
+                if(error) reject(error)
+                else resolve(result)
+              })
+            })
+            //const result1 = await db.query(query1, [obj.rollnumber, obj.subjectid]);
+
+            const class_taken = result1[0].class_taken;
+            const class_attended = result1[0].class_attended;
+            console.log(parseInt(class_taken) + parseInt(numofhours))
+            await new Promise((resolve,reject) => {
+              db.query(query2,[parseInt(class_taken) + parseInt(numofhours), parseInt(class_attended), obj.rollnumber, obj.subject_code],(error,result) => {
+                if(error) reject(error)
+                else resolve(result)
+              })
+            })
+            //await db.query(query2, [parseInt(class_taken) + parseInt(numofhours), parseInt(class_attended), obj.rollnumber, obj.subjectid]);
         }
-        res.status(201).json({success: "1"})
+        res.status(201).json({ success: "1" })
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.status(401).json({success: "0"})
+        res.status(401).json({ success: "0" })
     }
 })
 
-app.post('/attendance-view',async(req,res) => {
-    const {subject_code,email} = req.body;
-    const query1 = `SELECT class_taken from enrolledsubjects WHERE subject_code = $1 AND teacher_email = $2`;
-    try{
-        const result = await pool.query(query1,[subject_code,email]);
-        const class_taken = result.rows[0];
-        res.status(201).json({class_taken:class_taken})
+app.post('/attendance-view', async (req, res) => {
+    const { subject_code, email } = req.body;
+    const query1 = `SELECT class_taken from enrolledsubjects WHERE subjectid = ? AND teacher_email = ?`;
+    try {
+        const result = await new Promise((resolve,reject) => {
+          db.query(query1,[subject_code,email],(error,result) => {
+            if(error) reject(error)
+            else resolve(result)
+          })
+        })
+        //const result = await db.query(query1, [subject_code, email]);
+        const class_taken = result[0];
+        res.status(201).json({ class_taken: class_taken })
     }
-    catch(err){
-        res.status(401).json({message:"Error in viewing"})
+    catch (err) {
+        res.status(401).json({ message: "Error in viewing" })
     }
 })
 
-app.post('/search/:id',async(req,res) => {
-    const {email,subjectcode} = req.body;
-    const query1 = `SELECT username,rollnumber from users WHERE rollnumber::text LIKE $1 AND rollnumber in (SELECT student_roll_number from enrolledsubjects WHERE teacher_email=$2 AND subject_code=$3)`;
-    const query2 = `SELECT class_taken,class_attended from enrolledsubjects WHERE student_roll_number = $1 AND teacher_email = $2 AND subject_code = $3`;
+app.post('/search/:id', async (req, res) => {
+    const { email, subjectcode } = req.body;
+    //console.log(req.body)
+    const query1 = `SELECT username,rollnumber from students WHERE rollnumber LIKE ? AND rollnumber in (SELECT student_roll_number from enrolledsubjects WHERE teacher_email=? AND subjectid=?)`;
+    const query2 = `SELECT class_taken,class_attended from enrolledsubjects WHERE student_roll_number = ? AND teacher_email = ? AND subjectid = ?`;
     const data = []
-    try{
+    try {
         const roll = req.params.id;
         var rtemp = "%";
-        rtemp+=roll;
-        rtemp+="%";
+        rtemp += roll;
+        rtemp += "%";
         console.log(rtemp)
-        const result1 = await pool.query(query1,[rtemp,email,subjectcode]);
-        console.log(result1.rows)
-        
-        var t=0;
+        const result1 = await new Promise((resolve,reject) => {
+          db.query(query1,[rtemp,email,subjectcode],(error,result) => {
+            if(error) reject(error)
+            else resolve(result)
+          })
+        })
+        console.log(result1)
+        //const result1 = await db.query(query1, [rtemp, email, subjectcode]);
 
-        for(const obj of result1.rows){
-            t=1;
+        var t = 0;
+
+        for (const obj of result1) {
+            t = 1;
             const student_name = obj.username;
             const rollnumber = obj.rollnumber;
-            const result2 = await pool.query(query2,[rollnumber,email,subjectcode]);
-            const class_taken = result2.rows[0].class_taken
-            const class_attended = result2.rows[0].class_attended
 
-            data.push({rollnumber,student_name,subjectcode,email,class_taken,class_attended});
+
+            const result2 = await new Promise((resolve,reject) => {
+              db.query(query2,[rollnumber,email,subjectcode],(error,result) => {
+                if(error) reject(error)
+                else resolve(result)
+              })
+            })
+            //const result2 = await db.query(query2, [rollnumber, email, subjectcode]);
+            const class_taken = result2[0].class_taken
+            const class_attended = result2[0].class_attended
+
+            data.push({ rollnumber, student_name, subjectcode, email, class_taken, class_attended });
         }
 
-        if(t==1){
+        if (t == 1) {
             res.status(201).json(data);
         }
-        else{
+        else {
             res.status(201).json([]);
         }
-        
+
     }
-    catch(err){
-        res.status(401).json({message:"Internal server error"})
+    catch (err) {
+        res.status(401).json({ message: "Internal server error" })
     }
 })
 
-app.listen(5000, () => console.log("Server listening on port: 5000"));
+const storage=multer.diskStorage(
+    {
+      destination: (req, file, cb) => {
+        const directory ='prof-image/'+ path.dirname(file.originalname);
+        cb(null, directory);
+      },
+      filename: (req, file, cb) => {
+        cb(null, file.fieldname+"_"+Date.now()+path.extname(file.originalname));
+      }
+    }
+  )
+  const upload=multer({
+    storage:storage
+  })
+  
+  
+  app.post('/upload/:RollNumber',upload.single('image'),(req,res)=>{
+    const {RollNumber}=req.params;
+    const image=req.file.filename;
+    const sql1="update studentdetails set StudentImage=? where RollNumber=?";
+    db.query(sql1,[image,RollNumber],(err,result)=>{
+      if(err) return res.json({message:"Error"});
+      console.log("upload",result);
+      return res.json({status:"Success"});
+    })
+  })
+  
+  
+  app.get('/getImage/:RollNumber', (req, res) => {
+    const { RollNumber } = req.params;
+  
+    const sql1 = "SELECT StudentImage FROM studentdetails WHERE RollNumber=?";
+    db.query(sql1, [RollNumber], (err, result) => {
+      if (err) return res.json({ message: "Error" });
+  
+      if (result.length === 0 || !result[0].StudentImage) {
+        return res.json({ message: "Image not found" });
+      }
+  
+      const imageName = result[0].StudentImage;
+  
+      const imagePath = path.join(__dirname, 'prof-image', imageName);
+  
+      if (!fs.existsSync(imagePath)) {
+        return res.json({ message: "Image not found" });
+      }
+      fs.readFile(imagePath, (err, data) => {
+        if (err) {
+          console.error('Error reading image file:', err);
+          return res.json({ message: "Error reading image file" });
+        }
+        res.writeHead(200, { 'Content-Type': 'image/*' });
+        res.end(data);
+      });
+    });
+  });
+  
+  
+  
+  
+  
+  
+  
+  app.get('/studentDetails/:username', (req, res) => {
+    const { username } = req.params;
+    console.log('studentDetails:', username);
+    const sql = 'SELECT * FROM StudentDetails WHERE RollNumber = ?';
+    db.query(sql, [username], (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.json(result[0]); 
+    });
+  });
+  
+  app.get('/InternshipDetails/:username', (req, res) => {
+    const { username } = req.params;
+    const sql = 'SELECT * FROM Internship WHERE roll_number = ?';
+    db.query(sql, [username], (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.json(result); 
+    });
+  });
+  
+  app.get('/ScholarshipDetails/:username', (req, res) => {
+    const { username } = req.params;
+    const sql = 'SELECT * FROM Scholarship WHERE roll_number = ?';
+    db.query(sql, [username], (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.json(result); 
+    });
+  });
+  
+  app.get('/ProjectDetails/:username', (req, res) => {
+    const { username } = req.params;
+    const sql = 'SELECT * FROM Project WHERE roll_number = ?';
+    db.query(sql, [username], (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.json(result); 
+    });
+  });
+  
+  
+  app.get('/SportsDetails/:username', (req, res) => {
+    const { username } = req.params;
+    const sql = 'SELECT * FROM Sports WHERE roll_number = ?';
+    db.query(sql, [username], (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.json(result); 
+    });
+  });
+  
+  app.get('/ExamsDetails/:username', (req, res) => {
+    const { username } = req.params;
+    const sql = 'SELECT * FROM exams_attended WHERE roll_number = ?';
+    db.query(sql, [username], (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.json(result); 
+    });
+  });
+  
+  app.get('/PaperDetails/:username', (req, res) => {
+    const { username } = req.params;
+    const sql = 'SELECT * FROM paper_published WHERE roll_number = ?';
+    db.query(sql, [username], (err, result) => {
+        if (err) {
+            throw err;
+        }
+       
+        res.json(result); 
+    });
+  });
+  
+  app.get('/EventDetails/:username', (req, res) => {
+    const { username } = req.params;
+    const sql = 'SELECT * FROM events WHERE roll_number = ?';
+    db.query(sql, [username], (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.json(result); 
+    });
+  });
+  
+  
+  app.put('/updateStudentDetails/:username', (req, res) => {
+    const { username } = req.params;
+    const updatedData = req.body;
+    console.log("data add",updatedData.FatherName);
+    const sql = 'UPDATE StudentDetails SET DateOfBirth = ?, Address = ?, Phone = ?,Sex=?,Blood_Group=?,FatherName=?,MotherName=?,Fatheroccupation=?,Motheroccupation=? WHERE RollNumber = ?';
+    db.query(sql, [updatedData.DateOfBirth, updatedData.Address, updatedData.Phone,updatedData.Sex,updatedData.Blood_Group,updatedData.FatherName,updatedData.Mothername,updatedData.Fatheroccupation,updatedData.Motheroccupation, username], (err, result) => {
+        if (err) {
+            throw err;
+        }
+        console.log(result);
+        res.send('Student details updated successfully');
+    });
+  });
+  
+  
+  app.post('/addStudentDetails/:rollNumber', (req, res) => {
+    const {rollNumber} = req.params;
+    const newStudentData = req.body;
+    const checkExistingQuery = 'SELECT * FROM StudentDetails WHERE RollNumber = ?';
+    db.query(checkExistingQuery, [rollNumber], (checkError, checkResult) => {
+        if (checkError) {
+            throw checkError;
+        }
+        if (checkResult.length === 0) {
+            const insertQuery = 'INSERT INTO StudentDetails (RollNumber, DateOfBirth, Address, Phone, Sex, Blood_Group, FatherName, Mothername, Fatheroccupation, Motheroccupation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            const insertValues = [
+                rollNumber,
+                newStudentData.DateOfBirth,
+                newStudentData.Address,
+                newStudentData.Phone,
+                newStudentData.Sex,
+                newStudentData.Blood_Group,
+                newStudentData.FatherName,
+                newStudentData.Mothername,
+                newStudentData.Fatheroccupation,
+                newStudentData.Motheroccupation
+            ];
+  
+            db.query(insertQuery, insertValues, (insertError, insertResult) => {
+                if (insertError) {
+                    throw insertError;
+                }
+                res.send('Student details added successfully');
+            });
+        } else {
+            res.status(400).send('Student with this RollNumber already exists');
+        }
+    });
+  });
+  
+  
+  
+  
+  app.delete('/deleteScholarship/:id', (req, res) => {
+    const id = req.params.id;
+    const sql = 'DELETE FROM Scholarship WHERE id =?';
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.send('Scholarship deleted successfully');
+    });
+  })
+  
+  app.delete('/deleteInternship/:id', (req, res) => {
+    const id = req.params.id;
+    const sql = 'DELETE FROM Internship WHERE id =?';
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.send('Internship deleted successfully');
+    });
+  })
+  
+  app.delete('/deleteProject/:id', (req, res) => {
+    const id = req.params.id;
+    const sql = 'DELETE FROM Project WHERE id =?';
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.send('Project deleted successfully');
+    });
+  })
+  
+  app.delete('/deleteSports/:id', (req, res) => {
+    const id = req.params.id;
+    const sql = 'DELETE FROM Sports WHERE id =?';
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.send('Sports deleted successfully');
+    });
+  })
+  
+  app.delete('/deletePapers/:id', (req, res) => {
+    const id = req.params.id;
+    const sql = 'DELETE FROM paper_published WHERE id =?';
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.send('Papers deleted successfully');
+    });
+  })
+  
+  app.delete('/deleteEvents/:id', (req, res) => {
+    const id = req.params.id;
+    const sql = 'DELETE FROM Events WHERE id =?';
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.send('Events deleted successfully');
+    });
+  })
+  
+  
+  app.post('/addScholarship/:roll_number', (req, res) => {
+    const {roll_number}=req.params;
+    const scholarshipData = req.body;
+    const sql = 'INSERT INTO Scholarship (roll_number,ScholarshipProvider, amount) VALUES (?,?, ?)';
+    db.query(sql, [roll_number,scholarshipData.ScholarshipProvider, scholarshipData.amount], (err, result) => {
+        if (err) {
+            console.error('Error adding scholarship data:', err);
+            res.status(500).json({ error: 'Failed to add scholarship data to database' });
+        } else {
+            console.log('Scholarship data added successfully');
+            res.status(200).json({ message: 'Scholarship data added successfully' });
+        }
+    });
+  });
+  
+  app.post('/addProject/:roll_number', (req, res) => {
+    const {roll_number}=req.params;
+    const projectData = req.body;
+    const sql = 'INSERT INTO project (roll_number,title,guide,project_desc) VALUES (?,?, ?,?)';
+    db.query(sql, [roll_number,projectData.title,projectData.guide,projectData.project_desc], (err, result) => {
+        if (err) {
+            console.error('Error adding Project data:', err);
+            res.status(500).json({ error: 'Failed to add Project  data to database' });
+        } else {
+            console.log('Project data added successfully');
+            res.status(200).json({ message: 'Project  data added successfully' });
+        }
+    });
+  });
+  
+  app.post('/addInternship/:roll_number', (req, res) => {
+    const { roll_number } = req.params;
+    const internshipData = req.body;
+    const sql = 'INSERT INTO Internship (roll_number, employer_name, on_off_campus, ctc, InternshipDuration, InternshipStartDate, InternshipEndDate, product_service_based) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    db.query(sql, [roll_number, internshipData.employer_name, internshipData.on_off_campus, internshipData.ctc, internshipData.InternshipDuration, internshipData.InternshipStartDate, internshipData.InternshipEndDate, internshipData.product_service_based], (err, result) => {
+      if (err) {
+        console.error('Error adding Internship data:', err);
+        res.status(500).json({ error: 'Failed to add Internship data to database' });
+      } else {
+        console.log('Internship data added successfully');
+        res.status(200).json({ message: 'Internship data added successfully' });
+      }
+    });
+  });
+  app.post('/addSport/:roll_number', (req, res) => {
+    const { roll_number } = req.params;
+    const sportsData = req.body;
+    const sql = 'INSERT INTO Sports (roll_number, event_name, award) VALUES (?, ?, ?)';
+    db.query(sql, [roll_number, sportsData.event_name, sportsData.award], (err, result) => {
+      if (err) {
+        console.error('Error adding Sports data:', err);
+        res.status(500).json({ error: 'Failed to add Sports data to database' });
+      } else {
+        console.log('Sports data added successfully');
+        res.status(200).json({ message: 'Sports data added successfully' });
+      }
+    });
+  });
+  
+  app.post('/addPaper/:roll_number', (req, res) => {
+    console.log('addpaper');
+    const { roll_number } = req.params;
+    const paperData = req.body;
+    const sql = 'INSERT INTO Paper_Published (roll_number, title, journal, date_year, DOI_link) VALUES (?, ?, ?, ?, ?)';
+    db.query(sql, [roll_number, paperData.title, paperData.journal, paperData.date_year, paperData.DOI_link], (err, result) => {
+      if (err) {
+        console.error('Error adding Paper Published data:', err);
+        res.status(500).json({ error: 'Failed to add Paper Published data to database' });
+      } else {
+        console.log('Paper Published data added successfully');
+        res.status(200).json({ message: 'Paper Published data added successfully' });
+      }
+    });
+  });
+  
+  app.post('/addEvent/:roll_number', (req, res) => {
+    const { roll_number } = req.params;
+    const eventData = req.body;
+    const sql = 'INSERT INTO Events (roll_number, event_name, institution, date, role, awards) VALUES (?, ?, ?, ?, ?, ?)';
+    db.query(sql, [roll_number, eventData.event_name, eventData.institution, eventData.date, eventData.role, eventData.awards], (err, result) => {
+      if (err) {
+        console.error('Error adding Event data:', err);
+        res.status(500).json({ error: 'Failed to add Event data to database' });
+      } else {
+        console.log('Event data added successfully');
+        res.status(200).json({ message: 'Event data added successfully' });
+      }
+    });
+  });
+  
+  
+  app.get('/basicacademic/:rollNumber', (req, res) => {
+    const rollNumber = req.params.rollNumber;
+    const query = `SELECT * FROM student_academic_details WHERE RollNumber = ?`;
+    db.query(query, [rollNumber], (error, results) => {
+      if (error) {
+        console.error('Error executing query: ', error);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      if (results.length === 0) {
+        res.status(404).json({ message: 'Student academic details not found' });
+        return;
+      }
+      res.json(results[0]);
+    });
+  });
+  
+  app.get('/getsemestermarks/:rollNumber/:sem', (req, res) => {
+    const semester = req.params.sem;
+    const rollNumber = req.params.rollNumber;
+    console.log(semester, rollNumber);
+    const query = `SELECT * FROM marks WHERE Semester = ? AND RollNumber = ?`;
+    db.query(query, [semester, rollNumber], (error, results) => {
+      if (error) throw error;
+      res.json(results);
+    });
+  });
+  app.put('/editmarks/:rollNumber/:subjectID', (req, res) => {
+    const rollNumber = req.params.rollNumber;
+    const subjectID = req.params.subjectID;
+    const newMarks = req.body.marks;
+    let newGrade;
+    if (newMarks >= 90) {
+      newGrade = 'O';
+    } else if (newMarks >= 80) {
+      newGrade = 'A+';
+    } else if (newMarks >= 70) {
+      newGrade = 'A';
+    } else if (newMarks >= 60) {
+      newGrade = 'B+';
+    } else if (newMarks >= 50) {
+      newGrade = 'B';
+    } else {
+      newGrade = 'C';
+    }
+    const query = `UPDATE marks SET MarksObtained = ?, Grade = ? WHERE RollNumber = ? AND SubjectID = ?`;
+    db.query(query, [newMarks, newGrade, rollNumber, subjectID], (error, results) => {
+      if (error) {
+        console.error("Error updating marks:", error);
+        res.status(500).json({ error: "An error occurred while updating marks" });
+      } else {
+        console.log("Marks and grade updated successfully");
+        res.status(200).json({ message: "Marks and grade updated successfully" });
+      }
+    });
+  });
+  
+  
+  app.get('/getsemestergpa/:rollNumber/:sem', (req, res) => {
+    const semester = req.params.sem;
+    const rollNumber = req.params.rollNumber;
+    console.log(semester, rollNumber);
+    const query = `SELECT * FROM gpa WHERE semester =? AND rollnumber =?`;
+    db.query(query, [semester, rollNumber], (error, results) => {
+      if (error) throw error;
+      res.json(results[0]);
+    });
+  })
+  app.put('/editbasicacademic/:rollNumber', (req, res) => {
+    const rollNumber = req.params.rollNumber;
+    const { CurrentSemester, TenthMarks, HigherSecondaryMarks } = req.body;
+  
+    const query = `UPDATE student_academic_details 
+                   SET CurrentSemester = ?, TenthMarks = ?, HigherSecondaryMarks = ? 
+                   WHERE RollNumber = ?`;
+    
+    db.query(query, [CurrentSemester, TenthMarks, HigherSecondaryMarks, rollNumber], (error, results) => {
+        if (error) {
+            console.error("Error updating basic academic details:", error);
+            res.status(500).json({ error: "An error occurred while updating basic academic details" });
+        } else {
+            console.log("Basic academic details updated successfully");
+            res.status(200).json({ message: "Basic academic details updated successfully" });
+        }
+    });
+  });
+  app.get('/getgpa/:rollNumber', (req, res) => {
+    const rollNumber = req.params.rollNumber;
+    const query = `SELECT * FROM gpa WHERE rollnumber =?`;
+    db.query(query, [rollNumber], (error, results) => {
+      if (error) throw error;
+      res.json(results);
+    }); 
+  })
+  app.get('/getverifystatus/:rollNumber/:sem', (req, res) => {
+    const rollNumber = req.params.rollNumber;
+    const sem = req.params.sem;
+  
+    // Query to fetch verify_status for the given rollNumber and semester
+    const query = `
+      SELECT 
+        IF(COUNT(*) = SUM(verified_status), TRUE, FALSE) AS all_verified 
+      FROM 
+        marks 
+      WHERE 
+        RollNumber = ? AND 
+        Semester = ?
+    `;
+  
+    // Execute the query
+    db.query(query, [rollNumber, sem], (error, results) => {
+      if (error) {
+        console.error('Error executing MySQL query: ' + error.stack);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+  
+      // Extracting the result
+      const allVerified = results[0].all_verified;
+      console.log(allVerified);
+      // Sending the response
+      res.json({ allVerified });
+    });
+  });
+  
+  app.get('/approve/:rollNumber/:sem', (req, res) => {
+    const rollNumber = req.params.rollNumber;
+    const sem = req.params.sem;
+    const query = `
+      UPDATE marks 
+      SET verified_status = TRUE 
+      WHERE RollNumber = ? AND Semester = ?
+    `;
+    db.query(query, [rollNumber, sem], (error, results) => {
+      if (error) {
+        console.error('Error executing MySQL query: ' + error.stack);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      if (results.affectedRows === 0) {
+        res.status(404).json({ error: 'No matching record found' });
+        return;
+      }
+      res.json({ message: 'Verification status updated successfully' });
+    });
+  });
+  
+  app.get('/unapprove/:rollNumber/:sem', (req, res) => {
+    const rollNumber = req.params.rollNumber;
+    const sem = req.params.sem;
+    const query = `
+      UPDATE marks 
+      SET verified_status = FALSE 
+      WHERE RollNumber = ? AND Semester = ?
+    `;
+    db.query(query, [rollNumber, sem], (error, results) => {
+      if (error) {
+        console.error('Error executing MySQL query: ' + error.stack);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      if (results.affectedRows === 0) {
+        res.status(404).json({ error: 'No matching record found' });
+        return;
+      }
+      res.json({ message: 'Verification status updated successfully' });
+    });
+  });
+

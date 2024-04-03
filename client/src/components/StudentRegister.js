@@ -5,6 +5,8 @@ const StudentRegister = () => {
 
     const navigate = useNavigate();
 
+    
+
     const [rollnumber,setRollnumber] = useState('');
     const [username,setUsername] = useState("");
     const [password,setPassword] = useState("");

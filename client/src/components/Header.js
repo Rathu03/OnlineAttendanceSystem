@@ -1,7 +1,7 @@
 import React from 'react'
-import temp from '../images/temp.png';
-import image2 from '../images/image2.png'
-import image3 from '../images/image3.png'
+import temp from '../components/images/temp.png'
+import image2 from '../components/images/image2.png'
+import image3 from '../components/images/image3.png'
 import SimpleImageSlider from "react-simple-image-slider";
 
 
@@ -14,7 +14,8 @@ const Header = ({onClick}) => {
             <ul>
                 <li>HOME</li>
                 <li onClick={onClick}>SERVICES</li>
-            </ul>    
+            </ul>  
+            
         </div>
         <Image />   
     </div>

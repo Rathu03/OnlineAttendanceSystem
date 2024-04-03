@@ -31,10 +31,10 @@ const Home = () => {
     if (data.success) {
       console.log(data.decoded);
       if (data.decoded.type == "student") {
-        toggle('student-dashboard');
+        toggle('student/attendance');
       }
       if (data.decoded.type == "staff") {
-        toggle('staff-dashboard');
+        toggle('staff/attendance');
       }
     }
   }

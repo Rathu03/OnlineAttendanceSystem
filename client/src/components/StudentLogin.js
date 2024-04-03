@@ -24,6 +24,7 @@ const StudentLogin = () => {
         e.preventDefault();
         try{
             const body = {rollnumber,password};
+            console.log(body)
             const response = await fetch(`http://localhost:5000/loginstudent`,{
                 method: "POST",
                 headers: {
@@ -35,7 +36,7 @@ const StudentLogin = () => {
             console.log(data);
             if(data.success == true){
                 console.log('Login Successful');
-                toggleClick('../student-dashboard');
+                toggleClick('../student/attendance');
             }
             else{
                 alert('Invalid credentials');
@@ -43,6 +44,7 @@ const StudentLogin = () => {
             }
             localStorage.setItem("rollnumber",rollnumber);
             localStorage.setItem("token",data.token);
+            localStorage.setItem('role','student')
         }
         catch(err){
             console.log(err);
