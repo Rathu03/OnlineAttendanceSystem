@@ -49,10 +49,7 @@ const StaffLogin = () => {
 
   return (
     <div className='main-body1'>
-  
     {/* <div class="https://images.shiksha.com/mediadata/images/1511170235phpiYzFC7.jpeg"></div> */}
-    <img className="background-image1" src="./images/anna.jpg"  />
-
         <div className='login-container'>
             <form className='form-cont' onSubmit={handleSubmit}>
                 <div className='login'>

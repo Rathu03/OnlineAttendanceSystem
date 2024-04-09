@@ -57,10 +57,7 @@ const StudentLogin = () => {
         <div className='login-container'>
             <form className='form-cont' onSubmit={handleSubmit}>
                 <div className='login'>
-                    <div className='l1'>
                     <label htmlFor='username'>Username</label>
-                    </div>
-                    <div className='l2'>
                     <input 
                         type='text'
                         name='username'
@@ -68,7 +65,7 @@ const StudentLogin = () => {
                         placeholder='Enter Roll number'
                         value={rollnumber}
                         onChange={handleRollnumber}
-                    /></div>
+                    />
                 </div>
                 <div className='login'>
                     <div className='l1'><label htmlFor='password'>Password</label></div>
