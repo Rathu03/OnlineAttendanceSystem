@@ -7,6 +7,7 @@ const multer=require('multer');
 const path=require('path');
 const fs = require('fs');
 const nodemailer = require('nodemailer');
+const dbCred = require('./dbCredentials.json');
 
 const app = express();
 
@@ -20,10 +21,10 @@ app.use(cors({
 app.use(body_parser.urlencoded({ extended: true }));
 
 const dbConfig = {
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'istdept'
+    host: dbCred.host,
+    user: dbCred.user,
+    password: dbCred.password,
+    database: dbCred.database
 };
 
 
