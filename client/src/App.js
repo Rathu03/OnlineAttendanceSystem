@@ -38,7 +38,6 @@ import'./components/CSS/edit_otherdata.css'
 import Navbar from './components/Navbar'
 
 
-
 const App = () => {
   return (
     <Router>
@@ -73,8 +72,9 @@ const App = () => {
         <Route path='/hod/view/academicdata' element={<Hodviewacademic />} />
         <Route path='/hod/view/otherdata' element={<Hodviewother />} />
         <Route path='/hod/analytics' element={<Hodanalytics/>} />
+        {/* <Route path='/car'element={<CarouselComponent />} /> */}
 
-        <Route path='/temp' element={<Navbar />}/>
+        {/* <Route path='/temp' element={<Navbar />}/> */}
       </Routes>
     </Router>
   )

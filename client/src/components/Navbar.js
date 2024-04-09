@@ -24,7 +24,7 @@ const Navbar = () => {
 
   return (
     <div className='nav-container'>
-        <h1>TEMP PROJECT</h1>
+        <h1>DIST</h1>
         <ul>
             <li onClick={() => toggleClick(`../${role}/attendance`)}>ATTENDANCE</li> 
             <li onClick={() => toggleClick(`../${role}/analytics`)}>ANALYTICS</li> 

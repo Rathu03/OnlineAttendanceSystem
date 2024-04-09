@@ -6,6 +6,7 @@ const body_parser = require("body-parser");
 const multer=require('multer');
 const path=require('path');
 const fs = require('fs');
+const nodemailer = require('nodemailer');
 
 const app = express();
 
@@ -449,7 +450,6 @@ app.post('/attendance-view', async (req, res) => {
     }
 })
 
-<<<<<<< HEAD
 app.post('/search/:id', async (req, res) => {
     const { email, subjectcode } = req.body;
     //console.log(req.body)
@@ -504,6 +504,36 @@ app.post('/search/:id', async (req, res) => {
         res.status(401).json({ message: "Internal server error" })
     }
 })
+
+
+let transporter = nodemailer.createTransport({
+  service: 'Gmail',
+  auth: {
+    user: 'rathuratish4589@gmail.com',
+    pass: 'ivmb emyw atxi ralq'
+  }
+});
+
+app.post('/sendmail',async(req,res) => {
+  console.log(req.body)
+  let mailOptions = {
+    from: "rathuratish007@gmail.com",
+    to:"arunamanivannan2@gmail.com",
+    subject: "Hello",
+    text: "Helloworld",
+    html:"<b>Hello Wold</b>"
+  };
+  
+  transporter.sendMail(mailOptions, (error,info) => {
+    if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent:'+ info.messageId);
+      }
+  })
+})
+
+
 
 const storage=multer.diskStorage(
     {
@@ -1040,6 +1070,3 @@ const storage=multer.diskStorage(
     });
   });
 
-=======
-app.listen(5000, () => console.log("Server listening on port: 5000"));
->>>>>>> parent of c815049 (............)

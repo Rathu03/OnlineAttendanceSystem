@@ -1,9 +1,7 @@
 import React, { useDebugValue, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { json, useNavigate } from 'react-router-dom'
 import { CiCirclePlus } from "react-icons/ci";
 import { MdCheck } from "react-icons/md";
-import Navbar from './Navbar';
-
 
 const StaffDashboard = () => {
 
@@ -13,6 +11,7 @@ const StaffDashboard = () => {
   const [roomdata, setRoomdata] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [numofhours, setNumofhours] = useState("");
+  const [subjectcode,setSubjectcode] = useState("")
   const [textarea,setTextarea] = useState("");
   const [selectAll, setSelectAll] = useState(false);
   const [clickAbsentee,setClickAbsentee] = useState(false);
@@ -20,9 +19,11 @@ const StaffDashboard = () => {
   const [absentStudentData,setAbsentStudentData] = useState([])
   const [presentStudentData,setPresentStudentData] = useState([])
   const [clickView,setClickView] = useState(false)
+  const [searchRoll,setSearchRoll] = useState("")
+  const [searchdata,setSearchdata] = useState([])
+  const [isMailclick,setIsMailclick] = useState(false)
+  const [lowPercentage,setLowPercentage] = useState([])
   
-  
-  var items = {}
   const selectedStudentsData = roomdata.filter(obj => selectedStudents.includes(obj.rollnumber));
   const notSelectedStudentsData = roomdata.filter(obj => !selectedStudents.includes(obj.rollnumber));
 
@@ -33,7 +34,6 @@ const StaffDashboard = () => {
   const handleClick = () => {
     localStorage.removeItem('email');
     localStorage.removeItem('token');
-    localStorage.removeItem('staff');
     navigate('../')
   }
   
@@ -87,9 +87,7 @@ const StaffDashboard = () => {
 
 const handleAbsentSubmit = async(e) => {
   e.preventDefault();  
-
   var absent = [];
-
   absenteeData.map(item => (
     absent.push(roomdata.filter(obj => item.includes(obj.rollnumber))[0])
   ))
@@ -102,7 +100,6 @@ const handleAbsentSubmit = async(e) => {
   console.log(absentroll)
   const absentStudents = roomdata.filter(obj => absentroll.includes(obj.rollnumber));
   const presentStudents = roomdata.filter(obj => !absentroll.includes(obj.rollnumber));
-
 
   setAbsentStudentData(absentStudents)
   setPresentStudentData(presentStudents)
@@ -125,11 +122,40 @@ const handleAbsentSubmit = async(e) => {
   else{
     alert("Marked successfully")
   }
-
   setNumofhours("");
   setTextarea("")
- 
 };
+
+
+
+  const handleMail = async (data) => {
+    // console.log(data)
+    // const data1 = []
+    // for(let i = 0; i < data.length; i++) {
+    //   const mail = {
+    //     from: email,
+    //     to: data[i].email,
+    //     subject: 'Attendance',
+    //     text: `Hi ${data[i].student_name}, Your attendance is ${calculateAttendance(data[i])}%`
+    //   }
+    //   console.log(mail)
+    //   data1.push(mail)
+    // }
+
+    if(isMailclick){
+      console.log(data)
+      const response = await fetch('http://localhost:5000/sendmail', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify( {message:"Hello"})
+        })
+    }
+
+    
+  }
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -162,10 +188,21 @@ const handleAbsentSubmit = async(e) => {
   }
 
   useEffect(() => {
-    
-  },[clickView])
-
-
+    const fetchResults = async() => {
+      const body = {email,subjectcode};
+      const response = await fetch(`http://localhost:5000/search/${searchRoll}`,{
+        method:"POST",
+        headers:{
+          "Content-type":"application/json"
+        },
+        body:JSON.stringify(body)
+      })
+      const data = await response.json();
+      setSearchdata(data);
+      console.log(data)
+    }
+    fetchResults()
+  },[searchRoll])
 
   useEffect(() => {
     const getData = async () => {
@@ -195,6 +232,8 @@ const handleAbsentSubmit = async(e) => {
       })
       const data = await response.json();
       console.log(data)
+      setSubjectcode(data[0].subject_code);
+      console.log(subjectcode)
       setRoomdata(data);
     }
     if (isClicked) {
@@ -217,7 +256,12 @@ const handleAbsentSubmit = async(e) => {
  
   return (
     <div className='main-body'>
-      <Navbar />
+      <div className='nav-container'>
+        <h1>Staff Dashboard</h1>
+        <ul>
+          <li onClick={handleClick}>Logout</li>
+        </ul>
+      </div>
       {!isClicked ?
         <>
           <div className='staff-dashboard'>
@@ -346,11 +390,63 @@ const handleAbsentSubmit = async(e) => {
                     <div style={{width:"30%"}}>Credits: </div>
                     <div>{isClicked.credits}</div>
                   </div>
-                  <div className='room-data'>
-                    <div style={{width:"30%"}}>Class taken: </div>
-                    <div>{isClicked.class_taken}</div>
+                  <div>
+                    <div className='room-data'>
+                      <div style={{width:"30%"}}>Class taken: </div>
+                      <div>{isClicked.class_taken}</div>
+                    </div>
+                    <div style={{paddingTop:"20px",paddingLeft:"25px"}}>
+                      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                        <input 
+                          style={{height:"20px",width:"80px",borderRadius:"6px",backgroundColor:"rgb(174,190,178)",color:"rgb(86,94,86)",fontSize:"20px",boxShadow:"rgba(248,248,248,0.282) 0px 5px 15px",outline:"0",padding:"10px"}}
+                          type='text'
+                          placeholder="Search"
+                          value={searchRoll}
+                          onChange={(e) => setSearchRoll(e.target.value)}
+                        />
+                        <div>Alert: <button className='submit-button' onClick={() => handleTemp()}>Mail</button></div>
+                      </div>
+                    </div>
+                    
                   </div>
-            </div>      
+                  <table className='attendance-list'>
+                    <thead>
+                      <tr>
+                        <th>Roll Number</th>
+                        <th>Student Name</th>
+                        <th>Class attended</th>
+                        <th>Percentage</th>
+                      </tr>
+                    </thead>
+                    {searchRoll.length==0 ? 
+                    <>
+                      <tbody>
+                      {roomdata.map((obj) => (
+                        <tr key={obj.rollnumber}>
+                          <td>{obj.rollnumber}</td>
+                          <td>{obj.student_name}</td>
+                          <td>{obj.class_attended}</td>
+                          <td>{calculateAttendance(obj)}</td>
+                        </tr>
+                      ))}
+                    </tbody>  
+                    </>:
+                    <>
+                      <tbody>
+                        {searchdata.map((obj) => (
+                          <tr key={obj.rollnumber}>
+                            <td>{obj.rollnumber}</td>
+                            <td>{obj.student_name}</td>
+                            <td>{obj.class_attended}</td>
+                            <td>{calculateAttendance(obj)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </>}
+                    
+                </table>
+            </div>
+                
           </>
           }
           </>
@@ -409,3 +505,5 @@ const handleAbsentSubmit = async(e) => {
 }
 
 export default StaffDashboard
+
+
