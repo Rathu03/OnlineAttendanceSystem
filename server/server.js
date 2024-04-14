@@ -9,7 +9,6 @@ const fs = require('fs');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 require('dotenv').config()
-
 const app = express();
 
 app.use(express.static('prof-image'));
