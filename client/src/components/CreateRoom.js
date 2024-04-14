@@ -83,7 +83,7 @@ const CreateRoom = () => {
     return (
         <div className='main-body1'>
             <div className='login-container'>
-                <form className='form-cont' style={{ rowGap: "60px" }} onSubmit={handleSubmit}>
+                <form className='form-cont' style={{ rowGap: "25px" }} onSubmit={handleSubmit}>
                     <div className='login'>
                         <div className='l1'><label htmlFor='subject-code'>Subject Code</label></div>
                         <div className='l2'>
@@ -111,7 +111,7 @@ const CreateRoom = () => {
                         </div>
                     </div>
                     <div className='login'>
-                        <div className='l1'><label htmlFor='file' style={{ color: "rgb(4,144,4)" }}>Please enter student list in excel format</label></div>
+                        <div className='l1'><label htmlFor='file' style={{ color: "rgb(4,144,4)", fontSize:"20px" }}>Please enter student list in excel format</label></div>
                     </div>
                     <div className='login'>
                         <div className='l2' style={{ margin: "10px" }}>

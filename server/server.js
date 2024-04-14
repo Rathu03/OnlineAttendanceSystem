@@ -7,6 +7,8 @@ const multer=require('multer');
 const path=require('path');
 const fs = require('fs');
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+require('dotenv').config()
 
 const app = express();
 
@@ -22,7 +24,7 @@ app.use(body_parser.urlencoded({ extended: true }));
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: 'password',
     database: 'istdept'
 };
 
@@ -58,9 +60,9 @@ app.post('/tokencheck', async (req, res) => {
 app.post('/registerstudent', async (req, res) => {
 
     const { rollnumber, username, password, email, year_of_joining } = req.body;
-    const query = `INSERT INTO students VALUES(?,?,?,?,?);`;
+    const query = `INSERT INTO students VALUES(?,?,?,?,?,?);`;
 
-    db.query(query,[rollnumber, username, password, email, year_of_joining],(error,result) => {
+    db.query(query,[rollnumber, username, password, email, year_of_joining,""],(error,result) => {
       if(error){
         console.error(error);
         res.status(500).json({ success: 0 });
@@ -73,11 +75,11 @@ app.post('/registerstudent', async (req, res) => {
 })
 
 app.post('/loginstudent', async (req, res) => {
-    const { rollnumber, password } = req.body;
-    const query = `SELECT * from students WHERE rollnumber=? AND password=?`;
+    const { email,rollnumber, password } = req.body;
+    const query = `SELECT * from students WHERE rollnumber=? AND password=? AND email=?`;
     console.log(rollnumber,password)
     
-        db.query(query,[rollnumber,password],(err,result) => {
+        db.query(query,[rollnumber,password,email],(err,result) => {
           if(err){
             console.log(err);
             res.status(500).json({message:"Internal server error"})
@@ -101,10 +103,10 @@ app.post('/loginstudent', async (req, res) => {
 })
 
 app.post('/registerstaff', async (req, res) => {
-    const { firstname,lastname, password, email } = req.body;
-    const query = `INSERT INTO teachers(firstname,lastname,password,email) VALUES(?,?,?,?)`;
+    const { teacher_id,teacher_name, password, email } = req.body;
+    const query = `INSERT INTO teachers(teacherId,teacher_name,password,email) VALUES(?,?,?,?)`;
 
-    db.query(query,[firstname,lastname, password, email],(error,result) => {
+    db.query(query,[teacher_id,teacher_name, password, email],(error,result) => {
       if(error){
         console.log(err);
         res.status(401).json({ success: 0 })
@@ -116,10 +118,10 @@ app.post('/registerstaff', async (req, res) => {
 })
 
 app.post('/loginstaff', async (req, res) => {
-    const { email, password } = req.body;
-    const query = `SELECT * from teachers WHERE email=? AND password=?`;
+    const { teacherid,email, password } = req.body;
+    const query = `SELECT * from teachers WHERE email=? AND password=? AND teacherId = ?`;
 
-    db.query(query,[email,password],(error,result) => {
+    db.query(query,[email,password,teacherid],(error,result) => {
       if(error){
         res.status(500).json({ success: "Internal Server Error" })
       }
@@ -277,6 +279,7 @@ app.post('/get-staff-data', async (req, res) => {
     const query1 = `SELECT student_roll_number from enrolledsubjects WHERE subjectid = ? AND teacher_email = ?`;
     const query2 = `SELECT username from students WHERE rollnumber = ?`;
     const query3 = `SELECT class_attended,class_taken FROM enrolledsubjects WHERE student_roll_number = ? AND subjectid = ?`;
+    const query4 = `select doc,attendance_status,num_of_hours from dates where  subject_code=? and staff_email=? and rollnumber=? and doc in (select doc from dates where subject_code=? and staff_email=? and rollnumber=?);`
     const data = []
     try {
         const result1 = await new Promise((resolve,reject) => {
@@ -307,8 +310,16 @@ app.post('/get-staff-data', async (req, res) => {
             //const result3 = await db.query(query3, [rollnumber, subject_code]);
             const class_attended = result3[0].class_attended;
             const class_taken = result3[0].class_taken;
-
-            data.push({ subject_code, subject_name, credits, email, rollnumber, student_name, class_attended, class_taken });
+            
+            //select doc,attendance_status from dates where  subject_code=? and staff_email=? and doc in (select doc from dates where subject_code=? and staff_email=? and rollnumber=?);`
+            const dates = await new Promise((resolve, reject) => {
+              db.query(query4,[subject_code,email,rollnumber,subject_code,email,rollnumber],(error, result) => {
+                if(error) reject(error)
+                else resolve(result)
+              })
+            })
+            console.log(dates)
+            data.push({ subject_code, subject_name, credits, email, rollnumber, student_name, class_attended, class_taken, dates});
         }
         res.status(201).json(data);
     }
@@ -319,9 +330,11 @@ app.post('/get-staff-data', async (req, res) => {
 })
 
 app.post('/attendance', async (req, res) => {
-    const { selectedStudentsData, notSelectedStudentsData, numofhours } = req.body;
+    const { selectedStudentsData, notSelectedStudentsData, numofhours, getdate } = req.body;
+    console.log(req.body)
     const query1 = `SELECT class_taken,class_attended from enrolledsubjects WHERE student_roll_number = ? AND subjectid = ?`;
     const query2 = `UPDATE enrolledsubjects SET class_taken = ?, class_attended = ? WHERE student_roll_number = ? AND subjectid = ?`;
+    const query3 = `INSERT into dates values(?,?,?,?,?,?)`;
     try {
         for (const obj of selectedStudentsData) {
             console.log(obj.rollnumber)
@@ -345,6 +358,13 @@ app.post('/attendance', async (req, res) => {
                 else resolve(result)
               })
             })
+
+            await new Promise((resolve,reject) => {
+              db.query(query3,[obj.rollnumber,obj.email,obj.subject_code,numofhours,'P',getdate],(error,result1) => {
+                if(error) reject(error)
+                else resolve(result1)
+              })
+            })
             //await db.query(query2, [parseInt(class_taken) + parseInt(numofhours), parseInt(class_attended) + parseInt(numofhours), obj.rollnumber, obj.subjectid]);
         }
         for (const obj of notSelectedStudentsData) {
@@ -366,6 +386,13 @@ app.post('/attendance', async (req, res) => {
                 else resolve(result)
               })
             })
+
+            await new Promise((resolve,reject) => {
+              db.query(query3,[obj.rollnumber,obj.email,obj.subject_code,numofhours,'A',getdate],(error,result1) => {
+                if(error) reject(error)
+                else resolve(result1)
+              })
+            })
             //await db.query(query2, [parseInt(class_taken) + parseInt(numofhours), parseInt(class_attended), obj.rollnumber, obj.subjectid]);
         }
         res.status(201).json({ success: "1" })
@@ -377,9 +404,11 @@ app.post('/attendance', async (req, res) => {
 })
 
 app.post('/attendance1', async (req, res) => {
-    const { presentStudentData, absentStudentData, numofhours } = req.body;
+    const { presentStudentData, absentStudentData, numofhours,getdate } = req.body;
+    console.log(getdate)
     const query1 = `SELECT class_taken,class_attended from enrolledsubjects WHERE student_roll_number = ? AND subjectid = ?`;
     const query2 = `UPDATE enrolledsubjects SET class_taken = ?, class_attended = ? WHERE student_roll_number = ? AND subjectid = ?`;
+    const query3 = `INSERT into dates values(?,?,?,?,?,?)`;
     try {
         for (const obj of presentStudentData) {
 
@@ -398,6 +427,13 @@ app.post('/attendance1', async (req, res) => {
               db.query(query2,[parseInt(class_taken) + parseInt(numofhours), parseInt(class_attended) + parseInt(numofhours), obj.rollnumber, obj.subject_code],(error,result) => {
                 if(error) reject(error)
                 else resolve(result)
+              })
+            })
+
+            await new Promise((resolve,reject) => {
+              db.query(query3,[obj.rollnumber,obj.email,obj.subject_code,numofhours,'P',getdate],(error,result1) => {
+                if(error) reject(error)
+                else resolve(result1)
               })
             })
             //await db.query(query2, [parseInt(class_taken) + parseInt(numofhours), parseInt(class_attended) + parseInt(numofhours), obj.rollnumber, obj.subjectid]);
@@ -421,9 +457,17 @@ app.post('/attendance1', async (req, res) => {
                 else resolve(result)
               })
             })
+
+            await new Promise((resolve,reject) => {
+              db.query(query3,[obj.rollnumber,obj.email,obj.subject_code,numofhours,'A',getdate],(error,result1) => {
+                if(error) reject(error)
+                else resolve(result1)
+              })
+            })
+            res.status(201).json({ success: "1" })
             //await db.query(query2, [parseInt(class_taken) + parseInt(numofhours), parseInt(class_attended), obj.rollnumber, obj.subjectid]);
         }
-        res.status(201).json({ success: "1" })
+       
     }
     catch (err) {
         console.log(err);
@@ -455,6 +499,7 @@ app.post('/search/:id', async (req, res) => {
     //console.log(req.body)
     const query1 = `SELECT username,rollnumber from students WHERE rollnumber LIKE ? AND rollnumber in (SELECT student_roll_number from enrolledsubjects WHERE teacher_email=? AND subjectid=?)`;
     const query2 = `SELECT class_taken,class_attended from enrolledsubjects WHERE student_roll_number = ? AND teacher_email = ? AND subjectid = ?`;
+    const query3 = `select doc,attendance_status from dates where  subject_code=? and staff_email=? and rollnumber=? and doc in (select doc from dates where subject_code=? and staff_email=? and rollnumber=?);`
     const data = []
     try {
         const roll = req.params.id;
@@ -478,7 +523,6 @@ app.post('/search/:id', async (req, res) => {
             const student_name = obj.username;
             const rollnumber = obj.rollnumber;
 
-
             const result2 = await new Promise((resolve,reject) => {
               db.query(query2,[rollnumber,email,subjectcode],(error,result) => {
                 if(error) reject(error)
@@ -489,7 +533,15 @@ app.post('/search/:id', async (req, res) => {
             const class_taken = result2[0].class_taken
             const class_attended = result2[0].class_attended
 
-            data.push({ rollnumber, student_name, subjectcode, email, class_taken, class_attended });
+            //select doc,attendance_status from dates where  subject_code=? and staff_email=? and rollnumber=? and doc in (select doc from dates where subject_code=? and staff_email=? and rollnumber=?);`
+            const dates = await new Promise((resolve,reject) => {
+              db.query(query3,[subjectcode,email,rollnumber,subjectcode,email,rollnumber],(error,result) => {
+                if(error) reject(error)
+                  else resolve(result)
+              })
+            })
+
+            data.push({ rollnumber, student_name, subjectcode, email, class_taken, class_attended,dates });
         }
 
         if (t == 1) {
@@ -505,34 +557,124 @@ app.post('/search/:id', async (req, res) => {
     }
 })
 
+const myemail = process.env.API_URL
+const mypassword = process.env.API_PASS
 
 let transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: 'rathuratish4589@gmail.com',
-    pass: 'ivmb emyw atxi ralq'
+    user: `${myemail}`,
+    pass: `${mypassword}`
   }
 });
 
-app.post('/sendmail',async(req,res) => {
-  console.log(req.body)
-  let mailOptions = {
-    from: "rathuratish007@gmail.com",
-    to:"arunamanivannan2@gmail.com",
-    subject: "Hello",
-    text: "Helloworld",
-    html:"<b>Hello Wold</b>"
-  };
-  
-  transporter.sendMail(mailOptions, (error,info) => {
-    if (error) {
-        console.log(error);
+app.post('/getstudentemail', async (req, res) => {
+  const { rollnumber } = req.body;
+  const query1 = `SELECT email FROM students WHERE rollnumber = ?`;
+  try {
+      const result1 = await new Promise((resolve, reject) => {
+          db.query(query1, [rollnumber], (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+          });
+      });
+      if (result1.length > 0) {
+          const email = result1[0].email; // Access email from the first object in the array
+          console.log(email);
+          res.status(200).json({ email });
       } else {
-        console.log('Email sent:'+ info.messageId);
+          res.status(404).json({ message: "Email not found for given rollnumber" });
       }
-  })
+  } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
+app.post('/sendmail',async(req,res) => {
+  const obj = req.body;
+  for(let i=0;i<obj.length;i++) {
+    const data = obj[i]
+    let mailOptions = {
+      from: data.from ,
+      to:data.to,
+      subject: "Regarding attendance",
+      text: "Attendance",
+      html:`<b>${data.text}</b>`
+    };
+    
+    transporter.sendMail(mailOptions, (error,info) => {
+      if (error) {
+          console.log(error);
+          res.status(500).json({message:"Internal server error"})
+        } else {
+          console.log('Email sent:'+ info.messageId);
+          res.status(200).json({message:"success"})
+        }
+    })
+  }
+  
 })
 
+let passwordResetTokens = {}
+
+app.post('/forgotpassword',async(req,res) => {
+  const {email,role} = req.body
+  const token = crypto.randomBytes(20).toString('hex');
+  passwordResetTokens[token] = email
+
+
+  const mailOptions = {
+    from: `${myemail}`,
+    to: email,
+    subject: "Reset Password",
+    text: `Click this link to reset your password: http://localhost:3000/reset-password/${role}/${token}`
+  }
+
+
+  transporter.sendMail(mailOptions),(error,info) => {
+    if(error){
+      res.status(500).json({message:"Failed to send password reset email"})
+    }
+    else{
+      res.status(200).json({message:"Password reset email sent"})
+    }
+  }
+
+})
+
+app.post('/passwordreset',async(req,res) => {
+  const {token,role,newPassword} = req.body
+  const email=passwordResetTokens[token]
+  if(email){
+    let query1;
+    if(role == "staff"){
+      query1 = 'UPDATE teachers SET password = ? WHERE email = ?'; 
+    }
+    else if(role == "student"){
+      query1 = 'UPDATE students SET password = ? WHERE email = ?';
+    }
+    try{
+      const result1 = await new Promise((resolve, reject) => {
+        db.query(query1, [newPassword, email], (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        });
+      })
+      delete passwordResetTokens[token]
+      res.status(200).json({message: "Success"})
+    }
+    catch(error){
+      res.status(400).json({message:"Invalid token"})
+    }
+   
+  }
+  else{
+    res.status(500).json({message:"Bad request"})
+  }
+  
+})
 
 
 const storage=multer.diskStorage(

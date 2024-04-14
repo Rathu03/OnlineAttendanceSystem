@@ -10,12 +10,6 @@ const StudentDashboard = () => {
   const [roomdata,setRoomdata] = useState({});
 
   const navigate = useNavigate();
-  const handleClick = () => {
-    localStorage.removeItem('rollnumber');
-    localStorage.removeItem('token');
-    localStorage.removeItem('student');
-    navigate('../')
-  }
 
   const calculateAttendance = (obj) => {
     const attend = ((obj.class_attended / obj.class_taken)*100).toFixed(2);
@@ -65,6 +59,8 @@ const StudentDashboard = () => {
     <div className='main-body'>
       <Navbar />
       {!isClicked ?
+        <>
+        <div style={{margin:"35px",fontSize:"35px",fontWeight:"bold"}}>Welcome {rollnumber}</div>
         <div className='staff-dashboard'>
           <div className='staff-header'>
             <h1>Attendance List</h1>
@@ -92,7 +88,8 @@ const StudentDashboard = () => {
             </div>
           }
 
-        </div> :
+        </div>
+        </> :
         <div className='room-data-container'>
           <div className='room-data'>
             <div style={{width:"30%"}}>Subject code: </div>
@@ -126,8 +123,9 @@ const StudentDashboard = () => {
         </div>
         
       }
-
+      
     </div>
+    
   )
 }
 

@@ -7,6 +7,7 @@ const StaffLogin = () => {
 
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
+    const [teacherid,setTeacherid] = useState("")
 
     const handleEmail = (event) => {
         setEmail(event.target.value);
@@ -16,10 +17,28 @@ const StaffLogin = () => {
         setPassword(event.target.value);
     }
 
+    const handleForgot = async() => {
+        const  role = "staff";
+        if(email == ""){
+            alert("Please enter your email")
+            return
+        }
+        const body = {email,role};
+        alert("Check your mail")
+        const response = await fetch(`http://localhost:5000/forgotpassword`,{
+            method:"POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body:JSON.stringify(body)
+        })
+        
+    }
+
     const handleSubmit = async(e) => {
         e.preventDefault();
         try{
-            const body = {email,password};
+            const body = {email,password,teacherid};
             const response = await fetch(`http://localhost:5000/loginstaff`,{
                 method:"POST",
                 headers: {
@@ -39,7 +58,7 @@ const StaffLogin = () => {
             localStorage.setItem('email',email);
             localStorage.setItem('token',data.token);
             localStorage.setItem('role','staff');
-            
+            localStorage.setItem('teacherid',teacherid)
         }
         catch(err){
             console.log(err)
@@ -64,6 +83,17 @@ const StaffLogin = () => {
                     />
                 </div>
                 <div className='login'>
+                    <label htmlFor='teacherid'>Teacher Id</label>
+                    <input 
+                        type='text'
+                        name='teacherid'
+                        id='teacherid'
+                        placeholder='Enter teacher Id'
+                        value={teacherid}
+                        onChange={(e) => setTeacherid(e.target.value)}
+                    />
+                </div>
+                <div className='login'>
                     <label htmlFor='password'>Password</label>
                     <input 
                         type='password'
@@ -74,7 +104,7 @@ const StaffLogin = () => {
                         onChange={handlePassword}
                     />
                 </div>
-                <div className='login'><p>Forget password</p>
+                <div className='login'><p style={{cursor:"pointer"}} onClick={handleForgot}>Forgot password</p>
                 <button className='submit-button'>Submit</button></div>
                 <div className='login'>
                 <p>Didn't have an account..Click to <Link to='/staff-register' style={{color:'darkseagreen',marginLeft:"5px",cursor:"pointer"}} >create account</Link></p>

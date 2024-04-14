@@ -1,4 +1,4 @@
-import React, { useDebugValue, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { json, useNavigate } from 'react-router-dom'
 import { CiCirclePlus } from "react-icons/ci";
 import { MdCheck } from "react-icons/md";
@@ -6,6 +6,7 @@ import { MdCheck } from "react-icons/md";
 const StaffDashboard = () => {
 
   const email = localStorage.getItem('email');
+  const teacher_id = localStorage.getItem('teacherid');
   const [data, setData] = useState([]);
   const [isClicked, setIsClicked] = useState(null)
   const [roomdata, setRoomdata] = useState([]);
@@ -22,7 +23,8 @@ const StaffDashboard = () => {
   const [searchRoll,setSearchRoll] = useState("")
   const [searchdata,setSearchdata] = useState([])
   const [isMailclick,setIsMailclick] = useState(false)
-  const [lowPercentage,setLowPercentage] = useState([])
+  const [date, setDate] = useState("");
+
   
   const selectedStudentsData = roomdata.filter(obj => selectedStudents.includes(obj.rollnumber));
   const notSelectedStudentsData = roomdata.filter(obj => !selectedStudents.includes(obj.rollnumber));
@@ -34,6 +36,7 @@ const StaffDashboard = () => {
   const handleClick = () => {
     localStorage.removeItem('email');
     localStorage.removeItem('token');
+    localStorage.removeItem('teacherid')
     navigate('../')
   }
   
@@ -52,6 +55,8 @@ const StaffDashboard = () => {
     setIsClicked((prevObj) => {
       return {...prevObj,class_taken:class_taken}
     })
+    console.log("View",isClicked)
+    console.log("DOC",roomdata[0].dates[0].doc)
     setClickView(true)
   }
 
@@ -104,7 +109,8 @@ const handleAbsentSubmit = async(e) => {
   setAbsentStudentData(absentStudents)
   setPresentStudentData(presentStudents)
   
-  const body = {presentStudentData,absentStudentData,numofhours}
+  const getdate = date;
+  const body = {presentStudentData,absentStudentData,numofhours,getdate}
   console.log(body)
 
   const response = await fetch(`http://localhost:5000/attendance1`,{
@@ -126,42 +132,73 @@ const handleAbsentSubmit = async(e) => {
   setTextarea("")
 };
 
+const handleTemp = (data) => {
+ 
+  console.log(isMailclick)
+  if(!isMailclick){
+    handleMail(data)
+  }
+  setIsMailclick(!isMailclick)
+}
 
+  const getEmail = async(obj) => {
+      const rollnumber = obj.rollnumber;
+      const staff_email = obj.email;
+      const student_name = obj.student_name;
+      const res = await fetch(`http://localhost:5000/getstudentemail`,{
+        method:"POST",
+        headers:{
+          "Content-type":"application/json"
+        },
+        body:JSON.stringify({rollnumber})
+      })
+      const data = await res.json()
+      const student_email = data.email
+      const data1 = []
+      const mail = {
+        from : staff_email,
+        to: student_email,
+        subject: 'Attendance',
+        text:`
+          Hi ${student_name}, Your attendance is ${calculateAttendance(obj)}%
+          ${calculateAttendance(obj) < 75  ? "Shortage of attendance.. Try to attend all the classes. If any issue, contact respective staff" : ""}
+        `
+      }
+      console.log(mail)
+      data1.push(mail)
+
+      const response = await fetch(`http://localhost:5000/sendmail`,{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+          },
+        body: JSON.stringify( data1)
+      })
+
+  }
 
   const handleMail = async (data) => {
-    // console.log(data)
-    // const data1 = []
-    // for(let i = 0; i < data.length; i++) {
-    //   const mail = {
-    //     from: email,
-    //     to: data[i].email,
-    //     subject: 'Attendance',
-    //     text: `Hi ${data[i].student_name}, Your attendance is ${calculateAttendance(data[i])}%`
-    //   }
-    //   console.log(mail)
-    //   data1.push(mail)
-    // }
-
-    if(isMailclick){
-      console.log(data)
-      const response = await fetch('http://localhost:5000/sendmail', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify( {message:"Hello"})
-        })
+    console.log(data)
+    const data1 = []
+    try{
+      for(let i = 0; i < data.length; i++) {
+        const email = getEmail(data[i]);
+      } 
+      alert("Email sent successfully")
+  }
+  catch(err){
+      console.log(err)
+      alert("Error in sending email")
     }
-
-    
   }
   
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const body = { selectedStudentsData, notSelectedStudentsData, numofhours };
+    const getdate = date;
+    const body = { selectedStudentsData, notSelectedStudentsData, numofhours,getdate };
     console.log(body)
-    console.log(roomdata)
+    console.log("Roomdata",roomdata)
     const response = await fetch(`http://localhost:5000/attendance`, {
       method: "POST",
       headers: {
@@ -180,11 +217,19 @@ const handleAbsentSubmit = async(e) => {
 
     setNumofhours("")
     setSelectedStudents([]);
+    setDate("")
   }
 
   const calculateAttendance = (obj) => {
     const attend = ((obj.class_attended / obj.class_taken)*100).toFixed(2);
     return attend;
+  }
+
+  const handleDate = (date) => {
+    const date1 = new Date(date);
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    const localDate = date1.toLocaleDateString('en-GB',options); 
+    return localDate;
   }
 
   useEffect(() => {
@@ -199,7 +244,7 @@ const handleAbsentSubmit = async(e) => {
       })
       const data = await response.json();
       setSearchdata(data);
-      console.log(data)
+      console.log("Search",data)
     }
     fetchResults()
   },[searchRoll])
@@ -264,6 +309,7 @@ const handleAbsentSubmit = async(e) => {
       </div>
       {!isClicked ?
         <>
+          <div style={{margin:"35px",fontSize:"35px",fontWeight:"bold"}}>Welcome {teacher_id}</div>
           <div className='staff-dashboard'>
             <div className='staff-header'>
               <h1>Attendance List</h1>
@@ -307,12 +353,13 @@ const handleAbsentSubmit = async(e) => {
             </button>
           </div>
           <form className='attendance-section' onSubmit={handleSubmit}>
-            <div className='login'>
+            <div className='login' style={{rowGap:"7px"}}>
               <div className='l1'>
                 <label htmlFor='numofhours'>Number of hours</label>
               </div>
               <div className='l2'>
                 <input
+                  style={{width:"30%"}}
                   type='text'
                   name='numofhours'
                   id='numofhours'
@@ -320,7 +367,28 @@ const handleAbsentSubmit = async(e) => {
                   value={numofhours}
                   onChange={(e) => setNumofhours(e.target.value)}
                 /></div>
+                <div className='l1'>
+                <label htmlFor='date'>Date</label>
+              </div>
+              <div className='l2'>
+                <input
+                  style={{width:"30%"}}
+                  type='date'
+                  name='date'
+                  id='date'
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                /></div>
               
+            </div>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <input 
+              style={{width:"20%"}}
+              type='text'
+              placeholder="Search"
+              value={searchRoll}
+              onChange={(e) => setSearchRoll(e.target.value)}
+            />
             </div>
             <table className='attendance-list'>
               <thead>
@@ -339,24 +407,49 @@ const handleAbsentSubmit = async(e) => {
                 </tr>
 
               </thead>
-              <tbody>
-                {roomdata.map((obj) => (
-                  <tr key={obj.rollnumber}>
-                    <td>
-                      <label>
-                        <input
-                          type='checkbox'
-                          onChange={() => handleCheckboxChange(obj.rollnumber)}
-                          checked={selectedStudents.includes(obj.rollnumber)}
-                          style={{ transform: "scale(1.5)" }}
-                        />
-                      </label>
-                    </td>
-                    <td>{obj.rollnumber}</td>
-                    <td>{obj.student_name}</td>
-                  </tr>
-                ))}
-              </tbody>
+              
+                {searchRoll.length == 0 ?
+                 <>
+                  <tbody>
+                    {roomdata.map((obj) => (
+                    <tr key={obj.rollnumber}>
+                      <td>
+                        <label>
+                          <input
+                            type='checkbox'
+                            onChange={() => handleCheckboxChange(obj.rollnumber)}
+                            checked={selectedStudents.includes(obj.rollnumber)}
+                            style={{ transform: "scale(1.5)" }}
+                          />
+                        </label>
+                      </td>
+                      <td>{obj.rollnumber}</td>
+                      <td>{obj.student_name}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                </> : 
+                <>
+                  <tbody>
+                    {searchdata.map((obj) => (
+                      <tr key={obj.rollnumber}>
+                        <td>
+                        <label>
+                          <input
+                            type='checkbox'
+                            onChange={() => handleCheckboxChange(obj.rollnumber)}
+                            checked={selectedStudents.includes(obj.rollnumber)}
+                            style={{ transform: "scale(1.5)" }}
+                          />
+                        </label>
+                        </td>
+                        <td>{obj.rollnumber}</td>
+                        <td>{obj.student_name}</td>
+                      </tr>
+                      ))}
+                  </tbody> 
+                </>}
+                
             </table>
 
             <div className='form-footer'>
@@ -398,23 +491,29 @@ const handleAbsentSubmit = async(e) => {
                     <div style={{paddingTop:"20px",paddingLeft:"25px"}}>
                       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                         <input 
-                          style={{height:"20px",width:"80px",borderRadius:"6px",backgroundColor:"rgb(174,190,178)",color:"rgb(86,94,86)",fontSize:"20px",boxShadow:"rgba(248,248,248,0.282) 0px 5px 15px",outline:"0",padding:"10px"}}
+                        
+                          style={{height:"40px",width:"30%",borderRadius:"6px",backgroundColor:"rgb(224,231,226)",color:"rgb(86,94,86)",fontSize:"20px",boxShadow:"rgba(248,248,248,0.282) 0px 5px 15px",outline:"0"}}
                           type='text'
                           placeholder="Search"
                           value={searchRoll}
                           onChange={(e) => setSearchRoll(e.target.value)}
                         />
-                        <div>Alert: <button className='submit-button' onClick={() => handleTemp()}>Mail</button></div>
+                        <button className='submit-button' onClick={() => handleTemp(roomdata)}>Send Mail</button>
                       </div>
                     </div>
                     
                   </div>
+                  <div className='tables'>
                   <table className='attendance-list'>
                     <thead>
                       <tr>
                         <th>Roll Number</th>
                         <th>Student Name</th>
                         <th>Class attended</th>
+                        {roomdata[0].dates.map((date) => (
+                            <th>{handleDate(date.doc)} <br/> <div style={{padding:"5px"}}>{"("+date.num_of_hours + " hrs)"} </div></th>
+                        ))}
+                        {/* <th>{(roomdata[0].dates[0].doc).split('T')[0]}</th> */}
                         <th>Percentage</th>
                       </tr>
                     </thead>
@@ -426,6 +525,9 @@ const handleAbsentSubmit = async(e) => {
                           <td>{obj.rollnumber}</td>
                           <td>{obj.student_name}</td>
                           <td>{obj.class_attended}</td>
+                          {obj.dates.map((date) => (
+                            <td style={{color: date.attendance_status == 'P' ? "black" : "red",fontWeight: date.attendance_status == 'P' ? "normal" : "bold"  }}>{date.attendance_status}</td>
+                          ))}
                           <td>{calculateAttendance(obj)}</td>
                         </tr>
                       ))}
@@ -438,6 +540,9 @@ const handleAbsentSubmit = async(e) => {
                             <td>{obj.rollnumber}</td>
                             <td>{obj.student_name}</td>
                             <td>{obj.class_attended}</td>
+                            {obj.dates.map((date) => (
+                              <td style={{color: date.attendance_status == 'P' ? "black" : "red",fontWeight: date.attendance_status == 'P' ? "normal" : "bold"  }}>{date.attendance_status}</td>
+                            ))}
                             <td>{calculateAttendance(obj)}</td>
                           </tr>
                         ))}
@@ -445,6 +550,7 @@ const handleAbsentSubmit = async(e) => {
                     </>}
                     
                 </table>
+                </div>
             </div>
                 
           </>
@@ -466,6 +572,19 @@ const handleAbsentSubmit = async(e) => {
                       placeholder='Enter number of hours'
                       value={numofhours}
                       onChange={(e) => setNumofhours(e.target.value)}
+                    />
+                  </div>
+                  <div className='l1'>
+                    <label htmlFor='date'>Date</label>
+                  </div>
+                  <div className='l2'>
+                    <input 
+                      type='date'
+                      name='date'
+                      id='date'
+                      placeholder='Enter Date'
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
                     />
                   </div>
                 </div>

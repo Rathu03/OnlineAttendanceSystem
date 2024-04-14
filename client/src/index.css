@@ -181,7 +181,7 @@ body {
   border-radius: 6px;
   position: relative; /* Add position relative */
   overflow: hidden; /* Hide overflowing text */
-  background-image: url("https://www.annauniv.edu/dist/assests/CEG.png");
+  background-image: url("components/images/CEG.png");
   background-size: cover; /* Cover the entire container */
   background-position: center; /* Center the background image */
   align-items: center;
@@ -375,7 +375,6 @@ a:hover {
 }
 
 .staff-dashboard {
-
   box-shadow: rgba(80, 196, 246, 0.974) 0px 5px 15px;
   border-radius: 6px;
   margin: 50px; 
@@ -427,7 +426,7 @@ a:hover {
 }
 
 .room-data-container {
-  box-shadow: rgba(91, 90, 90, 0.282) 0px 5px 15px;
+  box-shadow: rgba(80, 196, 246, 0.974) 0px 5px 15px;
   border-radius: 6px;
   margin: 90px;
   margin-left: 300px;
@@ -447,7 +446,7 @@ a:hover {
 }
 
 .attendance-section {
-  box-shadow: rgba(91, 90, 90, 0.282) 0px 5px 15px;
+  box-shadow: rgba(80, 196, 246, 0.974) 0px 5px 15px;
   border-radius: 6px;
   margin: 70px;
   margin-left: 300px;
@@ -459,25 +458,31 @@ a:hover {
   row-gap: 2rem;
 }
 
+.tables {
+  overflow: auto;
+}
+
 .attendance-list {
   width: 100%;
   border-collapse: collapse;
+  overflow: auto;
 }
 
 .attendance-list th,
 .attendance-list td {
-  border: 1px solid #343c2d;
+  border: 1px solid #2816ef;
   padding: 12px;
   text-align: left;
+  text-align: center;
 }
 
 .attendance-list th {
-  background-color: rgb(198,239,206);
+  background-color: rgb(198, 227, 239);
   color: rgb(0, 97,0);
 }
 
 .attendance-list td {
-  background-color: gray;
+  background-color: rgb(213, 228, 226)
 }
 
 .attendance-list input[type="checkbox"] {
@@ -487,7 +492,17 @@ a:hover {
 .attendance-section input[type="text"] {
   height: 40px;
   border-radius: 6px;
-  background-color:  rgb(174, 190, 178);
+  background-color:  rgb(224, 231, 226);
+  color: rgb(86, 94, 86);
+  font-size: 20px;
+  box-shadow: rgba(248, 248, 248, 0.282) 0px 5px 15px;
+  outline: 0;
+}
+
+.attendance-section input[type="date"] {
+  height: 40px;
+  border-radius: 6px;
+  background-color:  rgb(224, 231, 226);
   color: rgb(86, 94, 86);
   font-size: 20px;
   box-shadow: rgba(248, 248, 248, 0.282) 0px 5px 15px;
@@ -517,8 +532,6 @@ a:hover {
 }
 
 textarea {
-
-  
   height: 100px;
   padding: 10px;
   margin-bottom: 10px;

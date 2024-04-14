@@ -9,7 +9,6 @@ import StudentDashboard from './components/StudentDashboard'
 import StaffRegister from './components/StaffRegister'
 import StaffDashboard from './components/StaffDashboard'
 import CreateRoom from './components/CreateRoom'
-import AttendanceView from './components/AttendanceView'
 import Student from './components/usercomponents/student'
 import Teacher from './components/usercomponents/teacher'
 import HOD from './components/usercomponents/hod'
@@ -35,7 +34,10 @@ import'./components/CSS/view.css'
 import'./components/CSS/view_academicdata.css'
 import'./components/CSS/viewotherdata.css'
 import'./components/CSS/edit_otherdata.css'
-import Navbar from './components/Navbar'
+import ResetPassword from './components/ResetPassword'
+import AdminDashboard from './components/AdminDashboard'
+import AdminAttendance from './components/AdminAttendance'
+
 
 
 const App = () => {
@@ -49,9 +51,10 @@ const App = () => {
         <Route path='student-register' element={<StudentRegister />}/>
         <Route path='staff-register' element={<StaffRegister />}/>
         <Route path='student/attendance' element={<StudentDashboard />} />
+        <Route path='admin-dashboard' element={<AdminDashboard />}/>
         <Route path='staff/attendance' element={<StaffDashboard />}/>
         <Route path='create-room' element={<CreateRoom />}/>
-        <Route path='staff-dashboard/attendance-view' element={<AttendanceView />}/>
+        <Route path='reset-password/:role/:token' element={<ResetPassword />}/>
         <Route path="/student" element={<Student />} />
         <Route path="/teacher" element={<Teacher />} />
         <Route path="/hod" element={<HOD />}/>
@@ -72,9 +75,7 @@ const App = () => {
         <Route path='/hod/view/academicdata' element={<Hodviewacademic />} />
         <Route path='/hod/view/otherdata' element={<Hodviewother />} />
         <Route path='/hod/analytics' element={<Hodanalytics/>} />
-        {/* <Route path='/car'element={<CarouselComponent />} /> */}
-
-        {/* <Route path='/temp' element={<Navbar />}/> */}
+        <Route path='/admin/attendance' element={<AdminAttendance />} />
       </Routes>
     </Router>
   )
