@@ -23,7 +23,7 @@ app.use(body_parser.urlencoded({ extended: true }));
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    password: 'password',
+    password: '',
     database: 'istdept'
 };
 
@@ -739,10 +739,10 @@ const storage=multer.diskStorage(
   
   
   
-  app.get('/studentDetails/:username', (req, res) => {
+  app.get('/studentdetails/:username', (req, res) => {
     const { username } = req.params;
-    console.log('studentDetails:', username);
-    const sql = 'SELECT * FROM StudentDetails WHERE RollNumber = ?';
+    console.log('studentdetails:', username);
+    const sql = 'SELECT * FROM studentdetails WHERE RollNumber = ?';
     db.query(sql, [username], (err, result) => {
         if (err) {
             throw err;
@@ -831,11 +831,11 @@ const storage=multer.diskStorage(
   });
   
   
-  app.put('/updateStudentDetails/:username', (req, res) => {
+  app.put('/updatestudentdetails/:username', (req, res) => {
     const { username } = req.params;
     const updatedData = req.body;
     console.log("data add",updatedData.FatherName);
-    const sql = 'UPDATE StudentDetails SET DateOfBirth = ?, Address = ?, Phone = ?,Sex=?,Blood_Group=?,FatherName=?,MotherName=?,Fatheroccupation=?,Motheroccupation=? WHERE RollNumber = ?';
+    const sql = 'UPDATE studentdetails SET DateOfBirth = ?, Address = ?, Phone = ?,Sex=?,Blood_Group=?,FatherName=?,MotherName=?,Fatheroccupation=?,Motheroccupation=? WHERE RollNumber = ?';
     db.query(sql, [updatedData.DateOfBirth, updatedData.Address, updatedData.Phone,updatedData.Sex,updatedData.Blood_Group,updatedData.FatherName,updatedData.Mothername,updatedData.Fatheroccupation,updatedData.Motheroccupation, username], (err, result) => {
         if (err) {
             throw err;
@@ -846,16 +846,16 @@ const storage=multer.diskStorage(
   });
   
   
-  app.post('/addStudentDetails/:rollNumber', (req, res) => {
+  app.post('/addstudentdetails/:rollNumber', (req, res) => {
     const {rollNumber} = req.params;
     const newStudentData = req.body;
-    const checkExistingQuery = 'SELECT * FROM StudentDetails WHERE RollNumber = ?';
+    const checkExistingQuery = 'SELECT * FROM studentdetails WHERE RollNumber = ?';
     db.query(checkExistingQuery, [rollNumber], (checkError, checkResult) => {
         if (checkError) {
             throw checkError;
         }
         if (checkResult.length === 0) {
-            const insertQuery = 'INSERT INTO StudentDetails (RollNumber, DateOfBirth, Address, Phone, Sex, Blood_Group, FatherName, Mothername, Fatheroccupation, Motheroccupation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            const insertQuery = 'INSERT INTO studentdetails (RollNumber, DateOfBirth, Address, Phone, Sex, Blood_Group, FatherName, Mothername, Fatheroccupation, Motheroccupation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             const insertValues = [
                 rollNumber,
                 newStudentData.DateOfBirth,
@@ -886,7 +886,7 @@ const storage=multer.diskStorage(
   
   app.delete('/deleteScholarship/:id', (req, res) => {
     const id = req.params.id;
-    const sql = 'DELETE FROM Scholarship WHERE id =?';
+    const sql = 'DELETE FROM scholarship WHERE id =?';
     db.query(sql, [id], (err, result) => {
         if (err) {
             throw err;
@@ -897,7 +897,7 @@ const storage=multer.diskStorage(
   
   app.delete('/deleteInternship/:id', (req, res) => {
     const id = req.params.id;
-    const sql = 'DELETE FROM Internship WHERE id =?';
+    const sql = 'DELETE FROM internship WHERE id =?';
     db.query(sql, [id], (err, result) => {
         if (err) {
             throw err;
@@ -908,7 +908,7 @@ const storage=multer.diskStorage(
   
   app.delete('/deleteProject/:id', (req, res) => {
     const id = req.params.id;
-    const sql = 'DELETE FROM Project WHERE id =?';
+    const sql = 'DELETE FROM project WHERE id =?';
     db.query(sql, [id], (err, result) => {
         if (err) {
             throw err;
@@ -919,7 +919,7 @@ const storage=multer.diskStorage(
   
   app.delete('/deleteSports/:id', (req, res) => {
     const id = req.params.id;
-    const sql = 'DELETE FROM Sports WHERE id =?';
+    const sql = 'DELETE FROM sports WHERE id =?';
     db.query(sql, [id], (err, result) => {
         if (err) {
             throw err;
@@ -941,7 +941,7 @@ const storage=multer.diskStorage(
   
   app.delete('/deleteEvents/:id', (req, res) => {
     const id = req.params.id;
-    const sql = 'DELETE FROM Events WHERE id =?';
+    const sql = 'DELETE FROM events WHERE id =?';
     db.query(sql, [id], (err, result) => {
         if (err) {
             throw err;
@@ -954,7 +954,7 @@ const storage=multer.diskStorage(
   app.post('/addScholarship/:roll_number', (req, res) => {
     const {roll_number}=req.params;
     const scholarshipData = req.body;
-    const sql = 'INSERT INTO Scholarship (roll_number,ScholarshipProvider, amount) VALUES (?,?, ?)';
+    const sql = 'INSERT INTO scholarship (roll_number,ScholarshipProvider, amount) VALUES (?,?, ?)';
     db.query(sql, [roll_number,scholarshipData.ScholarshipProvider, scholarshipData.amount], (err, result) => {
         if (err) {
             console.error('Error adding scholarship data:', err);
@@ -984,7 +984,7 @@ const storage=multer.diskStorage(
   app.post('/addInternship/:roll_number', (req, res) => {
     const { roll_number } = req.params;
     const internshipData = req.body;
-    const sql = 'INSERT INTO Internship (roll_number, employer_name, on_off_campus, ctc, InternshipDuration, InternshipStartDate, InternshipEndDate, product_service_based) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO internship (roll_number, employer_name, on_off_campus, ctc, InternshipDuration, InternshipStartDate, InternshipEndDate, product_service_based) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
     db.query(sql, [roll_number, internshipData.employer_name, internshipData.on_off_campus, internshipData.ctc, internshipData.InternshipDuration, internshipData.InternshipStartDate, internshipData.InternshipEndDate, internshipData.product_service_based], (err, result) => {
       if (err) {
         console.error('Error adding Internship data:', err);
@@ -998,7 +998,7 @@ const storage=multer.diskStorage(
   app.post('/addSport/:roll_number', (req, res) => {
     const { roll_number } = req.params;
     const sportsData = req.body;
-    const sql = 'INSERT INTO Sports (roll_number, event_name, award) VALUES (?, ?, ?)';
+    const sql = 'INSERT INTO sports (roll_number, event_name, award) VALUES (?, ?, ?)';
     db.query(sql, [roll_number, sportsData.event_name, sportsData.award], (err, result) => {
       if (err) {
         console.error('Error adding Sports data:', err);
@@ -1014,7 +1014,7 @@ const storage=multer.diskStorage(
     console.log('addpaper');
     const { roll_number } = req.params;
     const paperData = req.body;
-    const sql = 'INSERT INTO Paper_Published (roll_number, title, journal, date_year, DOI_link) VALUES (?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO paper_published (roll_number, title, journal, date_year, DOI_link) VALUES (?, ?, ?, ?, ?)';
     db.query(sql, [roll_number, paperData.title, paperData.journal, paperData.date_year, paperData.DOI_link], (err, result) => {
       if (err) {
         console.error('Error adding Paper Published data:', err);
@@ -1029,7 +1029,7 @@ const storage=multer.diskStorage(
   app.post('/addEvent/:roll_number', (req, res) => {
     const { roll_number } = req.params;
     const eventData = req.body;
-    const sql = 'INSERT INTO Events (roll_number, event_name, institution, date, role, awards) VALUES (?, ?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO events (roll_number, event_name, institution, date, role, awards) VALUES (?, ?, ?, ?, ?, ?)';
     db.query(sql, [roll_number, eventData.event_name, eventData.institution, eventData.date, eventData.role, eventData.awards], (err, result) => {
       if (err) {
         console.error('Error adding Event data:', err);
