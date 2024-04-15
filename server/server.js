@@ -23,8 +23,8 @@ app.use(body_parser.urlencoded({ extended: true }));
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    password: '',
-    // password:'passord',
+    // password: '',
+    password:'password',
     database: 'istdept'
 };
 
@@ -175,7 +175,6 @@ app.post('/student-get-data', async (req, res) => {
     const query2 = `SELECT subjectname,credits from subjects WHERE subjectid = ?`;
     const query3 = `SELECT teacher_name from teachers WHERE email = ?`
     try {
-        console.log('aa')
         const result1 = await new Promise((resolve,reject) => {
           db.query(query1,[rollnumber],(error,result) => {
             if(error) reject(error)
@@ -219,6 +218,58 @@ app.post('/student-get-data', async (req, res) => {
     }
 })
 
+app.post('/student-search-data', async (req, res) => {
+  const { rollnumber, searchCode } = req.body;
+  const query1 = `SELECT teacher_email,subjectid from enrolledsubjects WHERE student_roll_number = ? AND subjectid LIKE ?`;
+  const query2 = `SELECT subjectname,credits from subjects WHERE subjectid = ?`;
+  const query3 = `SELECT teacher_name from teachers WHERE email = ?`
+  try {
+      var stemp = "%";
+      stemp += searchCode;
+      stemp += "%";
+      const result1 = await new Promise((resolve,reject) => {
+        db.query(query1,[rollnumber,stemp],(error,result) => {
+          if(error) reject(error)
+          else resolve(result)
+        })
+      })
+
+      //const result1 = await db.query(query1, [rollnumber]);
+      const data = []
+      for (const row of result1) {
+          const staff_email = row.teacher_email;
+          const subject_code = row.subjectid;
+
+          const result2 = await new Promise((resolve,reject) => {
+            db.query(query2,[subject_code],(error,result) => {
+              if(error) reject (error)
+              else resolve(result)
+            })
+          })
+          //const result2 = await db.query(query2, [subject_code]);
+          const subject_name = result2[0].subjectname;
+          const credit = result2[0].credits
+
+          const result3 = await new Promise((resolve,reject) => {
+            db.query(query3,[staff_email],(error,result) => {
+              if(error) reject(error)
+              else resolve(result)
+            })
+          })
+          //const result3 = await db.query(query3, [staff_email]);
+          const staff_name = result3[0].teacher_name;
+
+          data.push({ staff_name, subject_code, subject_name, credit,staff_email });
+      }
+
+      res.status(201).json(data);
+  }
+  catch (err) {
+      console.log(err)
+      res.status(401).json({ error: "Failed to fetch data" })
+  }
+})
+
 app.post('/staff-get-data', async (req, res) => {
   const { email } = req.body;
 
@@ -228,6 +279,44 @@ app.post('/staff-get-data', async (req, res) => {
   try {
     const result1 = await new Promise((resolve, reject) => {
       db.query(query1, [email], (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      });
+    });
+
+    const data = [];
+    for (const row of result1) {
+      const subject_code = row.subjectid;
+      const result2 = await new Promise((resolve, reject) => {
+        db.query(query2, [subject_code], (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        });
+      });
+      const subject_name = result2[0].subjectname;
+      const credits = result2[0].credits;
+      const sem = result2[0].Semester;
+      data.push({ subject_code, subject_name, credits, sem });
+    }
+
+    res.status(201).json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ error: "Failed to fetch data" });
+  }
+});
+
+app.post('/staff-search-data', async (req, res) => {
+  const { email, searchCode } = req.body;
+  const query1 = `SELECT DISTINCT subjectid from enrolledsubjects WHERE teacher_email = ? AND subjectid LIKE ?`;
+  const query2 = `SELECT subjectname, credits, Semester from subjects WHERE subjectid = ?`;
+
+  try {
+    var stemp = "%";
+    stemp += searchCode;
+    stemp += "%";
+    const result1 = await new Promise((resolve, reject) => {
+      db.query(query1, [email,stemp], (error, result) => {
         if (error) reject(error);
         else resolve(result);
       });

@@ -9,6 +9,7 @@ const StudentDashboard = () => {
   const [isClicked, setIsClicked] = useState(null);
   const [roomdata,setRoomdata] = useState({});
   const [searchCode, setSearchCode] = useState("")
+  const [searchData, setSearchData] = useState([])
 
   const navigate = useNavigate();
 
@@ -57,7 +58,16 @@ const StudentDashboard = () => {
   useEffect(() => {
     const fetchResults = async() => {
       const body = {rollnumber, searchCode}
-      
+      const response = await fetch(`http://localhost:5000/student-search-data`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify(body)
+      })
+
+      const temp = await response.json()
+      setSearchData(temp)
     }
     fetchResults()
   },[searchCode])
@@ -74,10 +84,10 @@ const StudentDashboard = () => {
             <input 
             type='text'
             style={{height: "40px",width:"20%",borderRadius:"6px",backgroundColor:"rgb(224,231,226)", color:"rgb(86,94,86)", fontSize:"20px",boxShadow:"rgba(248,248,248,0.282) 0px 5px 15px", outline:"0",padding:"20px"}}
-            placeholder='Search'
+            placeholder='Search by ID'
             value={searchCode}
             onChange={(e) => setSearchCode(e.target.value)}
-          />
+            />
           </div>
           <div style={{ borderTop: "1px solid rgb(13,13,13)" }}></div>
           {data.length > 0 ?
@@ -99,8 +109,30 @@ const StudentDashboard = () => {
                 </div>
               ))}
               </> : 
-              <></>}
-              
+              <>
+                {searchData.length > 0 ? 
+                <>
+                  {searchData.map((item, index) =>(
+                  <div className='list-room' key={index} onClick={() => setIsClicked(item)}>
+                    <div className='rooms'>
+                      <div className='room-header'>
+                        <div>{item.subject_code}</div>
+                        <div>{item.subject_name}</div>
+                      </div>
+                      <div className='room-header'>
+                        <div>Staff: {item.staff_name}</div>
+                        <div>Credits: {item.credit}</div>
+                      </div>
+                    </div>
+                  </div> 
+                  ))}
+                </> :
+                <>
+                  <div style={{ fontSize: "25px", padding: "30px" }}>
+                    No room found
+                  </div>
+                </>}  
+              </>} 
             </> :
             <div style={{ fontSize: "25px", padding: "30px" }}>
               No room found
