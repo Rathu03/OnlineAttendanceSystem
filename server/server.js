@@ -23,7 +23,8 @@ app.use(body_parser.urlencoded({ extended: true }));
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    password: 'password',
+    password: '',
+    // password:'passord',
     database: 'istdept'
 };
 
@@ -60,8 +61,8 @@ app.post('/registerstudent', async (req, res) => {
 
     const { rollnumber, username, password, email, year_of_joining } = req.body;
     const query = `INSERT INTO students VALUES(?,?,?,?,?,?);`;
-
-    db.query(query,[rollnumber, username, password, email, year_of_joining,""],(error,result) => {
+    const hashedPass = crypto.createHash('sha256').update(password).digest('hex');
+    db.query(query,[rollnumber, username, hashedPass, email, year_of_joining,""],(error,result) => {
       if(error){
         console.error(error);
         res.status(500).json({ success: 0 });
@@ -75,10 +76,11 @@ app.post('/registerstudent', async (req, res) => {
 
 app.post('/loginstudent', async (req, res) => {
     const { email,rollnumber, password } = req.body;
+    const hashedPass = crypto.createHash('sha256').update(password).digest('hex');
     const query = `SELECT * from students WHERE rollnumber=? AND password=? AND email=?`;
-    console.log(rollnumber,password)
+    console.log(rollnumber,hashedPass)
     
-        db.query(query,[rollnumber,password,email],(err,result) => {
+        db.query(query,[rollnumber,hashedPass,email],(err,result) => {
           if(err){
             console.log(err);
             res.status(500).json({message:"Internal server error"})
@@ -103,9 +105,10 @@ app.post('/loginstudent', async (req, res) => {
 
 app.post('/registerstaff', async (req, res) => {
     const { teacher_id,teacher_name, password, email } = req.body;
+    const hashedPass = crypto.createHash('sha256').update(password).digest('hex');
     const query = `INSERT INTO teachers(teacherId,teacher_name,password,email) VALUES(?,?,?,?)`;
 
-    db.query(query,[teacher_id,teacher_name, password, email],(error,result) => {
+    db.query(query,[teacher_id,teacher_name, hashedPass, email],(error,result) => {
       if(error){
         console.log(err);
         res.status(401).json({ success: 0 })
@@ -118,9 +121,10 @@ app.post('/registerstaff', async (req, res) => {
 
 app.post('/loginstaff', async (req, res) => {
     const { teacherid,email, password } = req.body;
+    const hashedPass = crypto.createHash('sha256').update(password).digest('hex');
     const query = `SELECT * from teachers WHERE email=? AND password=? AND teacherId = ?`;
 
-    db.query(query,[email,password,teacherid],(error,result) => {
+    db.query(query,[email,hashedPass,teacherid],(error,result) => {
       if(error){
         res.status(500).json({ success: "Internal Server Error" })
       }
@@ -645,6 +649,7 @@ app.post('/forgotpassword',async(req,res) => {
 
 app.post('/passwordreset',async(req,res) => {
   const {token,role,newPassword} = req.body
+  const hashedPass = crypto.createHash('sha256').update(newPassword).digest('hex');
   const email=passwordResetTokens[token]
   if(email){
     let query1;
@@ -656,7 +661,7 @@ app.post('/passwordreset',async(req,res) => {
     }
     try{
       const result1 = await new Promise((resolve, reject) => {
-        db.query(query1, [newPassword, email], (error, result) => {
+        db.query(query1, [hashedPass, email], (error, result) => {
           if (error) reject(error);
           else resolve(result);
         });

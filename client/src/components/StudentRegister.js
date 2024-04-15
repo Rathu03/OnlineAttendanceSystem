@@ -136,10 +136,13 @@ const StudentRegister = () => {
                 </div>
 
                 <div className='login'>
-                <p>Already an user..Click to <Link to="/student-login" style={{color:'darkseagreen',marginLeft:"5px",cursor:"pointer"}}>login</Link></p>
                 <button className='submit-button' >Submit</button>
                 </div>    
             </form>
+            <div className='login'>
+                <button className='back-button' onClick={() => navigate("../")}>Back</button>
+                <p>Already have an account? <Link to="/student-login" style={{ color: 'darkseagreen', marginLeft: "5px", cursor: "pointer" }}>Login now</Link></p>
+            </div>
         </div>
     </div>
   )

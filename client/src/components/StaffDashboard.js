@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { json, useNavigate } from 'react-router-dom'
 import { CiCirclePlus } from "react-icons/ci";
 import { MdCheck } from "react-icons/md";
+import Navbar from './Navbar';
 
 const StaffDashboard = () => {
 
@@ -307,12 +308,7 @@ const handleTemp = (data) => {
  
   return (
     <div className='main-body'>
-      <div className='nav-container'>
-        <h1>Staff Dashboard</h1>
-        <ul>
-          <li onClick={handleClick}>Logout</li>
-        </ul>
-      </div>
+      <Navbar />
       {!isClicked ?
         <>
           <div style={{margin:"35px",fontSize:"35px",fontWeight:"bold"}}>Welcome {teacher_id}</div>

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom'
 
 const AdminLogin = () => {
     const [adminId, setAdminId] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate(); 
 
     const handleAdminId = (event) => {
         setAdminId(event.target.value);
@@ -25,7 +27,6 @@ const AdminLogin = () => {
         alert('Login successful');
 
         localStorage.setItem('role','admin')
-
         // Redirect to the admin dashboard
         window.location.href = '../admin-dashboard'; // Change this to the correct path
 
@@ -36,7 +37,7 @@ const AdminLogin = () => {
     
     return (
         <div className='main-body1'>
-            <div className='login-container'>
+            <div className='login-container' id='admin-login-container'>
                 <form className='form-cont' onSubmit={handleSubmit}>
                     <div className='login'>
                         <label htmlFor='adminId'>Admin Id</label>
@@ -61,10 +62,13 @@ const AdminLogin = () => {
                         />
                     </div>
                     <div className='login'>
-                        <p>Forgot password? <Link to='/admin-forgot-password' style={{ color: 'darkseagreen', marginLeft: "5px", cursor: "pointer" }}>Reset here</Link></p>
-                        <button type="submit" className='submit-button'>Submit</button>
+                        <button className='submit-button'>Submit</button>
                     </div>
                 </form>
+                <div className='login'>
+                    <button className='back-button' onClick={() => navigate('../')}>Back</button>
+                    <p>Forgot password? <Link to='/admin-forgot-password' style={{ color: 'darkseagreen', marginLeft: "5px", cursor: "pointer" }}>Reset here</Link></p>
+                </div>
             </div>
         </div>
     );

@@ -105,12 +105,13 @@ const StaffLogin = () => {
                     />
                 </div>
                 <div className='login'><p style={{cursor:"pointer"}} onClick={handleForgot}>Forgot password</p>
-                <button className='submit-button'>Submit</button></div>
-                <div className='login'>
-                <p>Didn't have an account..Click to <Link to='/staff-register' style={{color:'darkseagreen',marginLeft:"5px",cursor:"pointer"}} >create account</Link></p>
+                    <button className='submit-button'>Submit</button>
                 </div>
             </form>
-           
+            <div className='login'>
+                <button className='back-button' onClick={() => navigate('../')}>Back</button>
+                    <p>Don't have an account? <Link to="/staff-register" style={{ color: 'darkseagreen', marginLeft: "5px", cursor: "pointer" }}>Signup now</Link></p>
+            </div>
         </div>
     </div>
   )
