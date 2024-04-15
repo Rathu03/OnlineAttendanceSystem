@@ -654,3 +654,66 @@ textarea:focus {
 .navbar a:hover, .dropdown:hover .dropbtn {
   background-color: red;
 }
+
+#student-view-personal{
+  background-color: white;
+}
+
+#student-view-personal td{
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  table-layout:fixed;
+  width:20px;
+  word-wrap:break-word;
+}
+
+#student-view-personal .view-form{
+  transform: translateY(-28%);
+  z-index: -1;
+  max-width: 85%;
+  justify-content: center;
+}
+
+#student-view-personal .view-container{
+  min-width: 100%;
+}
+
+#student-view-personal #name{
+  font-size: 2.25em;
+  transform: translateY(80%) translateX(3%);
+}
+
+#student-view-personal img{
+  position: relative;
+  z-index: 1;
+  border-radius: 50%;
+}
+
+/* #student-view-personal table td{
+  border-bottom: 1px solid black;
+} */
+
+#student-view-personal td p{
+  text-align: center;
+  font-size: 1.2em;
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  75% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-30%);
+    opacity: 1;
+  }
+}
+
+/* Apply animation to view-form */
+#student-view-personal .view-form {
+  animation: slideInFromLeft 0.5s ease-in-out;
+}

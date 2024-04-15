@@ -47,20 +47,129 @@ function ViewStudentPersonal() {
     return (
         <>
             <Navbar />
+            <div id='student-view-personal'>
             <div className='view-container'>
-                <h2 className='view-heading'>Student Personal Details</h2>
+                <h1 className='view-heading'>Student Personal Details</h1>
+                <br/>
                 {errorMessage && <p>{errorMessage}</p>}
                 {studentDetails && (
                     <>
-                    <div className='img-container'>
-                    <img className='prof-pic' src={`http://localhost:5000/getImage/${studentDetails.RollNumber}`} alt='img'/>
-                    </div>
-                   
+                    <center>
+                   <img className='prof-pic' width={'300px'} src={`http://localhost:5000/getImage/${studentDetails.RollNumber}`} alt='img'/>
+                   </center>
+                   <center>
                     <div className='view-form'>
                         
+                       <table border={'0'}> 
+                            {/* <tr>
+                                <td className='topic'><p className='view-field'><strong>Roll Number:</strong></p></td>
+                                <td><p>{studentDetails.RollNumber}</p></td>
+
+                                <td colSpan={'2'} id='name-td'>
+                                    <p className='view-field' id='name'><strong></strong> {studentDetails.Name}</p>
+                                </td>
+
+                                <td className='topic'><p className='view-field'><strong>Phone:</strong></p></td>
+                                <td><p>{studentDetails.Phone}</p></td>
+                            </tr>
+
+                            <tr>
+                                <td className='topic'><p className='view-field'><strong>Gender:</strong></p></td>
+                                <td><p>{studentDetails.Sex}</p></td>
+                                <td></td>
+                                <td></td>
+
+                                <td className='topic'><p className='view-field'><strong>Blood Group:</strong></p></td>
+                                <td><p>{studentDetails.Blood_Group}</p></td>
+                            </tr>
+
+                            <tr>
+                                <td className='topic'><p className='view-field'><strong>DOB:</strong></p></td>
+                                <td><p>{studentDetails.DateOfBirth}</p></td>
+                                
+                                <td className='topic'><p className='view-field'><strong>Address:</strong></p></td>
+                                <td><p>{studentDetails.Address}</p></td>
+
+                                <td className='topic'><p className='view-field'><strong>Resident type:</strong></p></td>
+                                <td><p>{studentDetails.Residenttype}</p></td>
+                            </tr>
+                            <tr>
+                                <td className='topic'><p className='view-field'><strong>Father's Name:</strong></p></td>
+                                <td><p>{studentDetails.FatherName}</p></td>
+                                
+                                <td className='topic'><p className='view-field'><strong>Father's Occupation:</strong></p></td>
+                                <td><p>{studentDetails.Fatheroccupation}</p></td>
+
+                                <td className='topic'><p className='view-field'><strong>Father's Mobile:</strong></p></td>
+                                <td><p>{studentDetails.Fathermobile}</p></td>
+                            </tr>
+                            <tr>
+                                <td className='topic'><p className='view-field'><strong>Mother's Name:</strong></p></td>
+                                <td><p>{studentDetails.Mothername}</p></td>
+                                
+                                <td className='topic'><p className='view-field'><strong>Mother's Occupation:</strong></p></td>
+                                <td><p>{studentDetails.Motheroccupation}</p></td>
+
+                                <td className='topic'><p className='view-field'><strong>Mother's Mobile:</strong></p></td>
+                                <td><p>{studentDetails.Mothermobile}</p></td>
+                            </tr> */}
+
+
+
+                            <tr>
+                                <td>
+                                    <p className='view-field'><strong>Roll Number:</strong><br/> {studentDetails.RollNumber}</p>
+                                </td>
+
+                                <td colSpan={'2'} id='image-td'>
+                                    <p className='view-field' id='name'><strong></strong><br/> {studentDetails.Name}</p>
+                                </td>
+
+                                <td>
+                                    <p className='view-field'><strong>Phone:</strong><br/> {studentDetails.Phone}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td ><p className='view-field'><strong>Gender:</strong><br/> {studentDetails.Sex}</p></td>
+                                <td></td>
+                                <td></td>
+                                <td ><p className='view-field'><strong>Blood Group:</strong><br/> {studentDetails.Blood_Group}</p></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                <p className='view-field'><strong>DOB:</strong><br/> {studentDetails.DateOfBirth}</p>
+                                    </td>
+                                
+                                <td colSpan={'2'}>
+                                <p className='view-field'><strong>Address:</strong><br/> {studentDetails.Address}</p>
+                                </td>
+                                <td><p className='view-field'><strong>Resident Type</strong><br/> {studentDetails.Residenttype}</p></td>
+
+                            </tr>
+                            <tr>
+                                <td ><p className='view-field'><strong>Father's Name:</strong><br/> {studentDetails.FatherName}</p></td>
+                                <td colSpan={'2'}><p className='view-field'><strong>Father's Occupation:</strong><br/> {studentDetails.Fatheroccupation}</p></td>
+                                <td ><p className='view-field'><strong>Father's Mobile:</strong><br/> {studentDetails.Fathermobile}</p></td>
+                            </tr>
+                            <tr>
+                                <td ><p className='view-field'><strong>Mother's Name:</strong><br/> {studentDetails.Mothername}</p></td>
+                                <td colSpan={'2'}><p className='view-field'><strong>Mother's Occupation:</strong><br/> {studentDetails.Motheroccupation}</p></td>
+                                <td ><p className='view-field'><strong>Mother's Mobile:</strong> <br/>{studentDetails.Mothermobile}</p></td>
+                            </tr>
+                            
+
+                        </table>
+
+
+{/* 
                         
                         <p className='view-field'><strong>Roll Number:</strong> {studentDetails.RollNumber}</p>
                         <p className='view-field'><strong>Date of Birth:</strong> {studentDetails.DateOfBirth}</p>
+                        <center>
+                        <p>
+                        <img className='prof-pic' width={'300px'} src={`http://localhost:5000/getImage/${studentDetails.RollNumber}`} alt='img'/>
+                        </p>
+                    </center>
                         <p className='view-field'><strong>Address:</strong> {studentDetails.Address}</p>
                         <p className='view-field'><strong>Phone:</strong> {studentDetails.Phone}</p>
                      
@@ -70,9 +179,14 @@ function ViewStudentPersonal() {
                         <p className='view-field'><strong>Mother's Name:</strong> {studentDetails.Mothername}</p>
                         <p className='view-field'><strong>Father's Occupation:</strong> {studentDetails.Fatheroccupation}</p>
                         <p className='view-field'><strong>Mother's Occupation:</strong> {studentDetails.Motheroccupation}</p>
+
+
+                         */}
                     </div>
+                    </center>
                     </>
                 )}
+            </div>
             </div>
         </>
     );

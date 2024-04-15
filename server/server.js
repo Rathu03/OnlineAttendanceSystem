@@ -23,8 +23,8 @@ app.use(body_parser.urlencoded({ extended: true }));
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    // password: '',
-    password:'password',
+    password: '',
+    // password:'password',
     database: 'istdept'
 };
 
@@ -805,11 +805,10 @@ const storage=multer.diskStorage(
     db.query(sql1, [RollNumber], (err, result) => {
       if (err) return res.json({ message: "Error" });
   
-      if (result.length === 0 || !result[0].StudentImage) {
+      if (result.length === 0) {
         return res.json({ message: "Image not found" });
       }
-  
-      const imageName = result[0].StudentImage;
+      let imageName = result[0].StudentImage || 'default.jpg';
   
       const imagePath = path.join(__dirname, 'prof-image', imageName);
   
@@ -847,7 +846,7 @@ const storage=multer.diskStorage(
   
   app.get('/InternshipDetails/:username', (req, res) => {
     const { username } = req.params;
-    const sql = 'SELECT * FROM Internship WHERE roll_number = ?';
+    const sql = 'SELECT * FROM internship WHERE roll_number = ?';
     db.query(sql, [username], (err, result) => {
         if (err) {
             throw err;
@@ -929,8 +928,8 @@ const storage=multer.diskStorage(
     const { username } = req.params;
     const updatedData = req.body;
     console.log("data add",updatedData.FatherName);
-    const sql = 'UPDATE studentdetails SET DateOfBirth = ?, Address = ?, Phone = ?,Sex=?,Blood_Group=?,FatherName=?,MotherName=?,Fatheroccupation=?,Motheroccupation=? WHERE RollNumber = ?';
-    db.query(sql, [updatedData.DateOfBirth, updatedData.Address, updatedData.Phone,updatedData.Sex,updatedData.Blood_Group,updatedData.FatherName,updatedData.Mothername,updatedData.Fatheroccupation,updatedData.Motheroccupation, username], (err, result) => {
+    const sql = 'UPDATE studentdetails SET Name=?, DateOfBirth = ?, Address = ?, Phone = ?,Sex=?,Blood_Group=?,FatherName=?,MotherName=?,Fatheroccupation=?,Motheroccupation=?,Residenttype=?,Fathermobile=?,Mothermobile=? WHERE RollNumber = ?';
+    db.query(sql, [updatedData.Name, updatedData.DateOfBirth, updatedData.Address, updatedData.Phone,updatedData.Sex,updatedData.Blood_Group,updatedData.FatherName,updatedData.Mothername,updatedData.Fatheroccupation,updatedData.Motheroccupation,updatedData.Residenttype,updatedData.Fathermobile,updatedData.Mothermobile, username], (err, result) => {
         if (err) {
             throw err;
         }
@@ -949,16 +948,20 @@ const storage=multer.diskStorage(
             throw checkError;
         }
         if (checkResult.length === 0) {
-            const insertQuery = 'INSERT INTO studentdetails (RollNumber, DateOfBirth, Address, Phone, Sex, Blood_Group, FatherName, Mothername, Fatheroccupation, Motheroccupation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            const insertQuery = 'INSERT INTO studentdetails (RollNumber, Name, DateOfBirth, Residenttype, Address, Phone, Sex, Blood_Group, FatherName, Fathermobile, Mothername, Mothermobile, Fatheroccupation, Motheroccupation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             const insertValues = [
                 rollNumber,
+                newStudentData.Name,
                 newStudentData.DateOfBirth,
+                newStudentData.Residenttype,
                 newStudentData.Address,
                 newStudentData.Phone,
                 newStudentData.Sex,
                 newStudentData.Blood_Group,
                 newStudentData.FatherName,
+                newStudentData.Fathermobile,
                 newStudentData.Mothername,
+                newStudentData.Mothermobile,
                 newStudentData.Fatheroccupation,
                 newStudentData.Motheroccupation
             ];

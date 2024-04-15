@@ -6,13 +6,17 @@ import '../../CSS/edit.css'
 function EditStudentPersonal() {
     const [studentData, setStudentData] = useState({
         RollNumber: '',
+        Name: '',
         DateOfBirth: '',
+        Residenttype: '',
         Address: '',
         Phone: '',
         Sex: '',
         Blood_Group: '',
         FatherName: '',
+        Fathermobile: '',
         Mothername: '',
+        Mothermobile: '',
         Fatheroccupation: '',
         Motheroccupation: ''
     });
@@ -20,12 +24,10 @@ function EditStudentPersonal() {
     const [successMessage, setSuccessMessage] = useState('');
     const  [file,Setfile]=useState();
     const navigate = useNavigate(); 
-var fetchedUsername;
+    const fetchedUsername=localStorage.getItem("rollnumber");
     useEffect(() => {
         const fetchStudentDetails = async () => {
             try {
-   
-                fetchedUsername = localStorage.getItem('rollnumber')
                 const studentResponse = await axios.get(`http://localhost:5000/studentDetails/${fetchedUsername}`);
                
 
@@ -76,10 +78,9 @@ var fetchedUsername;
                 console.log('Student data updated successfully:', response.data);
                 setSuccessMessage('Student data updated successfully');
             } else {
-                const response = await axios.get('http://localhost:5000/session');
-                fetchedUsername = response.data.username;
                 const response1 = await axios.post(`http://localhost:5000/addStudentDetails/${fetchedUsername}`, studentData);
                 console.log('Student data added successfully:', response1.data,fetchedUsername);
+                
                 setSuccessMessage('Student data added successfully');
             }
 
@@ -132,10 +133,10 @@ axios.post(`http://localhost:5000/upload/${studentData.RollNumber}`,formdata)
                         <div className='form-fragment-right'>
 
 
-                            <table>
-                                <tr>
-                                    <td><label className='edit-label'>Date of Birth:</label>
-                                        <input className='edit-input' type="date" name="DateOfBirth" placeholder='Data of Birth' value={studentData.DateOfBirth || ""} onChange={handleChange} />
+                            <table border='0'>
+                                 <tr>
+                                    <td><label className='edit-label'>Name</label>
+                                        <input className='edit-input' type="text" name="Name" placeholder='Enter your name' value={studentData.Name} onChange={handleChange} />
                                     </td>
                                     <td>
                                         <label className='edit-label'>Phone:</label>
@@ -143,8 +144,22 @@ axios.post(`http://localhost:5000/upload/${studentData.RollNumber}`,formdata)
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td><label className='edit-label'>Date of Birth:</label>
+                                        <input className='edit-input' type="date" name="DateOfBirth" placeholder='Data of Birth' value={studentData.DateOfBirth || ""} onChange={handleChange} />
+                                    </td>
+                                    <td id='resident-td'>
+                                        <label className='edit-label'>Resident type:</label>
+                                        <select className='edit-dropdown' name="Residenttype" value={studentData.Residenttype} onChange={handleChange}>
+                                        <option value="" disabled selected>Resident Type</option>
+                                            <option value="Hosteller">Hosteller</option>
+                                            <option value="Dayscholar">Dayscholar</option>
+                                        </select>
+
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td>
-                                        <label className='edit-label'>Sex:</label>
+                                        <label className='edit-label'>Gender:</label>
                                         <select className='edit-dropdown' name="Sex" value={studentData.Sex} onChange={handleChange}>
                                         <option value="" disabled selected>Gender</option>
                                             <option value="Male">Male</option>
@@ -191,6 +206,16 @@ axios.post(`http://localhost:5000/upload/${studentData.RollNumber}`,formdata)
                                     <td>
                                         <label className='edit-label'>Mother's Occupation:</label>
                                         <input className='edit-input' type="text" name="Motheroccupation" placeholder='Mother Occupation' value={studentData.Motheroccupation} onChange={handleChange} />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label className='edit-label'>Father's Mobile:</label>
+                                        <input className='edit-input' type="text" name="Fathermobile" placeholder='Father Mobile Number' value={studentData.Fathermobile} onChange={handleChange} />
+                                    </td>
+                                    <td>
+                                        <label className='edit-label'>Mother's Occupation:</label>
+                                        <input className='edit-input' type="text" name="Mothermobile" placeholder='Mother Mobile Number' value={studentData.Mothermobile} onChange={handleChange} />
                                     </td>
                                 </tr>
                             </table>
