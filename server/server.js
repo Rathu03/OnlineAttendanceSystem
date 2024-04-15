@@ -147,6 +147,35 @@ app.post('/loginstaff', async (req, res) => {
     })
 })
 
+app.post('/loginadmin',async(req,res) => {
+  const{adminemail,password} = req.body
+  const hashedPass = crypto.createHash('sha256').update(password).digest('hex');
+  const query = `SELECT * FROM admin WHERE email = ? AND password = ?`
+
+  db.query(query,[adminemail,hashedPass],(error,result) => {
+    if(error){
+      res.status(500).json({ success: "Internal Server Error" })
+    }
+    else{
+      if(result.length > 0){
+        console.log("Admin Logged in: " + result[0].email);
+
+        const token = jwt.sign({
+            adminemail,
+            type: "admin"
+        }, "secret", {
+            expiresIn: 60 * 60
+        })
+        res.status(201).json({ success: true, token })
+      }
+      else{
+        res.status(401).json({ success: false })
+      }
+    } 
+  })
+
+})
+
 
 app.post('/create-room', async (req, res) => {
     const body = req.body;
@@ -767,6 +796,29 @@ app.post('/passwordreset',async(req,res) => {
     res.status(500).json({message:"Bad request"})
   }
   
+})
+
+app.get('/get-stafflist',async(req,res) => {
+  console.log("asd")
+  const query = `SELECT teacherid,teacher_name,email FROM teachers`;
+  try{
+    const stafflist = await new Promise((resolve, reject) => {
+      db.query(query,(error,result) => {
+        if(error) reject(error)
+        else resolve(result)
+      })
+    })
+    if(stafflist.length > 0){
+      res.status(200).json(stafflist)
+    }
+    else{
+      res.status(200).json([])
+    }
+  }
+  catch(err){
+    console.log(err)
+    res.status(500).json({message:"Internal server error"})
+  }
 })
 
 

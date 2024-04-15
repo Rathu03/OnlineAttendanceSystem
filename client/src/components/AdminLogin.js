@@ -3,51 +3,51 @@ import { Link } from 'react-router-dom';
 import {useNavigate} from 'react-router-dom'
 
 const AdminLogin = () => {
-    const [adminId, setAdminId] = useState("");
+    const [adminemail, setAdminemail] = useState("");
     const [password, setPassword] = useState("");
-    const navigate = useNavigate(); 
-
-    const handleAdminId = (event) => {
-        setAdminId(event.target.value);
+    const navigate = useNavigate();
+    
+    const toggleClick = (path) => {
+        navigate(path);
     }
 
-    const handlePassword = (event) => {
-        setPassword(event.target.value);
-    }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (adminId !== '111' || password !== '111') {
+    const handleSubmit = async(e) => {
+        e.preventDefault()
+        const body = {adminemail,password}
+        const response = await fetch(`http://localhost:5000/loginadmin`,{
+            method:"POST",
+            headers: {
+                "Content-type":"application/json"
+            },
+            body: JSON.stringify(body)
+        })
+        const data = await response.json()
+        if(data.success == true){
+            console.log('Login Successful');
+            toggleClick('../admin/attendance');
+        }
+        else{
             alert('Invalid credentials');
             return;
         }
-
-        // localStorage.setItem('')
-        // Simulating successful login
-        alert('Login successful');
-
-        localStorage.setItem('role','admin')
-        // Redirect to the admin dashboard
-        window.location.href = '../admin-dashboard'; // Change this to the correct path
-
-        // If you want to use useNavigate() from react-router-dom, you should wrap your component with a Router component.
-        // However, since this is not a JSX file, you can't use useNavigate() directly here.
-        // You can either convert this file to a JSX file or use window.location.href as shown above.
+        localStorage.setItem('adminemail',adminemail);
+        localStorage.setItem('token',data.token);
+        localStorage.setItem('role','admin');
     }
-    
+
     return (
         <div className='main-body1'>
             <div className='login-container' id='admin-login-container'>
                 <form className='form-cont' onSubmit={handleSubmit}>
                     <div className='login'>
-                        <label htmlFor='adminId'>Admin Id</label>
+                        <label htmlFor='adminemail'>Admin Id</label>
                         <input
                             type='text'
-                            name='adminId'
-                            id='adminId'
-                            placeholder='Enter Admin Id'
-                            value={adminId}
-                            onChange={handleAdminId}
+                            name='adminemail'
+                            id='adminemail'
+                            placeholder='Enter Admin Email'
+                            value={adminemail}
+                            onChange={(e) => setAdminemail(e.target.value)}
                         />
                     </div>
                     <div className='login'>
@@ -58,7 +58,7 @@ const AdminLogin = () => {
                             id='password'
                             placeholder='Enter Password'
                             value={password}
-                            onChange={handlePassword}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
                     <div className='login'>
@@ -67,7 +67,7 @@ const AdminLogin = () => {
                 </form>
                 <div className='login'>
                     <button className='back-button' onClick={() => navigate('../')}>Back</button>
-                    <p>Forgot password? <Link to='/admin-forgot-password' style={{ color: 'darkseagreen', marginLeft: "5px", cursor: "pointer" }}>Reset here</Link></p>
+                    <p>Forgot password? <Link to='/admin-login' style={{ color: 'darkseagreen', marginLeft: "5px", cursor: "pointer" }}>Reset here</Link></p>
                 </div>
             </div>
         </div>
