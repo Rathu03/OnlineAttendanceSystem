@@ -8,6 +8,7 @@ const StudentDashboard = () => {
   const [data, setData] = useState([])
   const [isClicked, setIsClicked] = useState(null);
   const [roomdata,setRoomdata] = useState({});
+  const [searchCode, setSearchCode] = useState("")
 
   const navigate = useNavigate();
 
@@ -53,7 +54,13 @@ const StudentDashboard = () => {
     }
   }, [isClicked])
 
-
+  useEffect(() => {
+    const fetchResults = async() => {
+      const body = {rollnumber, searchCode}
+      
+    }
+    fetchResults()
+  },[searchCode])
 
   return (
     <div className='main-body'>
@@ -64,11 +71,20 @@ const StudentDashboard = () => {
         <div className='staff-dashboard'>
           <div className='staff-header'>
             <h1>Attendance List</h1>
+            <input 
+            type='text'
+            style={{height: "40px",width:"20%",borderRadius:"6px",backgroundColor:"rgb(224,231,226)", color:"rgb(86,94,86)", fontSize:"20px",boxShadow:"rgba(248,248,248,0.282) 0px 5px 15px", outline:"0",padding:"20px"}}
+            placeholder='Search'
+            value={searchCode}
+            onChange={(e) => setSearchCode(e.target.value)}
+          />
           </div>
           <div style={{ borderTop: "1px solid rgb(13,13,13)" }}></div>
           {data.length > 0 ?
             <>
-              {data.map((item, index) => (
+              {searchCode.length == 0 ? 
+              <>
+                {data.map((item, index) => (
                 <div className='list-room' key={index} onClick={() => setIsClicked(item)}>
                   <div className='rooms'>
                     <div className='room-header'>
@@ -82,6 +98,9 @@ const StudentDashboard = () => {
                   </div>
                 </div>
               ))}
+              </> : 
+              <></>}
+              
             </> :
             <div style={{ fontSize: "25px", padding: "30px" }}>
               No room found

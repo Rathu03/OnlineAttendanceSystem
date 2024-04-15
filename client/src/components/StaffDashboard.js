@@ -56,7 +56,8 @@ const StaffDashboard = () => {
       return {...prevObj,class_taken:class_taken}
     })
     console.log("View",isClicked)
-    console.log("DOC",roomdata[0].dates[0].doc)
+    // console.log("DOC",roomdata[0].dates[0].doc)
+    console.log("Room",roomdata[0].dates.length)
     setClickView(true)
   }
 
@@ -142,9 +143,14 @@ const handleTemp = (data) => {
 }
 
   const getEmail = async(obj) => {
+      // console.log("Mail",obj)
       const rollnumber = obj.rollnumber;
       const staff_email = obj.email;
       const student_name = obj.student_name;
+      const subject_code = obj.subject_code;
+      const subject_name = obj.subject_name;
+      const dates = obj.dates;
+      console.log("Date",dates[0].attendance_status)
       const res = await fetch(`http://localhost:5000/getstudentemail`,{
         method:"POST",
         headers:{
@@ -160,9 +166,9 @@ const handleTemp = (data) => {
         to: student_email,
         subject: 'Attendance',
         text:`
-          Hi ${student_name}, Your attendance is ${calculateAttendance(obj)}%
-          ${calculateAttendance(obj) < 75  ? "Shortage of attendance.. Try to attend all the classes. If any issue, contact respective staff" : ""}
-        `
+        ${subject_code} ${subject_name} <br/>
+        Hi ${student_name}, Your attendance is ${calculateAttendance(obj)}%
+        ${calculateAttendance(obj) < 75 ? "Shortage of attendance.. Try to attend all the classes. If any issue, contact respective staff" : ""}`
       }
       console.log(mail)
       data1.push(mail)
@@ -510,9 +516,15 @@ const handleTemp = (data) => {
                         <th>Roll Number</th>
                         <th>Student Name</th>
                         <th>Class attended</th>
-                        {roomdata[0].dates.map((date) => (
+                        {roomdata[0].dates.length != 0 ?  
+                        <>
+                          {roomdata[0].dates.map((date) => (
                             <th>{handleDate(date.doc)} <br/> <div style={{padding:"5px"}}>{"("+date.num_of_hours + " hrs)"} </div></th>
-                        ))}
+                          ))}
+                        </> : 
+                        <>
+                        </>}
+                        
                         {/* <th>{(roomdata[0].dates[0].doc).split('T')[0]}</th> */}
                         <th>Percentage</th>
                       </tr>
@@ -525,9 +537,14 @@ const handleTemp = (data) => {
                           <td>{obj.rollnumber}</td>
                           <td>{obj.student_name}</td>
                           <td>{obj.class_attended}</td>
-                          {obj.dates.map((date) => (
-                            <td style={{color: date.attendance_status == 'P' ? "black" : "red",fontWeight: date.attendance_status == 'P' ? "normal" : "bold"  }}>{date.attendance_status}</td>
-                          ))}
+                          {obj.dates.length != 0 ? 
+                          <>
+                            {obj.dates.map((date) => (
+                              <td style={{color: date.attendance_status == 'P' ? "black" : "red",fontWeight: date.attendance_status == 'P' ? "normal" : "bold"  }}>{date.attendance_status}</td>
+                            ))}
+                          </>:
+                          <></>}
+                          
                           <td>{calculateAttendance(obj)}</td>
                         </tr>
                       ))}
@@ -540,9 +557,14 @@ const handleTemp = (data) => {
                             <td>{obj.rollnumber}</td>
                             <td>{obj.student_name}</td>
                             <td>{obj.class_attended}</td>
-                            {obj.dates.map((date) => (
-                              <td style={{color: date.attendance_status == 'P' ? "black" : "red",fontWeight: date.attendance_status == 'P' ? "normal" : "bold"  }}>{date.attendance_status}</td>
-                            ))}
+                            {obj.dates.length != 0 ? 
+                            <>
+                              {obj.dates.map((date) => (
+                                <td style={{color: date.attendance_status == 'P' ? "black" : "red",fontWeight: date.attendance_status == 'P' ? "normal" : "bold"  }}>{date.attendance_status}</td>
+                              ))}
+                            </>:
+                            <></>}
+                            
                             <td>{calculateAttendance(obj)}</td>
                           </tr>
                         ))}

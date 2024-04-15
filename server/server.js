@@ -23,7 +23,7 @@ app.use(body_parser.urlencoded({ extended: true }));
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: 'password',
     database: 'istdept'
 };
 
@@ -204,7 +204,7 @@ app.post('/student-get-data', async (req, res) => {
             //const result3 = await db.query(query3, [staff_email]);
             const staff_name = result3[0].teacher_name;
 
-            data.push({ staff_name, subject_code, subject_name, credit });
+            data.push({ staff_name, subject_code, subject_name, credit,staff_email });
         }
 
         res.status(201).json(data);
