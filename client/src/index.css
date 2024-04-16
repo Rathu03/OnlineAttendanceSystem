@@ -354,6 +354,17 @@ body {
   box-sizing: border-box;
 }
 
+.staff-header input[type='text']{
+  height: 40px;
+  border-radius: 6px;
+  background-color:  rgb(224, 231, 226);
+  color: rgb(86, 94, 86);
+  font-size: 20px;
+  box-shadow: rgba(248, 248, 248, 0.282) 0px 5px 15px;
+  outline: 0;
+  width: 20%;
+}
+
 .submit-button {
   background-color: skyblue;
   color: white;

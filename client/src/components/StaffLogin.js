@@ -110,7 +110,7 @@ const StaffLogin = () => {
             </form>
             <div className='login'>
                 <button className='back-button' onClick={() => navigate('../')}>Back</button>
-                    <p>Don't have an account? <Link to="/staff-register" style={{ color: 'darkseagreen', marginLeft: "5px", cursor: "pointer" }}>Signup now</Link></p>
+                    
             </div>
         </div>
     </div>

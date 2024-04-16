@@ -23,8 +23,8 @@ app.use(body_parser.urlencoded({ extended: true }));
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    password: '',
-    // password:'password',
+    // password: '',
+    password:'password',
     database: 'istdept'
 };
 
@@ -325,7 +325,7 @@ app.post('/staff-get-data', async (req, res) => {
       const subject_name = result2[0].subjectname;
       const credits = result2[0].credits;
       const sem = result2[0].Semester;
-      data.push({ subject_code, subject_name, credits, sem });
+      data.push({ subject_code, subject_name, credits, sem,email });
     }
 
     res.status(201).json(data);
@@ -627,7 +627,7 @@ app.post('/search/:id', async (req, res) => {
         var rtemp = "%";
         rtemp += roll;
         rtemp += "%";
-        console.log(rtemp)
+        // console.log(rtemp)
         const result1 = await new Promise((resolve,reject) => {
           db.query(query1,[rtemp,email,subjectcode],(error,result) => {
             if(error) reject(error)
@@ -799,11 +799,36 @@ app.post('/passwordreset',async(req,res) => {
 })
 
 app.get('/get-stafflist',async(req,res) => {
-  console.log("asd")
   const query = `SELECT teacherid,teacher_name,email FROM teachers`;
   try{
     const stafflist = await new Promise((resolve, reject) => {
       db.query(query,(error,result) => {
+        if(error) reject(error)
+        else resolve(result)
+      })
+    })
+    if(stafflist.length > 0){
+      res.status(200).json(stafflist)
+    }
+    else{
+      res.status(200).json([])
+    }
+  }
+  catch(err){
+    console.log(err)
+    res.status(500).json({message:"Internal server error"})
+  }
+})
+
+app.post('/search-stafflist',async(req,res) => {
+  const {teacher_name} = req.body
+  const query = `SELECT teacherid,teacher_name,email FROM teachers WHERE teacher_name LIKE ?`;
+  try{
+    var ntemp = "%";
+    ntemp += teacher_name;
+    ntemp += "%";
+    const stafflist = await new Promise((resolve, reject) => {
+      db.query(query,[ntemp],(error,result) => {
         if(error) reject(error)
         else resolve(result)
       })

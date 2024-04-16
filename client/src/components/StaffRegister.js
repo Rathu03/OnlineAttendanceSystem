@@ -39,7 +39,7 @@ const StaffRegister = () => {
 
       if(data.success == 1){
         alert("Registered Successfully")
-        navigate('../staff-login')
+        navigate('../')
       }
       else{
         alert("Error in filling the form")
@@ -110,7 +110,6 @@ const StaffRegister = () => {
         </form>
         <div className='login'>
           <button className='back-button' onClick={() => navigate('../')}>Back</button>
-          <p>Already have an account? <Link to="/staff-login" style={{ color: 'darkseagreen', marginLeft: "5px", cursor: "pointer" }}>Login now</Link></p>
         </div>
       </div>
     </div>

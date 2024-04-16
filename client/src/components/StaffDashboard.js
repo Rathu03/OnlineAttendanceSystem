@@ -565,14 +565,18 @@ const handleTemp = (data) => {
                         <th>Roll Number</th>
                         <th>Student Name</th>
                         <th>Class attended</th>
-                        {roomdata[0].dates.length != 0 ?  
-                        <>
-                          {roomdata[0].dates.map((date) => (
-                            <th>{handleDate(date.doc)} <br/> <div style={{padding:"5px"}}>{"("+date.num_of_hours + " hrs)"} </div></th>
-                          ))}
-                        </> : 
-                        <>
-                        </>}
+                        {roomdata.length > 0 &&
+                            <>
+                              {roomdata[0].dates.length != 0 ?  
+                                <>
+                                  {roomdata[0].dates.map((date) => (
+                                    <th>{handleDate(date.doc)} <br/> <div style={{padding:"5px"}}>{"("+date.num_of_hours + " hrs)"} </div></th>
+                                  ))}
+                                </> : 
+                                <>
+                                </>}
+                            </> 
+                            }
                         
                         {/* <th>{(roomdata[0].dates[0].doc).split('T')[0]}</th> */}
                         <th>Percentage</th>
