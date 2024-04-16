@@ -143,7 +143,7 @@ function ViewStudentPersonal() {
                                 <td colSpan={'2'}>
                                 <p className='view-field'><strong>Address:</strong><br/> {studentDetails.Address}</p>
                                 </td>
-                                <td><p className='view-field'><strong>Resident Type</strong><br/> {studentDetails.Residenttype}</p></td>
+                                <td><p className='view-field'><strong>Resident Type:</strong><br/> {studentDetails.Residenttype}</p></td>
 
                             </tr>
                             <tr>

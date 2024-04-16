@@ -58,7 +58,7 @@ const Navbar = () => {
                     <a onClick={() => toggleClick(`../${role}/edit/otherdata`)}>Other</a>
                 </div>
             </li>}
-             <li onClick={handleClick}>LOGOUT</li>
+             <li id="logout-button" onClick={handleClick}>LOGOUT</li>
         </ul>
     </div>
   )

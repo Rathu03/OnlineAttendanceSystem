@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx'
 
 const CreateRoom = () => {
@@ -7,6 +8,7 @@ const CreateRoom = () => {
     const [extractedData, setExtractedData] = useState(null);
     const [subject_code, setSubject_code] = useState("");
     const [sem,setSem] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         const sendData = async () => {
@@ -126,6 +128,10 @@ const CreateRoom = () => {
                         <button className='submit-button'>Submit</button>
                     </div>
                 </form>
+                <div className='login'>
+            <button className='back-button' onClick={() => navigate("../")}>Back</button>
+            <p>Don't have an account? <Link to="/staff/attendance" style={{color:'darkseagreen',marginLeft:"5px",cursor:"pointer"}}>Signup now</Link></p>
+            </div>
             </div>
         </div>
     )
