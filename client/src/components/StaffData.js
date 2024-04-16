@@ -1,12 +1,31 @@
 import React, { useState, useEffect } from 'react'
 import { CiCirclePlus } from 'react-icons/ci'
+import { useNavigate } from 'react-router-dom'
 
 const StaffData = () => {
 
+  const navigate = useNavigate()
   const adminemail = localStorage.getItem('adminEmail')
   const [stafflist,setStafflist] = useState([])
   const [isStaffClicked,setIsStaffClicked] = useState(false)
   const [data,setData] = useState([])
+  const [roomdata,setRoomdata] = useState([])
+  const [isClicked,setIsClicked] = useState(null)
+  const [searchStaff,setSearchStaff] = useState("")
+  const [searchStafflist,setSearchStafflist] = useState([])
+
+
+  const handleDate = (date) => {
+    const date1 = new Date(date);
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    const localDate = date1.toLocaleDateString('en-GB',options); 
+    return localDate;
+  }
+
+  const calculateAttendance = (obj) => {
+    const attend = ((obj.class_attended / obj.class_taken)*100).toFixed(2);
+    return attend;
+  }
 
   const getData = async (email) => {
     setIsStaffClicked(true) 
@@ -18,8 +37,8 @@ const StaffData = () => {
         },
         body: JSON.stringify(body)
       })
-      const temp = await response.json()
-      setData(temp);
+    const temp = await response.json()
+    setData(temp);
   }
 
 
@@ -37,20 +56,79 @@ const StaffData = () => {
     fetchStaffData() 
   },[])
 
+  useEffect(() => {
+    const handleSearchStaff = async() => {
+      const teacher_name = searchStaff;
+      const response = await fetch(`http://localhost:5000/search-stafflist`,{
+        method: "POST",
+        headers: {
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify({teacher_name})
+      })
+      const temp = await response.json()
+      setSearchStafflist(temp)
+    }
+    handleSearchStaff()
+  },[searchStaff])
+
+  useEffect(() => {
+    const handleRoom = async(value) => {
+      const response = await fetch(`http://localhost:5000/get-staff-data`,{
+        method: "POST",
+        headers: {
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify(value)
+      })
+      const data = await response.json()
+      setRoomdata(data)
+      
+    }
+    if(isClicked){
+      handleRoom(isClicked)
+    }
+  },[isClicked])
 
   return (
     <div className='main-body'>
       <div className='staff-dashboard'>
         <div className='staff-header'>
-          <h1>Staff List</h1>
-          {!isStaffClicked && <CiCirclePlus className='plus-icon' onClick={() => {}}/>}
+          {!isStaffClicked ? 
+          <>
+            <h1>Staff List</h1>
+            <input 
+              type='text'
+              name="search-staff"
+              id="search-staff"
+              placeholder='Enter name'
+              value={searchStaff}
+              onChange={(e) => setSearchStaff(e.target.value)}
+              
+            />
+            <CiCirclePlus className='plus-icon' onClick={() => navigate('../../staff-register')}/>
+          </> : 
+          <>
+            {!isClicked ? 
+            <>
+              <h1>Subject List</h1>
+              <button className='submit-button' onClick={() => setIsStaffClicked(false)}>Back</button>
+            </> : 
+            <>
+              <h1>Enrolled Students</h1>
+              <button className='submit-button' onClick={() => setIsClicked(null)}>Back</button>
+            </>}
+            
+          </>}
         </div>
         <div style={{ borderTop: "1px solid white" }}></div>
         {stafflist.length > 0 ? 
         <>
           {!isStaffClicked ? 
           <>
-          {stafflist.map((item, index) =>(
+          {searchStaff.length == 0 ? 
+          <>
+            {stafflist.map((item, index) =>(
             <div>
             <div className='list-card'>
               <div style={{width:"100px"}}>{item.teacherid}</div>
@@ -61,11 +139,34 @@ const StaffData = () => {
             </div>
           ))}
           </> : 
+          <>
+            {searchStafflist.length > 0 ? 
             <>
-              {data.length > 0 ? 
+              {searchStafflist.map((item, index) =>(
+              <div>
+              <div className='list-card'>
+                <div style={{width:"100px"}}>{item.teacherid}</div>
+                <div style={{ width: "100px", cursor: "pointer"}} onClick = {() => getData(item.email)}>{item.teacher_name}</div> 
+                <div style={{width:"100px"}}>{item.email}</div>
+              </div>
+              <div style={{ borderTop: "1px solid white" }}></div>
+              </div>
+              ))}
+            </> : 
+            <>
+              <div style={{ fontSize: "25px", padding: "30px" }}>
+                No staff found
+              </div>  
+            </>} 
+          </>}      
+          </> : 
+            <>
+              {!isClicked ? 
+                <>
+                  {data.length > 0 ? 
               <>
                 {data.map((item, index) => (
-                    <div className='list-room' key={index} onClick={() => {}}>
+                    <div className='list-room' key={index} onClick={() => setIsClicked(item)}>
                       <div className='rooms'>
                         <div className='room-header'>
                           <div>{item.subject_code}</div>
@@ -84,6 +185,55 @@ const StaffData = () => {
                   No room found
                 </div> 
               </>}
+                </> : 
+                <>
+                  <div className='room-data-container' style={{transform:"scale(1.4)"}}>
+                    <div className='tables'>
+                      <table className='attendance-list'>
+                        <thead>
+                          <tr>
+                            <th>Roll Number</th>
+                            <th>Student Name</th>
+                            <th>Class attended</th>
+                            {roomdata.length > 0 &&
+                            <>
+                              {roomdata[0].dates.length != 0 ?  
+                                <>
+                                  {roomdata[0].dates.map((date) => (
+                                    <th>{handleDate(date.doc)} <br/> <div style={{padding:"5px"}}>{"("+date.num_of_hours + " hrs)"} </div></th>
+                                  ))}
+                                </> : 
+                                <>
+                                </>}
+                            </> 
+                            }
+                            
+                            <th>Percentage</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {roomdata.map((obj) => (
+                            <tr key={obj.rollnumber}>
+                              <td>{obj.rollnumber}</td>
+                              <td>{obj.student_name}</td>
+                              <td>{obj.class_attended}</td>
+                              {obj.dates.length != 0 ? 
+                              <>
+                                {obj.dates.map((date) => (
+                                  <td style={{color: date.attendance_status == 'P' ? "black" : "red",fontWeight: date.attendance_status == 'P' ? "normal" : "bold"  }}>{date.attendance_status}</td>
+                                ))} 
+                              </> : 
+                              <></>}
+                              <td>{calculateAttendance(obj)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                  </div>
+                </>}
+              
             </>
           } 
         </> :

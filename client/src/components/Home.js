@@ -36,9 +36,9 @@ const Home = () => {
       if (data.decoded.type == "staff") {
         toggle('staff/attendance');
       }
-      // if(data.decoded.type == "admin"){
-      //   toggle('admin/attendance');
-      // }
+      if(data.decoded.type == "admin"){
+        toggle('admin/attendance');
+      }
     }
   }
 
