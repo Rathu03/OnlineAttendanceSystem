@@ -736,7 +736,7 @@ textarea:focus {
 }
 
 #student-view-personal .view-form {
-  box-shadow: rgba(80, 196, 246, 0.974) 0px 5px 15px;
+  box-shadow: black 0px 0px 50px;
   animation: slideInFromLeft 0.5s ease-in-out;
   background: #2980B9;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to bottom, #FFFFFF, #88ddfca9);  /* Chrome 10-25, Safari 5.1-6 */
@@ -747,3 +747,111 @@ textarea:focus {
 #student-view-personal strong{
   text-transform: uppercase;
 }
+
+#student-edit-academic p{
+  color: black;
+}
+
+#student-edit-academic .school-table-container{
+  background-color: white;
+  padding: 20px;
+  margin: auto;
+  width: 75%;
+  border-radius: 25px;
+  margin-top: 20px;
+}
+
+#student-edit-academic .school-table{
+  width: auto; /* Set table width to auto */
+  border-collapse: collapse; /* Collapse table borders */
+  table-layout: auto; /* Allow table to adjust width based on content */
+  margin: auto;
+}
+
+#student-edit-academic .school-table td{
+  text-align: center;
+  width: 25%;
+}
+
+
+#student-edit-academic .school-table td input{
+  width: 60%;
+  text-align: center;
+  border-radius: 15px;
+  border: 1px solid black;
+  margin-left: 15px;
+  font-size: 1.1em;
+}
+
+#student-edit-academic .school-table button{
+  font-size: 1.5em;
+}
+
+#student-edit-academic .school-table td input:focus{
+  box-shadow: 0 0 3px 3px rgb(60, 190, 241);
+}
+
+#student-edit-academic .school-table td p{
+  text-align: center;
+}
+
+#student-edit-academic .topic{
+  display: inline-block;
+  font-weight: bold;
+}
+
+#hide-text{
+  color: transparent;
+}
+
+.sem-view-container p{
+  display: inline-block;
+  margin:10px;
+}
+
+.marks-view{
+  background-color: red;
+  background-color: white;
+  padding: 20px;
+  margin: auto;
+  width: 75%;
+  border-radius: 25px;
+  margin-top: 20px;
+}
+
+.marks-view table{
+    width: 75%;
+    margin: auto;
+}
+
+#selector-table{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#selector-table td{
+  width: 33%;
+  text-align: center;
+}
+
+.marks-table{
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+}
+
+.marks-table tbody td, .marks-table thead th{
+  text-align: center;
+}
+
+.marks-table tr:hover{
+  border: none;
+  transform: scale(1.01);
+}
+
+.marks-table tr{
+  border-radius: 20px;
+  transition: transform 0.3s ease-in-out;
+}
+
+

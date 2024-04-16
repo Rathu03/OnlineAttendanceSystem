@@ -59,19 +59,76 @@ app.post('/tokencheck', async (req, res) => {
 
 app.post('/registerstudent', async (req, res) => {
 
-    const { rollnumber, username, password, email, year_of_joining } = req.body;
-    const query = `INSERT INTO students VALUES(?,?,?,?,?,?);`;
-    const hashedPass = crypto.createHash('sha256').update(password).digest('hex');
-    db.query(query,[rollnumber, username, hashedPass, email, year_of_joining,""],(error,result) => {
-      if(error){
-        console.error(error);
-        res.status(500).json({ success: 0 });
-      }
-      else{
-        res.status(201).json({success:1})
-      }
-    })
+  const { rollnumber, username, password, email, year_of_joining, department, course } = req.body;
 
+  // Hash the password
+  const hashedPass = crypto.createHash('sha256').update(password).digest('hex');
+
+  // Query to insert into students table
+  const studentQuery = `INSERT INTO students (rollnumber, username, password, email, year_of_joining) VALUES(?,?,?,?,?);`;
+
+  // Query to insert into student_academic_details table
+  const academicDetailsQuery = `INSERT INTO student_academic_details (RollNumber) VALUES(?);`;
+
+  const studentDetailsQuery = `INSERT INTO studentdetails(RollNumber) VALUES(?);`;
+
+  const marksQuery = `INSERT INTO marks(RollNumber,SubjectID,Semester,MarksObtained,Grade) SELECT ? as Rollnumber, SubjectID, Semester, 0 as MarksObtained, NULL as Grade from subjects;
+  `
+  // Execute both queries in a transaction
+  db.beginTransaction((err) => {
+      if (err) {
+          console.error(err);
+          res.status(500).json({ success: 0 });
+          return;
+      }
+
+      db.query(studentQuery, [rollnumber, username, hashedPass, email, year_of_joining], (error, result) => {
+          if (error) {
+              console.error(error);
+              return db.rollback(() => {
+                  res.status(500).json({ success: 0 });
+              });
+          }
+
+          db.query(academicDetailsQuery, [rollnumber], (academicError, academicResult) => {
+              if (academicError) {
+                  console.error(academicError);
+                  return db.rollback(() => {
+                      res.status(500).json({ success: 0 });
+                  });
+              }
+
+              db.query(studentDetailsQuery, [rollnumber], (studentDetailsError, studentDetailsResult) => {
+                if (studentDetailsError) {
+                    console.error(studentDetailsError);
+                    return db.rollback(() => {
+                        res.status(500).json({ success: 0 });
+                    });
+                }
+
+                db.query(marksQuery, [rollnumber], (marksError, marksResult) => {
+                  if (studentDetailsError) {
+                      console.error(studentDetailsError);
+                      return db.rollback(() => {
+                          res.status(500).json({ success: 0 });
+                      });
+                  }
+
+                // Commit the transaction if both queries are successful
+                db.commit((commitError) => {
+                    if (commitError) {
+                        console.error(commitError);
+                        return db.rollback(() => {
+                            res.status(500).json({ success: 0 })
+                        })
+                    }
+                    res.status(201).json({ success: 1 })
+                })
+              })
+            })
+          })
+      })
+  })
 })
 
 app.post('/loginstudent', async (req, res) => {
@@ -1212,9 +1269,11 @@ const storage=multer.diskStorage(
     const semester = req.params.sem;
     const rollNumber = req.params.rollNumber;
     console.log(semester, rollNumber);
-    const query = `SELECT * FROM marks WHERE Semester = ? AND RollNumber = ?`;
+    const query = `select *,subjects.SubjectID from marks INNER JOIN subjects on marks.SubjectID=subjects.SubjectID  WHERE marks.Semester = ? AND marks.RollNumber = ?`;
     db.query(query, [semester, rollNumber], (error, results) => {
       if (error) throw error;
+      console.log("Results = ");
+      console.log(results);
       res.json(results);
     });
   });

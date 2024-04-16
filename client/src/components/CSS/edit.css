@@ -51,7 +51,7 @@
     margin: 6%;
     margin-top: 3%;
     background-color: white;
-    box-shadow: 0 0 50px 10px skyblue;
+    box-shadow: 0 0 50px 1px black;
 }
 
 #resident-td label, #resident-td select{

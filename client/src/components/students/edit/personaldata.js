@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 import Navbar from '../../Navbar';
 import '../../CSS/edit.css'
 function EditStudentPersonal() {
@@ -76,12 +78,18 @@ function EditStudentPersonal() {
             if (studentData.RollNumber) {
                 const response = await axios.put(`http://localhost:5000/updateStudentDetails/${studentData.RollNumber}`, studentData);
                 console.log('Student data updated successfully:', response.data);
-                setSuccessMessage('Student data updated successfully');
+                //setSuccessMessage('Student data updated successfully');
+                toast.success("Student Data Updated Successfully",{
+                    autoClose:2500,
+                    position:'top-center'
+                });
             } else {
                 const response1 = await axios.post(`http://localhost:5000/addStudentDetails/${fetchedUsername}`, studentData);
                 console.log('Student data added successfully:', response1.data,fetchedUsername);
-                
-                setSuccessMessage('Student data added successfully');
+                toast.success("Student Data Added Successfully",{
+                    autoClose:2500,
+                    position:'top-center'
+                });
             }
 
             setTimeout(() => {
@@ -102,9 +110,17 @@ axios.post(`http://localhost:5000/upload/${studentData.RollNumber}`,formdata)
 .then(res=>{
     if(res.data.status === 'Success'){
         console.log("succeed");
+        toast.success("Profie Photo Updated Successfully",{
+            autoClose:2500,
+            position:'top-center'
+        });
     }
     else{
         console.log("failed");
+        toast.success("Profie Photo Updation Failed",{
+            autoClose:2500,
+            position:'top-center'
+        });
     }
 
 })
@@ -131,7 +147,6 @@ axios.post(`http://localhost:5000/upload/${studentData.RollNumber}`,formdata)
                             <button  onClick={handleUpload}>Upload</button>
                         </div>
                         <div className='form-fragment-right'>
-
 
                             <table border='0'>
                                  <tr>
@@ -214,7 +229,7 @@ axios.post(`http://localhost:5000/upload/${studentData.RollNumber}`,formdata)
                                         <input className='edit-input' type="text" name="Fathermobile" placeholder='Father Mobile Number' value={studentData.Fathermobile} onChange={handleChange} />
                                     </td>
                                     <td>
-                                        <label className='edit-label'>Mother's Occupation:</label>
+                                        <label className='edit-label'>Mother's Mobile:</label>
                                         <input className='edit-input' type="text" name="Mothermobile" placeholder='Mother Mobile Number' value={studentData.Mothermobile} onChange={handleChange} />
                                     </td>
                                 </tr>
@@ -271,7 +286,7 @@ axios.post(`http://localhost:5000/upload/${studentData.RollNumber}`,formdata)
                             <br/> */}
 
                             <br/><button type="submit" >Submit</button>
-
+                            <ToastContainer />
                         </div>
                     </div>
                 </form>

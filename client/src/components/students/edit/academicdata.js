@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 import Navbar from '../../Navbar';
 
 function EditStudentAcademic() {
@@ -7,17 +9,20 @@ function EditStudentAcademic() {
     const [basicacademic, setBasicAcademic] = useState(null);
     const [marks, setMarks] = useState(null);
     const [sem, setSem] = useState(null);
+    const [semester, setSemester] = useState('');
     const [tenthMarks, setTenthMarks] = useState('');
     const [higherSecondaryMarks, setHigherSecondaryMarks] = useState('');
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        if (name === 'sem') {
-            setSem(value);
+        if (name === 'semester') {
+            setSemester(value);
         } else if (name === 'tenthMarks') {
             setTenthMarks(value);
         } else if (name === 'higherSecondaryMarks') {
             setHigherSecondaryMarks(value);
+        } else if (name === 'sem'){
+            setSem(value);
         }
     };
 
@@ -29,6 +34,7 @@ function EditStudentAcademic() {
                     .then(response => {
                         if (response.data) {
                             setBasicAcademic(response.data);
+                            setSemester(response.data.CurrentSemester);
                             setTenthMarks(response.data.TenthMarks);
                             setHigherSecondaryMarks(response.data.HigherSecondaryMarks);
                         } else {
@@ -80,7 +86,10 @@ function EditStudentAcademic() {
 
     const handleEditBasicAcademic = () => {
         // Make API call to edit basic academic details
+        if(tenthMarks<=100 && higherSecondaryMarks<=100 && tenthMarks>=0 && higherSecondaryMarks>=0){
+
         axios.put(`http://localhost:5000/editbasicacademic/${userRef.current}`, {
+            CurrentSemester: semester,
             TenthMarks: tenthMarks,
             HigherSecondaryMarks: higherSecondaryMarks
         })
@@ -88,86 +97,172 @@ function EditStudentAcademic() {
             console.log('Basic academic details edited successfully');
             setBasicAcademic({
                 ...basicacademic,
+                CurrentSemester: semester,
                 TenthMarks: tenthMarks,
                 HigherSecondaryMarks: higherSecondaryMarks
+                
+            });
+            toast.success("Basic Academic Details Updated",{
+                autoClose:2500,
+                position:'top-center'
             });
         })
         .catch(error => {
             console.log(error);
+            toast.error("Error Occurred!!! Enter valid data",{
+                autoClose:2500,
+                position:'top-center'
+            });
         });
+        }
+
+        else{
+            toast.error("Enter valid data !!!",{
+                autoClose:2500,
+                position:'top-center'
+            });
+        }
     };
 
     return (
         <>
             <Navbar />
-   
-            {basicacademic && <div className='basic-detail'>
-                <p>Current Semester : {basicacademic.CurrentSemester}</p>
-                <p>Tenth Marks : 
-                    <input
-                        type="number"
-                        name="tenthMarks"
-                        value={tenthMarks}
-                        onChange={handleInputChange}
-                    />
-                </p>
-                <p>Higher Secondary Marks : 
-                    <input
-                        type="number"
-                        name="higherSecondaryMarks"
-                        value={higherSecondaryMarks}
-                        onChange={handleInputChange}
-                    />
-                </p>
-                <button className="add-btn" onClick={handleEditBasicAcademic}>Save Basic Academic Details</button>
-            </div>}
-            <div>
-                <label htmlFor="semSelect">Select Semester:</label>
-                <select
-                    id="semSelect"
-                    name="sem"
-                    value={sem || ''}
-                    onChange={handleInputChange}
-                >
-                    <option value="">Select Semester</option>
-                    {[...Array(8).keys()].map((num) => (
-                        <option key={num + 1} value={num + 1}>{num + 1}</option>
-                    ))}
-                </select>
-                <p>Semester: {sem}</p>
-            </div>
-            {marks && <div>
-                <h2>Marks Table</h2>
-                <table className='marks-table'>
-                    <thead>
+            <div id='student-edit-academic'>
+                {basicacademic && <div className='basic-detail'>
+                    <div className='school-table-container'>
+                    <ToastContainer />
+            
+
+                    <table border={'0'} className='school-table'>
+
                         <tr>
-                            <th>Subject ID</th>
-                            <th>Marks Obtained</th>
-                            <th>Grade</th>
-                            <th>Edit Marks</th>
+                            <td colSpan={'2'}>
+                                <h2>BASIC ACADEMIC DETAILS</h2>
+                            </td>
+                            <td>
+                            <button className="submit-button" onClick={handleEditBasicAcademic}>
+                                Save
+                            </button>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {marks.map((mark, index) => (
-                            <tr key={index}>
-                                <td>{mark.SubjectID}</td>
-                                <td>{mark.MarksObtained}</td>
-                                <td>{mark.Grade}</td>
-                                <td>
-                                    <input
-                                        type="number"
-                                        value={mark.MarksObtained}
-                                        onChange={(e) => {
-                                            const newMarks = e.target.value;
-                                            handleEditMarks(mark.SubjectID, newMarks);
-                                        }}
-                                    />
-                                </td>
-                            </tr>
+
+                        <tr>
+                            <td>
+                                <p className='topic'><span id='hide-text'>00</span>Secondary Percentage : </p><br/>
+                                <input
+                                type="number"
+                                name="tenthMarks"
+                                placeholder='10th/SSLC'
+                                value={tenthMarks}
+                                onChange={handleInputChange}
+                                />
+                            </td>
+                            
+                            <td>
+                                <p className='topic'><span id='hide-text'>000</span>Higher Secondary Percentage : </p><br/>
+                                <input
+                                    type="number"
+                                    name="higherSecondaryMarks"
+                                    placeholder='12th/HSC'
+                                    value={higherSecondaryMarks}
+                                    onChange={handleInputChange}
+                                />
+                                
+                            </td>
+
+                            <td>
+                                <p className='topic'><span id='hide-text'>00</span>Current Semester : </p><br/>
+                                <input
+                                type="number"
+                                name="semester"
+                                value={semester}
+                                onChange={handleInputChange}
+                                />
+                            </td>
+
+                            
+                        </tr>
+                    </table>
+                    </div>
+
+                    
+                    
+                    
+                    
+                </div>}
+                <div  className='marks-view'>
+                    <table border={'0'} id='selector-table'>
+                        <tr>
+                            <td><label htmlFor="semSelect" style={{fontWeight: "bold"}}>Select Semester:</label>
+                    <select
+                        id="semSelect"
+                        name="sem"
+                        value={sem || ''}
+                        onChange={handleInputChange}
+                    >
+                        <option value="" >Select Semester</option>
+                        {[...Array(8).keys()].map((num) => (
+                            <option key={num + 1} value={num + 1}>{num + 1}</option>
                         ))}
-                    </tbody>
-                </table>
-            </div>}
+                    </select></td>
+                            <td><h2>Marks Table</h2></td>
+                            <td><button className="submit-button" style={{fontSize:"1.5em"}} onClick={handleEditBasicAcademic}>
+                                Save
+                            </button></td>
+                        </tr>
+                    </table>
+                {/* <div>
+                    <label htmlFor="semSelect">Select Semester:</label>
+                    <select
+                        id="semSelect"
+                        name="sem"
+                        value={sem || ''}
+                        onChange={handleInputChange}
+                    >
+                        <option value="">Select Semester</option>
+                        {[...Array(8).keys()].map((num) => (
+                            <option key={num + 1} value={num + 1}>{num + 1}</option>
+                        ))}
+                    </select>
+                    {/* <p>Semester: {sem}</p> *//*}
+                </div> */}
+                {marks && <div>
+                    {/* <h2>Marks Table</h2> */}
+                    <table className='marks-table'>
+                        <thead>
+                            <tr>
+                                <th>Subject ID</th>
+                                <th>Subject Name</th>
+                                {/* <th>Marks Obtained</th> */}
+                                <th>Edit Marks</th>
+                                <th>Grade</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {marks.map((mark, index) => (
+                                <tr key={index}>
+                                    <td>{mark.SubjectID}</td>
+                                    <td>{mark.SubjectName}</td>
+                                    {/* <td>{mark.MarksObtained}</td> */}
+                                    <td>
+                                        <input
+                                            type="number"
+                                            value={mark.MarksObtained}
+                                            onChange={(e) => {
+                                                const newMarks = e.target.value;
+                                                handleEditMarks(mark.SubjectID, newMarks);
+                                            }}
+                                        />
+                                    </td>
+                                    <td>{mark.Grade}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>}
+            </div>
+            </div>
         </>
     );
 }
