@@ -89,7 +89,7 @@ const StudentDashboard = () => {
             onChange={(e) => setSearchCode(e.target.value)}
             />
           </div>
-          <div style={{ borderTop: "1px solid rgb(13,13,13)" }}></div>
+          <div style={{ borderTop: "1px solid white" }}></div>
           {data.length > 0 ?
             <>
               {searchCode.length == 0 ? 

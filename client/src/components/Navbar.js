@@ -14,7 +14,11 @@ const Navbar = () => {
   const handleClick = () => {
     localStorage.removeItem('rollnumber');
     localStorage.removeItem('token');
-    localStorage.removeItem('student');
+    localStorage.removeItem('role');
+    localStorage.removeItem('admin')
+    localStorage.removeItem('teacherid')
+    localStorage.removeItem('adminemail')
+    localStorage.removeItem('email')
     navigate('/')
   }
 
@@ -26,7 +30,15 @@ const Navbar = () => {
     <div className='nav-container'>
         <h1>DIST</h1>
         <ul>
-            <li onClick={() => toggleClick(`../${role}/attendance`)}>ATTENDANCE</li> 
+            {role != 'admin' ? 
+              <>
+                <li onClick={() => toggleClick(`../${role}/attendance`)}>ATTENDANCE</li> 
+              </> :
+              <>
+                <li>STUDENT</li>
+                <li>STAFF</li>
+              </>}
+            
             <li onClick={() => toggleClick(`../${role}/analytics`)}>ANALYTICS</li> 
             <li class="dropdown">
                 VIEW
@@ -37,7 +49,7 @@ const Navbar = () => {
                     <a onClick={() => toggleClick(`../${role}/view/otherdata`)}>Other</a>
                 </div>
             </li> 
-            {role!='staff' && <li class="dropdown">
+            {role!='staff' && role!='admin' && <li class="dropdown">
                 EDIT
                 <i class="fa fa-caret-down"></i> 
                 <div class="dropdown-content">

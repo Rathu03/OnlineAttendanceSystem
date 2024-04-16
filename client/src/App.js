@@ -36,7 +36,8 @@ import'./components/CSS/viewotherdata.css'
 import'./components/CSS/edit_otherdata.css'
 import ResetPassword from './components/ResetPassword'
 import AdminDashboard from './components/AdminDashboard'
-import AdminAttendance from './components/AdminAttendance'
+import StudentData from './components/StudentData'
+import StaffData from './components/StaffData'
 
 
 
@@ -75,7 +76,9 @@ const App = () => {
         <Route path='/hod/view/academicdata' element={<Hodviewacademic />} />
         <Route path='/hod/view/otherdata' element={<Hodviewother />} />
         <Route path='/hod/analytics' element={<Hodanalytics/>} />
-        <Route path='/admin/attendance' element={<AdminAttendance />} />
+        <Route path='/admin/attendance' element={<AdminDashboard />} />
+        <Route path='/admin/attendance/student' element={<StudentData />}/>
+        <Route path='/admin/attendance/staff' element={<StaffData />}/>
       </Routes>
     </Router>
   )

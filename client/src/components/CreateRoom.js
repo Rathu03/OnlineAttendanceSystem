@@ -115,7 +115,11 @@ const CreateRoom = () => {
                     </div>
                     <div className='login'>
                         <div className='l2' style={{ margin: "10px" }}>
-                            <input type="file" id="file" accept=".xlsx, .xls" onChange={handleFileChange} />
+                            <label className='custom-file-upload'>
+                            <input type="file" id="file" accept=".xlsx, .xls" onChange={handleFileChange}  />
+                            Choose File
+                            </label>
+                            
                         </div>
                     </div>
                     <div className='login'>

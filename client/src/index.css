@@ -655,6 +655,18 @@ textarea:focus {
   background-color: red;
 }
 
+.list-card {
+  display:flex;
+  column-gap:320px;
+  padding: 20px;
+  font-size: 22px;
+  /* border: 1px solid black; */
+}
+
+.list-card:hover {
+  background-color: rgb(226, 233, 235);
+}
+
 #student-view-personal{
   background-color: white;
 }
