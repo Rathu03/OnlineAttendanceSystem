@@ -1,6 +1,13 @@
 /* Add colors */
 .view-form {
-    background-color: #dbd2d2;
+    background-color: #f8f7f7;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .view-form1{
+    background-color: #f8f7f7;
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 10px;
@@ -14,6 +21,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin: 0.8%;
   }
   
   .add-btn:hover {
@@ -27,6 +35,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin: 0.8%;
   }
   
   .delete-btn:hover {

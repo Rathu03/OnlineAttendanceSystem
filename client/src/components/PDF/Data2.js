@@ -213,7 +213,7 @@ function Data2(){
                 value={rollNumber}
                 onChange={handleInputChange}
             />
-            <button onClick={fetchData}>Search</button>
+            <button className='add-btn' onClick={fetchData}>Search</button>
            <div className="persoanl-details">
            <div className='view-container'>
                 <h2 className='view-heading'>Student Personal Details</h2>
@@ -292,7 +292,7 @@ function Data2(){
            <div className="other-details">
 
            {internships && internships.map((internship, index) => (
-    <div className='view-form1' key={index}>
+    <div className='view-form' key={index}>
         <h2>Internship Details {index + 1}</h2>
         <p className='view-field'><strong>Roll Number:</strong> {internship.roll_number}</p>
         <p className='view-field'><strong>Employer:</strong> {internship.employer_name}</p>

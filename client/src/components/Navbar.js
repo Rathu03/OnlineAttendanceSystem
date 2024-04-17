@@ -47,6 +47,7 @@ const Navbar = () => {
                     <a onClick={() => toggleClick(`../${role}/view/personaldata`)}>Personal</a>
                     <a onClick={() => toggleClick(`../${role}/view/academicdata`)}>Academic</a>
                     <a onClick={() => toggleClick(`../${role}/view/otherdata`)}>Other</a>
+                    <a onClick={() => toggleClick(`../${role}/view/pdf`)}>PDF</a>
                 </div>
             </li> 
             {role!='staff' && role!='admin' && <li class="dropdown">

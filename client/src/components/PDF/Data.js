@@ -10,9 +10,8 @@ function Data(){
     const [marksData, setMarksData] = useState([]);
     const [gpaData, setGpaData] = useState({});
     useEffect(() => {
-        axios.get('http://localhost:5000/session')
-          .then(response => {
-            userRef.current = response.data.username;
+     
+            userRef.current = localStorage.getItem('rollnumber');
     
             axios.get(`http://localhost:5000/basicacademic/${userRef.current}`)
               .then(response => {
@@ -25,10 +24,8 @@ function Data(){
               .catch(error => {
                 console.log(error);
               });
-          })
-          .catch(error => {
-            console.log(error);
-          });
+        
+          
       }, []);
     
       useEffect(() => {
@@ -57,9 +54,8 @@ function Data(){
       }, [basicacademic]);
     
     useEffect(() => {
-        axios.get('http://localhost:5000/session')
-            .then(response => {
-                const username = response.data.username;
+      
+                const username = localStorage.getItem('rollnumber');
                 
                 axios.get(`http://localhost:5000/studentDetails/${username}`)
                     .then(response => {
@@ -80,10 +76,8 @@ function Data(){
                     .catch(error => {
                         console.error('Error fetching student details:', error);
                     });
-            })
-            .catch(error => {
-                console.error('Error fetching username:', error);
-            });    
+          
+               
     }, []);
 
     const formatDate = (dateString) => {
@@ -104,9 +98,8 @@ function Data(){
     const [events,setEvents]=useState(null);
     axios.defaults.withCredentials = true; 
     useEffect(() => {
-        axios.get('http://localhost:5000/session')
-            .then(response => {
-                const username = response.data.username;
+       
+                const username = localStorage.getItem('rollnumber');
                 
                 axios.get(`http://localhost:5000/InternshipDetails/${username}`)
                     .then(response => {
@@ -208,10 +201,7 @@ function Data(){
                     .catch(error => {
                         console.error('Error fetching Events details:', error);
                     });
-            })
-            .catch(error => {
-                console.error('Error fetching username:', error);
-            });    
+              
     }, []);
     return(
         <div>
@@ -257,7 +247,7 @@ function Data(){
       <div>
         <h2>Marks Table</h2>
         {marksData.length > 0 && 
-          <table className='marks-table'>
+          <table className='marks-table1'>
             <thead>
               <tr>
                 <th>Semester</th>
@@ -300,9 +290,9 @@ function Data(){
         <p className='view-field'><strong>Employer:</strong> {internship.employer_name}</p>
         <p className='view-field'><strong>On/Off campus:</strong> {internship.on_off_campus}</p>
         <p className='view-field'><strong>CTC:</strong> {internship.ctc}</p>
-        <p className='view-field'><strong>Internship Duration:</strong> {internship.internship_duration}</p>
-        <p className='view-field'><strong>Internship StartDate:</strong> {internship.internship_start_date}</p>
-        <p className='view-field'><strong>Internship EndDate:</strong> {internship.internship_end_date}</p>
+        <p className='view-field'><strong>Internship Duration:</strong> {internship.InternshipDuration}</p>
+        <p className='view-field'><strong>Internship StartDate:</strong> {new Date(internship.InternshipStartDate).toLocaleDateString()}</p>
+        <p className='view-field'><strong>Internship EndDate:</strong> {new Date(internship.InternshipEndDate).toLocaleDateString()}</p>
         <p className='view-field'><strong>Product/Service Based :</strong> {internship.product_service_based}</p>
         
     </div>

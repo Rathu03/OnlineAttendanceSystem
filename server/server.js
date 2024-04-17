@@ -1306,28 +1306,30 @@ const storage=multer.diskStorage(
     const rollNumber = req.params.rollNumber;
     const subjectID = req.params.subjectID;
     const newMarks = req.body.marks;
-    let newGrade;
-    if (newMarks >= 90) {
-      newGrade = 'O';
-    } else if (newMarks >= 80) {
-      newGrade = 'A+';
-    } else if (newMarks >= 70) {
-      newGrade = 'A';
-    } else if (newMarks >= 60) {
-      newGrade = 'B+';
-    } else if (newMarks >= 50) {
-      newGrade = 'B';
-    } else {
-      newGrade = 'C';
-    }
-    const query = `UPDATE marks SET MarksObtained = ?, Grade = ? WHERE RollNumber = ? AND SubjectID = ?`;
-    db.query(query, [newMarks, newGrade, rollNumber, subjectID], (error, results) => {
+    const query = `UPDATE marks SET MarksObtained = ?, WHERE RollNumber = ? AND SubjectID = ?`;
+    db.query(query, [newMarks, rollNumber, subjectID], (error, results) => {
       if (error) {
         console.error("Error updating marks:", error);
         res.status(500).json({ error: "An error occurred while updating marks" });
       } else {
         console.log("Marks and grade updated successfully");
         res.status(200).json({ message: "Marks and grade updated successfully" });
+      }
+    });
+  });
+
+  app.put('/editgrade/:rollNumber/:subjectID', (req, res) => {
+    const rollNumber = req.params.rollNumber;
+    const subjectID = req.params.subjectID;
+    const newgrade = req.body.grade;
+    const query = `UPDATE marks SET Grade = ? WHERE RollNumber = ? AND SubjectID = ?`;
+    db.query(query, [newgrade, rollNumber, subjectID], (error, results) => {
+      if (error) {
+        console.error("Error updating grade:", error);
+        res.status(500).json({ error: "An error occurred while updating grade" });
+      } else {
+        console.log(" grade updated successfully");
+        res.status(200).json({ message: "grade updated successfully" });
       }
     });
   });

@@ -10,6 +10,7 @@
   /* Basic Detail Styles */
   .basic-detail {
     margin-bottom: 20px;
+    color:black !important;
   }
   
   /* Select Styles */
@@ -34,6 +35,20 @@
     background-color: #f2f2f2;
   }
   
+  .marks-table1 {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .marks-table1 th, .marks-table1 td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .marks-table1 th {
+    background-color: #f2f2f2;
+  }
   /* Semester GPA Styles */
   .gpa-show {
     font-weight: bold;

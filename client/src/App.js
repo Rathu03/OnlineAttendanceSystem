@@ -38,7 +38,8 @@ import ResetPassword from './components/ResetPassword'
 import AdminDashboard from './components/AdminDashboard'
 import StudentData from './components/StudentData'
 import StaffData from './components/StaffData'
-
+import PDFData from './components/PDF/PDFGenerator'
+import PDFData2 from './components/PDF/PDFGenerator2'
 
 
 const App = () => {
@@ -62,6 +63,7 @@ const App = () => {
         <Route path="/student/view/personaldata" element={<ViewStudentPersonal />} />
         <Route path="/student/view/academicdata" element={<ViewStudentAcademic />} />
         <Route path="/student/view/otherdata" element={<ViewStudentOther />} />
+        <Route path="/student/view/pdf" element={<PDFData />} />
         <Route path="/student/edit/personaldata" element={<EditStudentPersonal />} />
         <Route path="/student/edit/otherdata" element={<EditStudentOther />} />
         <Route path="/changepassword" element={<Changepassword/>}/>
@@ -70,7 +72,9 @@ const App = () => {
         <Route path="/staff/view/personaldata" element={<Staffviewpersonal />} />
         <Route path="/staff/view/academicdata" element={<Staffviewacademic />} />
         <Route path="/staff/view/otherdata" element={<Staffviewother />} />
+        <Route path="/staff/view/pdf" element={<PDFData2 />} />
         <Route path="/staff/analytics" element={<Teacheranalytics/>} />
+
         <Route path="/pdf" element={<Data/>} />
         <Route path='/hod/view/personaldata' element={<Hodviewpersonal />} />
         <Route path='/hod/view/academicdata' element={<Hodviewacademic />} />

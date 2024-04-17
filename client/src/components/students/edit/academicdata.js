@@ -84,6 +84,27 @@ function EditStudentAcademic() {
             });
     };
 
+    const handleEditGrade = (subjectID, newGrade) => {
+       
+        axios.put(`http://localhost:5000/editgrade/${userRef.current}/${subjectID}`, { grade: newGrade })
+            .then(response => {
+                console.log('Marks edited successfully');
+                axios.get(`http://localhost:5000/getsemestermarks/${userRef.current}/${sem}`)
+                    .then(response => {
+                        if (response.data) {
+                            setMarks(response.data);
+                        } else {
+                            alert('No marks found for selected semester');
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    };
     const handleEditBasicAcademic = () => {
         // Make API call to edit basic academic details
         if(tenthMarks<=100 && higherSecondaryMarks<=100 && tenthMarks>=0 && higherSecondaryMarks>=0){
@@ -115,7 +136,6 @@ function EditStudentAcademic() {
             });
         });
         }
-
         else{
             toast.error("Enter valid data !!!",{
                 autoClose:2500,
@@ -123,7 +143,6 @@ function EditStudentAcademic() {
             });
         }
     };
-
     return (
         <>  
         <div id='student-edit-academic'>
@@ -132,8 +151,6 @@ function EditStudentAcademic() {
                 {basicacademic && <div className='basic-detail'>
                     <div className='school-table-container'>
                     <ToastContainer />
-            
-
                     <table border={'0'} className='school-table'>
 
                         <tr>
@@ -168,9 +185,7 @@ function EditStudentAcademic() {
                                     value={higherSecondaryMarks}
                                     onChange={handleInputChange}
                                 />
-                                
                             </td>
-
                             <td>
                                 <p className='topic'><span id='hide-text'>00</span>Current Semester : </p><br/>
                                 <input
@@ -179,17 +194,10 @@ function EditStudentAcademic() {
                                 value={semester}
                                 onChange={handleInputChange}
                                 />
-                            </td>
-
-                            
+                            </td> 
                         </tr>
                     </table>
-                    </div>
-
-                    
-                    
-                    
-                    
+                    </div>   
                 </div>}
                 <div  className='marks-view'>
                     <table border={'0'} id='selector-table'>
@@ -212,29 +220,14 @@ function EditStudentAcademic() {
                             </button></td>
                         </tr>
                     </table>
-                {/* <div>
-                    <label htmlFor="semSelect">Select Semester:</label>
-                    <select
-                        id="semSelect"
-                        name="sem"
-                        value={sem || ''}
-                        onChange={handleInputChange}
-                    >
-                        <option value="">Select Semester</option>
-                        {[...Array(8).keys()].map((num) => (
-                            <option key={num + 1} value={num + 1}>{num + 1}</option>
-                        ))}
-                    </select>
-                    {/* <p>Semester: {sem}</p> *//*}
-                </div> */}
+        
                 {marks && <div>
-                    {/* <h2>Marks Table</h2> */}
+                   
                     {sem && <table className='marks-table'>
                         <thead>
                             <tr>
                                 <th>Subject ID</th>
                                 <th>Subject Name</th>
-                                {/* <th>Marks Obtained</th> */}
                                 <th>Edit Marks</th>
                                 <th>Grade</th>
                                 
@@ -245,7 +238,6 @@ function EditStudentAcademic() {
                                 <tr key={index}>
                                     <td>{mark.SubjectID}</td>
                                     <td>{mark.SubjectName}</td>
-                                    {/* <td>{mark.MarksObtained}</td> */}
                                     <td>
                                         <input
                                             type="number"
@@ -256,7 +248,24 @@ function EditStudentAcademic() {
                                             }}
                                         />
                                     </td>
-                                    <td>{mark.Grade}</td>
+                                    <td>
+                                    <select id="gradeSelect" name="grade" value={mark.Grade} 
+                                    onChange={(e) => {
+                                        const newGrade = e.target.value;
+                                        handleEditGrade(mark.SubjectID, newGrade);
+                                    }}
+                                    >
+                                        <option value="">Select Grade</option>
+                                        <option value="O">O</option>
+                                        <option value="A">A</option>
+                                        <option value="A+">A+</option>
+                                        <option value="B">B</option>
+                                        <option value="B+">B+</option>
+                                        <option value="C">C</option>
+  
+                                        </select>
+                                    </td>
+                                    
                                 </tr>
                             ))}
                         </tbody>
