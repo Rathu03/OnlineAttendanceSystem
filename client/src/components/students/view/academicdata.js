@@ -52,12 +52,40 @@ function ViewStudentAcademic(){
 
     return(
         <>
+        <div id='student-view-academic'>
         <Navbar/>
-        <h1>ViewStudentAcademic</h1>
+        
+
         {basicacademic &&<div className='basic-detail'>
-            <p>Current Semester : {basicacademic.CurrentSemester}</p>
-            <p>Tenth Marks : {basicacademic.TenthMarks}</p>
-            <p>Higher Secondary Marks : {basicacademic.HigherSecondaryMarks}</p>
+
+            <div className='school-table-container'>
+            <table border={'1'} className='school-table'>
+
+                        <tr>
+                            <td colSpan={'3'}>
+                                <h2>BASIC ACADEMIC DETAILS</h2>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <p className='topic'><span id='hide-text'>00</span>Secondary Percentage : {basicacademic.TenthMarks}</p><br/>
+                            </td>
+                            
+                            <td>
+                                <p className='topic'><span id='hide-text'>000</span>Higher Secondary Percentage : {basicacademic.HigherSecondaryMarks}</p><br/>
+                                
+                            </td>
+
+                            <td>
+                                <p className='topic'><span id='hide-text'>00</span>Current Semester : {basicacademic.CurrentSemester}</p><br/>
+                            </td>
+
+                            
+                        </tr>
+                    </table>
+            
+            </div>
             </div>}
             <div>
             <label htmlFor="semSelect">Select Semester:</label>
@@ -95,6 +123,7 @@ function ViewStudentAcademic(){
       </table>
       {gpa && <p className='gpa-show'>Semester GPA:{gpa.gpa}</p>}
     </div>}
+    </div>
         </>
     )
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 const StudentLogin = () => {
 
@@ -24,11 +25,17 @@ const StudentLogin = () => {
     const handleForgot = async() => {
         const  role = "student";
         if(email == ""){
-            alert("Please enter your email")
+            toast.warning("Please enter your mail !",{
+                autoClose:2500,
+                position:'top-center'
+            });
             return
         }
         const body = {email,role};
-        alert("Check your mail")
+        toast.info("Check your mail",{
+            autoClose:2500,
+            position:'top-center'
+        });
         const response = await fetch(`http://localhost:5000/forgotpassword`,{
             method:"POST",
             headers: {
@@ -60,7 +67,10 @@ const StudentLogin = () => {
                 toggleClick('../student/attendance');
             }
             else{
-                alert('Invalid credentials');
+                toast.error("Invalid Credentials",{
+                    autoClose:2500,
+                    position:'top-center'
+                });
                 return;
             }
             localStorage.setItem("rollnumber",rollnumber);
@@ -119,6 +129,7 @@ const StudentLogin = () => {
             <p>Don't have an account? <Link to="/student-register" style={{color:'darkseagreen',marginLeft:"5px",cursor:"pointer"}}>Signup now</Link></p>
             </div>
         </div>
+        <ToastContainer/>
     </div>
   )
 }

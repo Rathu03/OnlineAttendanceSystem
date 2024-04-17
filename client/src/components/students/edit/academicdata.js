@@ -125,9 +125,10 @@ function EditStudentAcademic() {
     };
 
     return (
-        <>
+        <>  
+        <div id='student-edit-academic'>
             <Navbar />
-            <div id='student-edit-academic'>
+            
                 {basicacademic && <div className='basic-detail'>
                     <div className='school-table-container'>
                     <ToastContainer />
@@ -145,7 +146,7 @@ function EditStudentAcademic() {
                             </button>
                             </td>
                         </tr>
-
+                        
                         <tr>
                             <td>
                                 <p className='topic'><span id='hide-text'>00</span>Secondary Percentage : </p><br/>
@@ -228,7 +229,7 @@ function EditStudentAcademic() {
                 </div> */}
                 {marks && <div>
                     {/* <h2>Marks Table</h2> */}
-                    <table className='marks-table'>
+                    {sem && <table className='marks-table'>
                         <thead>
                             <tr>
                                 <th>Subject ID</th>
@@ -259,7 +260,7 @@ function EditStudentAcademic() {
                                 </tr>
                             ))}
                         </tbody>
-                    </table>
+                    </table>}
                 </div>}
             </div>
             </div>

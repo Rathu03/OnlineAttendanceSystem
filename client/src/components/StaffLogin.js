@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 const StaffLogin = () => {
 
@@ -20,11 +22,17 @@ const StaffLogin = () => {
     const handleForgot = async() => {
         const  role = "staff";
         if(email == ""){
-            alert("Please enter your email")
+            toast.warn("Please enter your email",{
+                autoClose:2500,
+                position:'top-center'
+            });
             return
         }
         const body = {email,role};
-        alert("Check your mail")
+        toast.info("Check your Mail",{
+            autoClose:2500,
+            position:'top-center'
+        });
         const response = await fetch(`http://localhost:5000/forgotpassword`,{
             method:"POST",
             headers: {
@@ -52,7 +60,10 @@ const StaffLogin = () => {
                 navigate('../staff/attendance')
             }
             else{
-                alert('Invalid credentials');
+                toast.error("Invalid credentials",{
+                    autoClose:2500,
+                    position:'top-center'
+                });
                 return;
             }
             localStorage.setItem('email',email);
@@ -67,6 +78,7 @@ const StaffLogin = () => {
 
 
   return (
+    <div id='staff-login'>
     <div className='main-body1'>
     {/* <div class="https://images.shiksha.com/mediadata/images/1511170235phpiYzFC7.jpeg"></div> */}
         <div className='login-container'>
@@ -113,6 +125,8 @@ const StaffLogin = () => {
                     
             </div>
         </div>
+        <ToastContainer/>
+    </div>
     </div>
   )
 }

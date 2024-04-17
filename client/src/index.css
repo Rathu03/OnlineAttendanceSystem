@@ -763,7 +763,11 @@ textarea:focus {
   color: black;
 }
 
-#student-edit-academic .school-table-container{
+#student-edit-academic .submit-button{
+  background-color: rgb(14, 178, 243);
+}
+
+#student-edit-academic .school-table-container, #student-view-academic .school-table-container{
   background-color: white;
   padding: 20px;
   margin: auto;
@@ -772,14 +776,14 @@ textarea:focus {
   margin-top: 20px;
 }
 
-#student-edit-academic .school-table{
+#student-edit-academic .school-table, #student-view-academic .school-table{
   width: auto; /* Set table width to auto */
   border-collapse: collapse; /* Collapse table borders */
   table-layout: auto; /* Allow table to adjust width based on content */
   margin: auto;
 }
 
-#student-edit-academic .school-table td{
+#student-edit-academic .school-table td, #student-view-academic .school-table td{
   text-align: center;
   width: 25%;
 }
@@ -806,7 +810,7 @@ textarea:focus {
   text-align: center;
 }
 
-#student-edit-academic .topic{
+#student-edit-academic .topic, #student-view-academic .topic{
   display: inline-block;
   font-weight: bold;
 }
@@ -815,12 +819,12 @@ textarea:focus {
   color: transparent;
 }
 
-.sem-view-container p{
+#student-edit-academic .sem-view-container p{
   display: inline-block;
   margin:10px;
 }
 
-.marks-view{
+#student-edit-academic .marks-view{
   background-color: red;
   background-color: white;
   padding: 20px;
@@ -830,14 +834,14 @@ textarea:focus {
   margin-top: 20px;
 }
 
-.marks-view table{
+#student-edit-academic .marks-view table{
     width: 75%;
     margin: auto;
 }
 
 #selector-table{
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 }
 
 #selector-table td{
@@ -845,24 +849,36 @@ textarea:focus {
   text-align: center;
 }
 
-.marks-table{
-  border-collapse: separate;
+#student-edit-academic .marks-table{
+  border-collapse: collapse;
   border-spacing: 0;
   border-radius: 10px;
+  color: #10465C;
+  box-shadow: 0px 10px 50px 3px black;
 }
 
-.marks-table tbody td, .marks-table thead th{
+#student-edit-academic .marks-table tbody td, .marks-table thead th{
   text-align: center;
 }
 
-.marks-table tr:hover{
+/* .marks-table tr:hover{
   border: none;
   transform: scale(1.01);
-}
+} */
 
-.marks-table tr{
+#student-edit-academic .marks-table tr{
   border-radius: 20px;
   transition: transform 0.3s ease-in-out;
 }
 
+#staff-login .login-container{
+  transform: scale(1.3);
+}
 
+#student-edit-academic, #student-view-academic{
+  background-color: rgb(221, 246, 255);
+}
+
+#student-view-academic .school-table-container p{
+  color: black;
+}

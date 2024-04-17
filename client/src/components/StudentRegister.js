@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 const StudentRegister = () => {
 
@@ -49,12 +51,18 @@ const StudentRegister = () => {
             const data = await response.json();
 
             if(data.success == 1){
-                alert("Registered Successfully");
+                toast.success("Student registered successfully",{
+                    autoClose:2500,
+                    position:'top-center'
+                });
                 navigate('../student-login');
             }
 
             else{
-                alert("Error in filling the form");
+                toast.warning("Error in filling the form",{
+                    autoClose:2500,
+                    position:'top-center'
+                });
             }
 
             console.log(response);
@@ -144,6 +152,7 @@ const StudentRegister = () => {
                 <p>Already have an account? <Link to="/student-login" style={{ color: 'darkseagreen', marginLeft: "5px", cursor: "pointer" }}>Login now</Link></p>
             </div>
         </div>
+        <ToastContainer/>
     </div>
   )
 }

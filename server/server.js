@@ -23,8 +23,8 @@ app.use(body_parser.urlencoded({ extended: true }));
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    // password: '',
-    password:'password',
+    password: '',
+    // password:'password',
     database: 'istdept'
 };
 
@@ -991,7 +991,7 @@ const storage=multer.diskStorage(
   
   app.get('/ScholarshipDetails/:username', (req, res) => {
     const { username } = req.params;
-    const sql = 'SELECT * FROM Scholarship WHERE roll_number = ?';
+    const sql = 'SELECT * FROM scholarship WHERE roll_number = ?';
     db.query(sql, [username], (err, result) => {
         if (err) {
             throw err;
@@ -1002,7 +1002,7 @@ const storage=multer.diskStorage(
   
   app.get('/ProjectDetails/:username', (req, res) => {
     const { username } = req.params;
-    const sql = 'SELECT * FROM Project WHERE roll_number = ?';
+    const sql = 'SELECT * FROM project WHERE roll_number = ?';
     db.query(sql, [username], (err, result) => {
         if (err) {
             throw err;
@@ -1014,7 +1014,7 @@ const storage=multer.diskStorage(
   
   app.get('/SportsDetails/:username', (req, res) => {
     const { username } = req.params;
-    const sql = 'SELECT * FROM Sports WHERE roll_number = ?';
+    const sql = 'SELECT * FROM sports WHERE roll_number = ?';
     db.query(sql, [username], (err, result) => {
         if (err) {
             throw err;
