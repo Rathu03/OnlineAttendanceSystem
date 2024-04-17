@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Apr 17, 2024 at 05:33 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.1.25
+-- Host: 127.0.0.1
+-- Generation Time: Apr 17, 2024 at 07:32 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.0.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -74,7 +74,8 @@ CREATE TABLE `events` (
 --
 
 INSERT INTO `events` (`id`, `roll_number`, `event_name`, `institution`, `date`, `role`, `awards`) VALUES
-(1, 111, 'Itrix', 'IST', '0000-00-00', 'Participate', 'First');
+(1, 111, 'Itrix', 'IST', '0000-00-00', 'Participate', 'First'),
+(2, 2021115050, 'Itrix', 'IST', '0000-00-00', 'Participate', 'First');
 
 -- --------------------------------------------------------
 
@@ -115,7 +116,13 @@ INSERT INTO `gpa` (`rollnumber`, `gpa`, `semester`) VALUES
 (111, 9.1, 3),
 (111, 6.8, 4),
 (111, 8.7, 5),
-(111, 7.2, 6);
+(111, 7.2, 6),
+(2021115050, 8.3, 1),
+(2021115050, 7.5, 2),
+(2021115050, 9.1, 3),
+(2021115050, 6.8, 4),
+(2021115050, 8.7, 5),
+(2021115050, 7.2, 6);
 
 -- --------------------------------------------------------
 
@@ -140,7 +147,8 @@ CREATE TABLE `internship` (
 --
 
 INSERT INTO `internship` (`id`, `roll_number`, `employer_name`, `on_off_campus`, `ctc`, `InternshipDuration`, `InternshipStartDate`, `InternshipEndDate`, `product_service_based`) VALUES
-(2, 111, 'sample', 'On Campus', 2000.00, '2 months', '2024-03-05', '2024-03-06', 'Product Based');
+(2, 111, 'sample', 'On Campus', 2000.00, '2 months', '2024-03-05', '2024-03-06', 'Product Based'),
+(3, 2021115050, 'sample', 'On Campus', 2000.00, '2 months', '2024-03-05', '2024-03-06', 'Product Based');
 
 -- --------------------------------------------------------
 
@@ -162,39 +170,39 @@ CREATE TABLE `marks` (
 --
 
 INSERT INTO `marks` (`RollNumber`, `SubjectID`, `Semester`, `MarksObtained`, `Grade`, `verified_status`) VALUES
-(2021115050, 'BS5161', 1, 96, 'O', 0),
-(2021115050, 'CY5151', 1, 0, NULL, 0),
-(2021115050, 'EE5251', 2, 0, NULL, 0),
-(2021115050, 'EE5261', 2, 0, NULL, 0),
-(2021115050, 'GE5151', 2, 0, NULL, 0),
-(2021115050, 'GE5153', 1, 0, NULL, 0),
-(2021115050, 'GE5161', 1, 0, NULL, 0),
-(2021115050, 'GE5251', 4, 0, NULL, 0),
-(2021115050, 'HS5151', 1, 0, NULL, 0),
-(2021115050, 'HS5251', 2, 0, NULL, 0),
+(2021115050, 'BS5161', 1, 96, 'A', 0),
+(2021115050, 'CY5151', 1, 90, 'A+', 0),
+(2021115050, 'EE5251', 2, 88, 'A+', 0),
+(2021115050, 'EE5261', 2, 78, 'A', 0),
+(2021115050, 'GE5151', 2, 87, 'A+', 0),
+(2021115050, 'GE5153', 1, 78, 'A', 0),
+(2021115050, 'GE5161', 1, 77, 'A', 0),
+(2021115050, 'GE5251', 4, 90, 'O', 0),
+(2021115050, 'HS5151', 1, 88, 'A+', 0),
+(2021115050, 'HS5251', 2, 99, 'O', 0),
 (2021115050, 'HUXXX1', 3, 87, 'A+', 0),
-(2021115050, 'HUXXX2', 4, 0, NULL, 0),
-(2021115050, 'HUXXX3', 5, 0, NULL, 0),
-(2021115050, 'IT5201', 2, 0, NULL, 0),
-(2021115050, 'IT5211', 2, 0, NULL, 0),
-(2021115050, 'IT5301', 3, 0, NULL, 0),
-(2021115050, 'IT5302', 3, 0, NULL, 0),
-(2021115050, 'IT5311', 3, 0, NULL, 0),
-(2021115050, 'IT5312', 3, 0, NULL, 0),
-(2021115050, 'IT5351', 3, 0, NULL, 0),
-(2021115050, 'IT5352', 3, 0, NULL, 0),
-(2021115050, 'IT5401', 4, 0, NULL, 0),
-(2021115050, 'IT5402', 4, 0, NULL, 0),
-(2021115050, 'IT5403', 4, 0, NULL, 0),
-(2021115050, 'IT5411', 4, 0, NULL, 0),
-(2021115050, 'IT5412', 4, 0, NULL, 0),
-(2021115050, 'IT5451', 4, 0, NULL, 0),
-(2021115050, 'IT5501', 5, 0, NULL, 0),
-(2021115050, 'IT5502', 5, 0, NULL, 0),
-(2021115050, 'IT5511', 5, 0, NULL, 0),
-(2021115050, 'IT5512', 5, 0, NULL, 0),
-(2021115050, 'IT5513', 5, 0, NULL, 0),
-(2021115050, 'IT5551', 5, 0, NULL, 0),
+(2021115050, 'HUXXX2', 4, 90, 'O', 0),
+(2021115050, 'HUXXX3', 5, 90, 'O', 0),
+(2021115050, 'IT5201', 2, 78, 'A', 0),
+(2021115050, 'IT5211', 2, 99, 'O', 0),
+(2021115050, 'IT5301', 3, 77, 'A', 0),
+(2021115050, 'IT5302', 3, 66, 'B+', 0),
+(2021115050, 'IT5311', 3, 78, 'A', 0),
+(2021115050, 'IT5312', 3, 87, 'A+', 0),
+(2021115050, 'IT5351', 3, 88, 'A+', 0),
+(2021115050, 'IT5352', 3, 99, 'O', 0),
+(2021115050, 'IT5401', 4, 98, 'O', 0),
+(2021115050, 'IT5402', 4, 87, 'A+', 0),
+(2021115050, 'IT5403', 4, 76, 'A', 0),
+(2021115050, 'IT5411', 4, 88, 'A+', 0),
+(2021115050, 'IT5412', 4, 80, 'A+', 0),
+(2021115050, 'IT5451', 4, 70, 'A', 0),
+(2021115050, 'IT5501', 5, 98, 'O', 0),
+(2021115050, 'IT5502', 5, 80, 'A+', 0),
+(2021115050, 'IT5511', 5, 99, 'O', 0),
+(2021115050, 'IT5512', 5, 88, 'A+', 0),
+(2021115050, 'IT5513', 5, 78, 'A', 0),
+(2021115050, 'IT5551', 5, 67, 'B+', 0),
 (2021115050, 'IT5601', 6, 0, NULL, 0),
 (2021115050, 'IT5602', 6, 0, NULL, 0),
 (2021115050, 'IT5603', 6, 0, NULL, 0),
@@ -207,19 +215,19 @@ INSERT INTO `marks` (`RollNumber`, `SubjectID`, `Semester`, `MarksObtained`, `Gr
 (2021115050, 'IT5711', 7, 0, NULL, 0),
 (2021115050, 'IT5712', 7, 0, NULL, 0),
 (2021115050, 'IT5811', 8, 0, NULL, 0),
-(2021115050, 'ITXXX1', 5, 0, NULL, 0),
-(2021115050, 'ITXXX2', 5, 0, NULL, 0),
+(2021115050, 'ITXXX1', 5, 76, 'A', 0),
+(2021115050, 'ITXXX2', 5, 77, 'A', 0),
 (2021115050, 'ITXXX3', 6, 0, NULL, 0),
 (2021115050, 'ITXXX4', 6, 0, NULL, 0),
 (2021115050, 'ITXXX5', 7, 0, NULL, 0),
 (2021115050, 'ITXXX6', 7, 0, NULL, 0),
 (2021115050, 'ITXXX7', 8, 0, NULL, 0),
-(2021115050, 'MA5158', 1, 0, NULL, 0),
-(2021115050, 'MA5252', 2, 0, NULL, 0),
-(2021115050, 'MA5302', 3, 0, NULL, 0),
+(2021115050, 'MA5158', 1, 94, 'O', 0),
+(2021115050, 'MA5252', 2, 87, 'A+', 0),
+(2021115050, 'MA5302', 3, 90, 'O', 0),
 (2021115050, 'OEXXX1', 6, 0, NULL, 0),
 (2021115050, 'OEXXX2', 7, 0, NULL, 0),
-(2021115050, 'PH5151', 1, 0, NULL, 0);
+(2021115050, 'PH5151', 1, 78, 'A', 0);
 
 -- --------------------------------------------------------
 
@@ -241,7 +249,8 @@ CREATE TABLE `paper_published` (
 --
 
 INSERT INTO `paper_published` (`id`, `roll_number`, `title`, `journal`, `date_year`, `DOI_link`) VALUES
-(1, 111, 'CTG Fetal Risk Classification', 'IEEE', '0000-00-00', 'ieee.com');
+(1, 111, 'CTG Fetal Risk Classification', 'IEEE', '0000-00-00', 'ieee.com'),
+(3, 2021115050, 'CTG Fetal Risk Classification', 'IEEE', '0000-00-00', 'ieee.com');
 
 -- --------------------------------------------------------
 
@@ -262,7 +271,8 @@ CREATE TABLE `project` (
 --
 
 INSERT INTO `project` (`id`, `roll_number`, `title`, `guide`, `project_desc`) VALUES
-(1, 111, 'SRP-Project', 'ABC', 'Socially Relavent Project');
+(1, 111, 'SRP-Project', 'ABC', 'Socially Relavent Project'),
+(3, 2021115050, 'SRP-Project', 'ABC', 'Socially Relavent Project');
 
 -- --------------------------------------------------------
 
@@ -283,7 +293,9 @@ CREATE TABLE `scholarship` (
 
 INSERT INTO `scholarship` (`id`, `roll_number`, `ScholarshipProvider`, `amount`) VALUES
 (1, 111, 'Aram', 50000.00),
-(5, 111, 'LMES', 10000.00);
+(5, 111, 'LMES', 10000.00),
+(6, 2021115050, 'Aram', 50000.00),
+(7, 2021115050, 'LMES', 10000.00);
 
 -- --------------------------------------------------------
 
@@ -322,7 +334,8 @@ CREATE TABLE `sports` (
 --
 
 INSERT INTO `sports` (`id`, `roll_number`, `event_name`, `award`) VALUES
-(4, 111, 'abc', 'sample');
+(4, 111, 'abc', 'sample'),
+(5, 2021115050, 'abc', 'sample');
 
 -- --------------------------------------------------------
 
@@ -357,7 +370,7 @@ INSERT INTO `studentdetails` (`RollNumber`, `Name`, `DateOfBirth`, `Residenttype
 (222, NULL, '2024-03-04', NULL, 'Vaagai Hostels,CEG', '12345678', 'Male', 'o', 'afd', NULL, 'dsfs', NULL, 'afd', 'adf', NULL),
 (333, NULL, '2024-03-13', NULL, 'Vaagai Hostels,CEG', '123', 'Male', 'O+', 'Father', NULL, 'Mother Name', NULL, 'Father Occupation', 'Mother Occupation', NULL),
 (4444, 'Karthikeyan M S', '2003-09-16', 'Hosteller', '9-E, Type-1 Qtrs, Block-19, Neyveli-3', '9345534207', 'Male', 'O+', 'Maharajan K', '9442058375', 'Sumathi M', '9487332765', 'Retired NLC Employee', 'HouseWife', 'image_1713202330826.png'),
-(2021115050, 'Karthikeyan M S', '2003-09-16', 'Hosteller', '9-E,Type-1 qtrs, Block-19, Neyveli - 607803', '9345534207', 'Male', 'O+', 'Maharajan K', '9442058375', 'Sumathi M', '9487332765', 'Retired NLC Employee', 'Housewife', 'image_1713292700774.png');
+(2021115050, 'Karthikeyan M S', '2003-09-16', 'Hosteller', '9-E,Type-1 qtrs, Block-19, Neyveli - 607803', '9345534207', 'Male', 'O+', 'Maharajan K', '9442058375', 'Sumathi M', '9487332765', 'Retired NLC Employee', 'Housewife', 'image_1713369281788.png');
 
 -- --------------------------------------------------------
 
@@ -676,19 +689,19 @@ ALTER TABLE `exams_attended`
 -- AUTO_INCREMENT for table `internship`
 --
 ALTER TABLE `internship`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `paper_published`
 --
 ALTER TABLE `paper_published`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `project`
 --
 ALTER TABLE `project`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `scholarship`
@@ -700,7 +713,7 @@ ALTER TABLE `scholarship`
 -- AUTO_INCREMENT for table `sports`
 --
 ALTER TABLE `sports`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables
