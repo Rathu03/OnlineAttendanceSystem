@@ -134,7 +134,7 @@ function Hodviewother(){
                 value={rollNumber}
                 onChange={handleInputChange}
             />
-            <button onClick={fetchStudentDetails}>Search</button>
+            <button className='add-btn' onClick={fetchStudentDetails}>Search</button>
         {internships && internships.map((internship, index) => (
     <div className='view-form' key={index}>
         <h2>Internship Details {index + 1}</h2>

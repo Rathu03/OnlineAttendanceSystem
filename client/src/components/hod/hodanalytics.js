@@ -10,17 +10,19 @@ function Hodanalytics() {
     const [marks, setMarks] = useState(null);
     const [sem, setSem] = useState(null);
     const [gpa, setGpa] = useState(null);
+    const [stafflist, setStafflist] = useState(null);
     const handleInputChange1 = (event) => {
         setRollNumber(event.target.value);
     };
     useEffect(() => {
-        axios.get('http://localhost:5000/session')
-            .then(response => {
-                userRef.current = response.data.username;
-            })
-            .catch(error => {
-                console.log(error);
-            });
+       axios.get(`http://localhost:5000/getstafflist`)
+       .then((response) =>{
+        setStafflist(response.data);
+
+       })
+       .catch((error) => {
+            console.log(error);
+        });
             axios.get(`http://localhost:5000/getgpa/${rollNumber}`)
             .then(response => {
                 if (response.data) {
@@ -149,7 +151,7 @@ function Hodanalytics() {
                 value={rollNumber}
                 onChange={handleInputChange1}
             />
-            <button onClick={fetchStudentDetails}>Search</button>
+            <button className='add-btn' onClick={fetchStudentDetails}>Search</button>
             <div>
                 <label htmlFor="semSelect">Select Semester:</label>
                 <select
@@ -170,6 +172,15 @@ function Hodanalytics() {
             <div>
                 <canvas id="gpaChart"></canvas>
             </div>
+            {stafflist && stafflist.map((staff, index) => (
+    <div className='view-form' key={index}>
+        <h2>Staff Details {index + 1}</h2>
+        <p className='view-field'><strong>Staff ID:</strong> {staff.teacherId}</p>
+        <p className='view-field'><strong>Staff Name:</strong> {staff.teacher_name}</p>
+
+   
+    </div>
+))}
         </>
     )
 }

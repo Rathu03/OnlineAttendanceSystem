@@ -69,17 +69,15 @@ function Staffviewacademic(){
     }
 
     useEffect(() => {
-        axios.get('http://localhost:5000/session')
-        .then(response => {
+       
+       
             userRef.current = rollNumber;
             if(rollNumber){
             fetchdata();
         }
 
-        })
-        .catch(error => {
-            console.log(error);
-        })
+     
+       
         
     },[sem])
    
@@ -106,19 +104,48 @@ function Staffviewacademic(){
 
     return(
         <>
-        <Navbar />
-     
-        <input
+         <div id='student-view-academic'>
+         <Navbar/>
+         <input
                 type="number"
                 placeholder="Enter Roll Number"
                 value={rollNumber}
                 onChange={handleInputChange}
             />
             <button className='add-btn' onClick={fetchdata}>Search</button>
+       
+        
+
         {basicacademic &&<div className='basic-detail'>
-            <p><strong>Current Semester : </strong>{basicacademic.CurrentSemester}</p>
-            <p><strong>Tenth Marks : </strong>{basicacademic.TenthMarks}</p>
-            <p><strong>Higher Secondary Marks : </strong>{basicacademic.HigherSecondaryMarks}</p>
+
+            <div className='school-table-container'>
+            <table border={'1'} className='school-table'>
+
+                        <tr>
+                            <td colSpan={'3'}>
+                                <h2>BASIC ACADEMIC DETAILS</h2>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <p className='topic'><span id='hide-text'>00</span>Secondary Percentage : {basicacademic.TenthMarks}</p><br/>
+                            </td>
+                            
+                            <td>
+                                <p className='topic'><span id='hide-text'>000</span>Higher Secondary Percentage : {basicacademic.HigherSecondaryMarks}</p><br/>
+                                
+                            </td>
+
+                            <td>
+                                <p className='topic'><span id='hide-text'>00</span>Current Semester : {basicacademic.CurrentSemester}</p><br/>
+                            </td>
+
+                            
+                        </tr>
+                    </table>
+            
+            </div>
             </div>}
             <div>
             <label htmlFor="semSelect">Select Semester:</label>
@@ -132,19 +159,10 @@ function Staffviewacademic(){
                     <option key={num + 1} value={num + 1}>{num + 1}</option>
                 ))}
             </select>
-          
+            <p>Semester: {sem}</p>
         </div>
-        { marks && verifiedstatus && <div>
-            <button className='delete-btn'onClick={unApprove}>Unapprove</button>
-            <p>Marks are verified</p>
-            </div>}
-
-            {marks && !verifiedstatus && <div>
-                <button className='add-btn'onClick={Approve}>Approve</button>
-                <p>Marks are not verified</p>
-                </div>}
         {marks &&  <div>
-      <center><h2>Marks Table</h2></center>
+      <h2>Marks Table</h2>
       <table className='marks-table'>
         <thead>
           <tr>
@@ -165,6 +183,7 @@ function Staffviewacademic(){
       </table>
       {gpa && <p className='gpa-show'>Semester GPA:{gpa.gpa}</p>}
     </div>}
+    </div>
         </>
     )
 }

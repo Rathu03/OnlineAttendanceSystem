@@ -24,7 +24,7 @@ const dbConfig = {
     host: 'localhost',
     user: 'root',
     // password: '',
-    password:'password',
+    password:'',
     database: 'istdept'
 };
 
@@ -1365,6 +1365,7 @@ const storage=multer.diskStorage(
   });
   app.get('/getgpa/:rollNumber', (req, res) => {
     const rollNumber = req.params.rollNumber;
+    console.log(rollNumber);
     const query = `SELECT * FROM gpa WHERE rollnumber =?`;
     db.query(query, [rollNumber], (error, results) => {
       if (error) throw error;
@@ -1445,4 +1446,26 @@ const storage=multer.diskStorage(
       res.json({ message: 'Verification status updated successfully' });
     });
   });
+
+
+  app.get('/getstafflist', (req, res) => {
+    const query = `SELECT teacherId,teacher_name from teachers`;
+    db.query(query, (error, results) => {
+      if (error) {
+        console.error('Error executing MySQL query: ' + error.stack);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      res.json(results);
+    });
+  })
+
+
+  app.get('/getstaffsubjects', (req, res) => {
+   
+  })
+
+  app.get('/getstaffsubjectmarks', (req, res) => {
+    
+  })
 

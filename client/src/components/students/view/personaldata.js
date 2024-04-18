@@ -61,58 +61,6 @@ function ViewStudentPersonal() {
                     <div className='view-form'>
                         
                        <table border={'0'}> 
-                            {/* <tr>
-                                <td className='topic'><p className='view-field'><strong>Roll Number:</strong></p></td>
-                                <td><p>{studentDetails.RollNumber}</p></td>
-
-                                <td colSpan={'2'} id='name-td'>
-                                    <p className='view-field' id='name'><strong></strong> {studentDetails.Name}</p>
-                                </td>
-
-                                <td className='topic'><p className='view-field'><strong>Phone:</strong></p></td>
-                                <td><p>{studentDetails.Phone}</p></td>
-                            </tr>
-
-                            <tr>
-                                <td className='topic'><p className='view-field'><strong>Gender:</strong></p></td>
-                                <td><p>{studentDetails.Sex}</p></td>
-                                <td></td>
-                                <td></td>
-
-                                <td className='topic'><p className='view-field'><strong>Blood Group:</strong></p></td>
-                                <td><p>{studentDetails.Blood_Group}</p></td>
-                            </tr>
-
-                            <tr>
-                                <td className='topic'><p className='view-field'><strong>DOB:</strong></p></td>
-                                <td><p>{studentDetails.DateOfBirth}</p></td>
-                                
-                                <td className='topic'><p className='view-field'><strong>Address:</strong></p></td>
-                                <td><p>{studentDetails.Address}</p></td>
-
-                                <td className='topic'><p className='view-field'><strong>Resident type:</strong></p></td>
-                                <td><p>{studentDetails.Residenttype}</p></td>
-                            </tr>
-                            <tr>
-                                <td className='topic'><p className='view-field'><strong>Father's Name:</strong></p></td>
-                                <td><p>{studentDetails.FatherName}</p></td>
-                                
-                                <td className='topic'><p className='view-field'><strong>Father's Occupation:</strong></p></td>
-                                <td><p>{studentDetails.Fatheroccupation}</p></td>
-
-                                <td className='topic'><p className='view-field'><strong>Father's Mobile:</strong></p></td>
-                                <td><p>{studentDetails.Fathermobile}</p></td>
-                            </tr>
-                            <tr>
-                                <td className='topic'><p className='view-field'><strong>Mother's Name:</strong></p></td>
-                                <td><p>{studentDetails.Mothername}</p></td>
-                                
-                                <td className='topic'><p className='view-field'><strong>Mother's Occupation:</strong></p></td>
-                                <td><p>{studentDetails.Motheroccupation}</p></td>
-
-                                <td className='topic'><p className='view-field'><strong>Mother's Mobile:</strong></p></td>
-                                <td><p>{studentDetails.Mothermobile}</p></td>
-                            </tr> */}
 
 
 
@@ -156,32 +104,7 @@ function ViewStudentPersonal() {
                                 <td colSpan={'2'}><p className='view-field'><strong>Mother's Occupation:</strong><br/> {studentDetails.Motheroccupation}</p></td>
                                 <td ><p className='view-field'><strong>Mother's Mobile:</strong> <br/>{studentDetails.Mothermobile}</p></td>
                             </tr>
-                            
-
                         </table>
-
-
-{/* 
-                        
-                        <p className='view-field'><strong>Roll Number:</strong> {studentDetails.RollNumber}</p>
-                        <p className='view-field'><strong>Date of Birth:</strong> {studentDetails.DateOfBirth}</p>
-                        <center>
-                        <p>
-                        <img className='prof-pic' width={'300px'} src={`http://localhost:5000/getImage/${studentDetails.RollNumber}`} alt='img'/>
-                        </p>
-                    </center>
-                        <p className='view-field'><strong>Address:</strong> {studentDetails.Address}</p>
-                        <p className='view-field'><strong>Phone:</strong> {studentDetails.Phone}</p>
-                     
-                        <p className='view-field'><strong>Sex:</strong> {studentDetails.Sex}</p>
-                        <p className='view-field'><strong>Blood Group:</strong> {studentDetails.Blood_Group}</p>
-                        <p className='view-field'><strong>Father's Name:</strong> {studentDetails.FatherName}</p>
-                        <p className='view-field'><strong>Mother's Name:</strong> {studentDetails.Mothername}</p>
-                        <p className='view-field'><strong>Father's Occupation:</strong> {studentDetails.Fatheroccupation}</p>
-                        <p className='view-field'><strong>Mother's Occupation:</strong> {studentDetails.Motheroccupation}</p>
-
-
-                         */}
                     </div>
                     </center>
                     </>

@@ -37,6 +37,7 @@ const Navbar = () => {
               <>
                 <li>STUDENT</li>
                 <li>STAFF</li>
+                <li onClick={() => toggleClick(`../${role}/attendance`)}>ATTENDANCE</li> 
               </>}
             
             <li onClick={() => toggleClick(`../${role}/analytics`)}>ANALYTICS</li> 

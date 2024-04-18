@@ -50,7 +50,7 @@ function Hodviewpersonal() {
                 value={rollNumber}
                 onChange={handleInputChange}
             />
-            <button onClick={fetchStudentDetails}>Search</button>
+            <button className='add-btn' onClick={fetchStudentDetails}>Search</button>
             {errorMessage && <p>{errorMessage}</p>}
             {studentDetails && (
                 <div>

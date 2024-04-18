@@ -149,7 +149,7 @@ function Teacheranalytics() {
                 value={rollNumber}
                 onChange={handleInputChange1}
             />
-            <button onClick={fetchStudentDetails}>Search</button>
+            <button className='add-btn' onClick={fetchStudentDetails}>Search</button>
             <div>
                 <label htmlFor="semSelect">Select Semester:</label>
                 <select
