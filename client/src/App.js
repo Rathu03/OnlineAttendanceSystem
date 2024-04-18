@@ -74,12 +74,12 @@ const App = () => {
         <Route path="/staff/view/otherdata" element={<Staffviewother />} />
         <Route path="/staff/view/pdf" element={<PDFData2 />} />
         <Route path="/staff/analytics" element={<Teacheranalytics/>} />
-
+        <Route path="/admin/view/pdf" element={<PDFData2 />} />
         <Route path="/pdf" element={<Data/>} />
-        <Route path='/hod/view/personaldata' element={<Hodviewpersonal />} />
-        <Route path='/hod/view/academicdata' element={<Hodviewacademic />} />
-        <Route path='/hod/view/otherdata' element={<Hodviewother />} />
-        <Route path='/hod/analytics' element={<Hodanalytics/>} />
+        <Route path='/admin/view/personaldata' element={<Hodviewpersonal />} />
+        <Route path='/admin/view/academicdata' element={<Hodviewacademic />} />
+        <Route path='/admin/view/otherdata' element={<Hodviewother />} />
+        <Route path='/admin/analytics' element={<Hodanalytics/>} />
         <Route path='/admin/attendance' element={<AdminDashboard />} />
         <Route path='/admin/attendance/student' element={<StudentData />}/>
         <Route path='/admin/attendance/staff' element={<StaffData />}/>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Navbarfun from '../usercomponents/Navbarfun'
-function Hodviewpersonal(){
+import Navbar from '../Navbar';
+function Hodviewpersonal() {
     const [rollNumber, setRollNumber] = useState('');
     const [studentDetails, setStudentDetails] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
@@ -40,32 +40,34 @@ function Hodviewpersonal(){
     };
 
     return (
-        <div className='staffviewpersonal'>
-            <Navbarfun />
-           
+        <div>
+            <Navbar />
+            
+            <h2>Teacher View Student Personal Details</h2>
             <input
                 type="number"
                 placeholder="Enter Roll Number"
                 value={rollNumber}
                 onChange={handleInputChange}
             />
-            <button className='add-btn' onClick={fetchStudentDetails}>Search</button>
+            <button onClick={fetchStudentDetails}>Search</button>
             {errorMessage && <p>{errorMessage}</p>}
             {studentDetails && (
-                <div className='teacheracademiccont'>
-                    <p className='teacher-view-field'><strong>Roll Number:</strong> {studentDetails.RollNumber}</p>
-                    <p className='teacher-view-field'><strong>Date of Birth:</strong> {studentDetails.DateOfBirth}</p>
-                    <p className='teacher-view-field'><strong>Address:</strong> {studentDetails.Address}</p>
-                    <p className='teacher-view-field'><strong>Phone:</strong> {studentDetails.Phone}</p>
-                    <p className='teacher-view-field'><strong>Sex:</strong> {studentDetails.Sex}</p>
-                    <p className='teacher-view-field'><strong>Blood Group:</strong> {studentDetails.Blood_Group}</p>
-                    <p className='teacher-view-field'><strong>Father's Name:</strong> {studentDetails.FatherName}</p>
-                    <p className='teacher-view-field'><strong>Mother's Name:</strong> {studentDetails.Mothername}</p>
-                    <p className='teacher-view-field'><strong>Father's Occupation:</strong> {studentDetails.Fatheroccupation}</p>
-                    <p className='teacher-view-field'><strong>Mother's Occupation:</strong> {studentDetails.Motheroccupation}</p>
+                <div>
+                    <p><strong>Roll Number:</strong> {studentDetails.RollNumber}</p>
+                    <p><strong>Date of Birth:</strong> {studentDetails.DateOfBirth}</p>
+                    <p><strong>Address:</strong> {studentDetails.Address}</p>
+                    <p><strong>Phone:</strong> {studentDetails.Phone}</p>
+                    <p><strong>Sex:</strong> {studentDetails.Sex}</p>
+                    <p><strong>Blood Group:</strong> {studentDetails.Blood_Group}</p>
+                    <p><strong>Father's Name:</strong> {studentDetails.FatherName}</p>
+                    <p><strong>Mother's Name:</strong> {studentDetails.Mothername}</p>
+                    <p><strong>Father's Occupation:</strong> {studentDetails.Fatheroccupation}</p>
+                    <p><strong>Mother's Occupation:</strong> {studentDetails.Motheroccupation}</p>
                 </div>
             )}
         </div>
     );
 }
+
 export default Hodviewpersonal;

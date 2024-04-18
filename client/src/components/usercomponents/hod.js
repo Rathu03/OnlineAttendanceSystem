@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Import Axios library
 import Navbarfun from './Navbarfun';
+import PDFData2 from '../PDF/PDFGenerator2';
 function Hod() {
     const [username, setUsername] = useState('');
 
@@ -32,6 +33,7 @@ function Hod() {
         <Navbarfun/>
             <h1>HOD</h1>
             <p>Welcome, {username}</p>
+            <PDFData2/>
         </>
     );
 }

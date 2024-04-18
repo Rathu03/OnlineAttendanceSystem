@@ -1,8 +1,9 @@
+import { React, useState, useRef, useEffect } from "react";
+import Navbar from "../Navbar";
 import axios from "axios";
 import Chart from 'chart.js/auto';
-import { React, useState, useRef, useEffect } from "react";
-import Navbarfun from '../usercomponents/Navbarfun'
-function Hodanalytics(){
+
+function Hodanalytics() {
     const userRef = useRef(null);
     const [rollNumber, setRollNumber] = useState('');
     const [basicacademic, setbasicacademic] = useState(null);
@@ -140,7 +141,7 @@ function Hodanalytics(){
 
     return (
         <>
-            <Navbarfun />
+            <Navbar />
             
         <input
                 type="number"
@@ -148,7 +149,7 @@ function Hodanalytics(){
                 value={rollNumber}
                 onChange={handleInputChange1}
             />
-            <button className="add-btn" onClick={fetchStudentDetails}>Search</button>
+            <button onClick={fetchStudentDetails}>Search</button>
             <div>
                 <label htmlFor="semSelect">Select Semester:</label>
                 <select
@@ -173,4 +174,4 @@ function Hodanalytics(){
     )
 }
 
-export default Hodanalytics;   
+export default Hodanalytics;

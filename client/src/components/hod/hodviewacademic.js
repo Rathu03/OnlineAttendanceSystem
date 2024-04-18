@@ -1,6 +1,7 @@
 import React, { useState, useEffect,useRef } from 'react';
 import axios from 'axios';
-import Navbarfun from '../usercomponents/Navbarfun'
+import Navbar from '../Navbar';
+
 function Hodviewacademic(){
     const userRef = useRef(null);
     const [rollNumber, setRollNumber] = useState('');
@@ -105,7 +106,7 @@ function Hodviewacademic(){
 
     return(
         <>
-        <Navbarfun/>
+        <Navbar />
      
         <input
                 type="number"
