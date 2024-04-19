@@ -1461,9 +1461,41 @@ const storage=multer.diskStorage(
   })
 
 
-  app.get('/getstaffsubjects', (req, res) => {
-   
+  app.get('/getstaffsubjects/:teacherId', (req, res) => {
+    const teacherId = req.params.teacherId;
+    const query0 = `SELECT email FROM teachers WHERE teacherId = ?`;
+    db.query(query0, [teacherId], (error, results0) => {
+      if (error) {
+        console.error('Error executing MySQL query: ' + error.stack);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      // Assuming results0 is an array with a single object containing the teacher's email
+      const teacherEmail = results0[0].email;
+      const query = `SELECT DISTINCT subjectid FROM enrolledsubjects WHERE teacher_email = ?`;
+      db.query(query, [teacherEmail], (error, results) => {
+        if (error) {
+          console.error('Error executing MySQL query: ' + error.stack);
+          res.status(500).json({ error: 'Internal server error' });
+          return;
+        }
+        const subjectIds = results.map(result => result.subjectid);
+        const placeholders = subjectIds.map(() => '?').join(',');
+        const query2 = `SELECT SubjectId, SubjectName FROM subjects WHERE SubjectId IN (${placeholders})`;
+        db.query(query2, subjectIds, (error, results1) => {
+          if (error) {
+            console.error('Error executing MySQL query: ' + error.stack);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+          }
+          console.log(results1)
+          res.json(results1);
+        })
+      })
+    })
   })
+  
+  
 
   app.get('/getstaffsubjectmarks', (req, res) => {
     

@@ -11,9 +11,21 @@ function Hodanalytics() {
     const [sem, setSem] = useState(null);
     const [gpa, setGpa] = useState(null);
     const [stafflist, setStafflist] = useState(null);
+    const [staffclicked,setstaffclicked] = useState(false);
+    const [staffsubjects,setstaffsubjects] = useState(null);
     const handleInputChange1 = (event) => {
         setRollNumber(event.target.value);
     };
+    const handlestaffclick=(teacherId) => {
+        setstaffclicked(true);
+        axios.get(`http://localhost:5000/getstaffsubjects/${teacherId}`)
+        .then((response) =>{
+         setstaffsubjects(response.data);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
     useEffect(() => {
        axios.get(`http://localhost:5000/getstafflist`)
        .then((response) =>{
@@ -172,15 +184,24 @@ function Hodanalytics() {
             <div>
                 <canvas id="gpaChart"></canvas>
             </div>
-            {stafflist && stafflist.map((staff, index) => (
-    <div className='view-form' key={index}>
-        <h2>Staff Details {index + 1}</h2>
+            {stafflist && !staffclicked && <h2>Staff Details</h2>}
+            {stafflist && !staffclicked && stafflist.map((staff, index) => (
+    <div onClick={()=>{handlestaffclick(staff.teacherId)}} className='view-form' key={index}>
+        <h2>{index + 1}</h2>
         <p className='view-field'><strong>Staff ID:</strong> {staff.teacherId}</p>
         <p className='view-field'><strong>Staff Name:</strong> {staff.teacher_name}</p>
-
+        
    
     </div>
 ))}
+{staffclicked && <button className="delete-btn" onClick={()=>{setstaffclicked(false)}}>Back</button>}
+            {staffclicked && staffsubjects && staffsubjects.map((subject, index) => (
+                <div className='view-form' key={index}>
+                    <h2>{index + 1}</h2>
+                    <p className='view-field'><strong>Subject ID:</strong> {subject.SubjectId}</p>
+                    <p className='view-field'><strong>Subject Name:</strong> {subject.SubjectName}</p>
+                    </div>
+                ))}
         </>
     )
 }
