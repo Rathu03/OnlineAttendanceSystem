@@ -907,7 +907,7 @@ textarea:focus {
 }
 
 #student-view-academic .marks-table tbody tr:hover, #student-edit-academic .marks-table tbody tr:hover{
-  background-color: #b3efff;
+  background-color: #d5eef5;
 }
 
 #student-edit-academic #gradeSelect{

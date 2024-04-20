@@ -32,7 +32,7 @@
   
   /* Hover Effect for Table Rows */
   .marks-table tbody tr:hover {
-    background-color: #b3ffef;
+    background-color: #d1fff5;
     transition: background-color 0.2s ease;
     color:black;
   }

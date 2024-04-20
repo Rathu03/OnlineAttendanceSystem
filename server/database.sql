@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Apr 17, 2024 at 07:32 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.0.28
+-- Host: localhost
+-- Generation Time: Apr 20, 2024 at 10:02 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.1.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -170,7 +170,7 @@ CREATE TABLE `marks` (
 --
 
 INSERT INTO `marks` (`RollNumber`, `SubjectID`, `Semester`, `MarksObtained`, `Grade`, `verified_status`) VALUES
-(2021115050, 'BS5161', 1, 96, 'A', 0),
+(2021115050, 'BS5161', 1, 96, 'B', 0),
 (2021115050, 'CY5151', 1, 90, 'A+', 0),
 (2021115050, 'EE5251', 2, 88, 'A+', 0),
 (2021115050, 'EE5261', 2, 78, 'A', 0),
@@ -370,7 +370,7 @@ INSERT INTO `studentdetails` (`RollNumber`, `Name`, `DateOfBirth`, `Residenttype
 (222, NULL, '2024-03-04', NULL, 'Vaagai Hostels,CEG', '12345678', 'Male', 'o', 'afd', NULL, 'dsfs', NULL, 'afd', 'adf', NULL),
 (333, NULL, '2024-03-13', NULL, 'Vaagai Hostels,CEG', '123', 'Male', 'O+', 'Father', NULL, 'Mother Name', NULL, 'Father Occupation', 'Mother Occupation', NULL),
 (4444, 'Karthikeyan M S', '2003-09-16', 'Hosteller', '9-E, Type-1 Qtrs, Block-19, Neyveli-3', '9345534207', 'Male', 'O+', 'Maharajan K', '9442058375', 'Sumathi M', '9487332765', 'Retired NLC Employee', 'HouseWife', 'image_1713202330826.png'),
-(2021115050, 'Karthikeyan M S', '2003-09-16', 'Hosteller', '9-E,Type-1 qtrs, Block-19, Neyveli - 607803', '9345534207', 'Male', 'O+', 'Maharajan K', '9442058375', 'Sumathi M', '9487332765', 'Retired NLC Employee', 'Housewife', 'image_1713369281788.png');
+(2021115050, 'Karthikeyan M S', '2003-09-16', 'Hosteller', '9-E,Type-1 qtrs, Block-19, Neyveli - 607803', '9345534207', 'Male', 'O+', 'Maharajan K', '9442058375', 'Sumathi M', '9487332765', 'Retired NLC Employee', 'Housewife', 'image_1713540469791.png');
 
 -- --------------------------------------------------------
 
@@ -409,16 +409,17 @@ CREATE TABLE `student_academic_details` (
   `RollNumber` int(11) NOT NULL,
   `CurrentSemester` int(11) DEFAULT NULL,
   `TenthMarks` float(5,2) DEFAULT NULL,
-  `HigherSecondaryMarks` float(5,2) DEFAULT NULL
+  `HigherSecondaryMarks` float(5,2) DEFAULT NULL,
+  `Cutoff` float(5,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `student_academic_details`
 --
 
-INSERT INTO `student_academic_details` (`RollNumber`, `CurrentSemester`, `TenthMarks`, `HigherSecondaryMarks`) VALUES
-(202, NULL, NULL, NULL),
-(2021115050, 6, 32.00, 34.00);
+INSERT INTO `student_academic_details` (`RollNumber`, `CurrentSemester`, `TenthMarks`, `HigherSecondaryMarks`, `Cutoff`) VALUES
+(202, NULL, NULL, NULL, NULL),
+(2021115050, 6, 32.00, 2.00, 123.00);
 
 -- --------------------------------------------------------
 
