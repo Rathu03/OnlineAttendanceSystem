@@ -13,7 +13,7 @@ function EditStudentAcademic() {
     const [tenthMarks, setTenthMarks] = useState('');
     const [higherSecondaryMarks, setHigherSecondaryMarks] = useState('');
     const [cutoff, setCutoff] = useState('');
-
+    const [gpa, setgpa] = useState('');
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         if (name === 'semester') {
@@ -60,6 +60,23 @@ function EditStudentAcademic() {
                     .catch(err => {
                         console.log(err);
                     });
+                    axios.get(`http://localhost:5000/getsemestergpa/${userRef.current}/${sem}`)
+                    .then(response => {
+                 
+                     setgpa(response.data);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+                    axios.post(`http://localhost:5000/calculategpa/${userRef.current}/${sem}`)
+                    .then(response => {
+                     console.log('gpa',response.data);
+                     setgpa(response.data.gpa);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+                   
           
     }, [sem]);
 
@@ -148,7 +165,19 @@ function EditStudentAcademic() {
                 position:'top-center'
             });
         }
+        
     };
+    const handlegpa=()=>{
+        axios.post(`http://localhost:5000/calculategpa/${userRef.current}/${sem}`)
+                    .then(response => {
+                     console.log('gpa',response.data.gpa);
+                   
+                     setgpa(response.data);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+    }
     return (
         <>  
         <div id='student-edit-academic'>
@@ -231,7 +260,7 @@ function EditStudentAcademic() {
                         ))}
                     </select></td>
                             <td><h2>Marks Table</h2></td>
-                            <td><button className="submit-button" style={{fontSize:"1.5em"}} onClick={handleEditBasicAcademic}>
+                            <td><button className="submit-button" style={{fontSize:"1.5em"}} onClick={handlegpa}>
                                 Save
                             </button></td>
                         </tr>
@@ -287,6 +316,7 @@ function EditStudentAcademic() {
                         </tbody>
                     </table>}
                 </div>}
+                {gpa && <center><p className='gpa-show'>Semester GPA:{gpa.gpa}</p></center>}
             </div>
             </div>
         </>
