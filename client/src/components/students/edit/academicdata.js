@@ -161,7 +161,7 @@ function EditStudentAcademic() {
 
                         <tr>
                             <td colSpan={'3'}>
-                                <h2>BASIC ACADEMIC DETAILS</h2>
+                                <h2>SCHOOL EDUCATION DETAILS</h2>
                             </td>
                             <td>
                             <button className="submit-button" onClick={handleEditBasicAcademic}>
@@ -273,10 +273,10 @@ function EditStudentAcademic() {
                                     >
                                         <option value="">Select Grade</option>
                                         <option value="O">O</option>
-                                        <option value="A">A</option>
                                         <option value="A+">A+</option>
-                                        <option value="B">B</option>
+                                        <option value="A">A</option>
                                         <option value="B+">B+</option>
+                                        <option value="B">B</option>
                                         <option value="C">C</option>
   
                                         </select>

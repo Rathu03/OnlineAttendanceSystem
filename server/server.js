@@ -1294,7 +1294,7 @@ const storage=multer.diskStorage(
     const semester = req.params.sem;
     const rollNumber = req.params.rollNumber;
     console.log(semester, rollNumber);
-    const query = `select *,subjects.SubjectID from marks INNER JOIN subjects on marks.SubjectID=subjects.SubjectID  WHERE marks.Semester = ? AND marks.RollNumber = ?`;
+    const query = `select *,subjects.SubjectName,subjects.credits from marks INNER JOIN subjects on marks.SubjectID=subjects.SubjectID  WHERE marks.Semester = ? AND marks.RollNumber = ? order by credits`;
     db.query(query, [semester, rollNumber], (error, results) => {
       if (error) throw error;
       console.log("Results = ");

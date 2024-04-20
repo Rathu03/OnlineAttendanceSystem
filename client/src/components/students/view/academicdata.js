@@ -59,26 +59,28 @@ function ViewStudentAcademic(){
         {basicacademic &&<div className='basic-detail'>
 
             <div className='school-table-container'>
-            <table border={'1'} className='school-table'>
+            <table border={'0'} className='school-table'>
 
                         <tr>
-                            <td colSpan={'3'}>
-                                <h2>BASIC ACADEMIC DETAILS</h2>
+                            <td colSpan={'4'}>
+                                <h2>SCHOOL EDUCATION DETAILS</h2>
                             </td>
                         </tr>
 
                         <tr>
-                            <td>
-                                <p className='topic'><span id='hide-text'>00</span>Secondary Percentage : {basicacademic.TenthMarks}</p><br/>
+                            <td id='td1'>
+                                <p className='topic'>Secondary Percentage : {basicacademic.TenthMarks}%</p><br/>
                             </td>
                             
-                            <td>
-                                <p className='topic'><span id='hide-text'>000</span>Higher Secondary Percentage : {basicacademic.HigherSecondaryMarks}</p><br/>
+                            <td id='td2'>
+                                <p className='topic'>Higher Secondary Percentage : {basicacademic.HigherSecondaryMarks}%</p><br/>
                                 
                             </td>
-
-                            <td>
-                                <p className='topic'><span id='hide-text'>00</span>Current Semester : {basicacademic.CurrentSemester}</p><br/>
+                            <td id='td3'>
+                                <p className='topic'>Cutoff Marks : {basicacademic.Cutoff}</p><br/>
+                            </td>
+                            <td id='td4'>
+                                <p className='topic'>Current Semester : {basicacademic.CurrentSemester}</p><br/>
                             </td>
 
                             
@@ -87,6 +89,10 @@ function ViewStudentAcademic(){
             
             </div>
             </div>}
+
+
+            <div className='marks-view'>
+            <center><h2>Marks Table</h2></center>
             <div>
             <label htmlFor="semSelect">Select Semester:</label>
             <select
@@ -99,14 +105,15 @@ function ViewStudentAcademic(){
                     <option key={num + 1} value={num + 1}>{num + 1}</option>
                 ))}
             </select>
-            <p>Semester: {sem}</p>
         </div>
         {marks &&  <div>
-      <h2>Marks Table</h2>
-      <table className='marks-table'>
+
+      {sem && <table className='marks-table' id='view-marks-table'>
         <thead>
           <tr>
             <th>Subject ID</th>
+            <th>Subject Name</th>
+            <th>Credits</th>
             <th>Marks Obtained</th>
             <th>Grade</th>
           </tr>
@@ -115,14 +122,18 @@ function ViewStudentAcademic(){
           {marks.map((mark, index) => (
             <tr key={index}>
               <td>{mark.SubjectID}</td>
+              <td>{mark.SubjectName}</td>
+              <td>{mark.credits}</td>
               <td>{mark.MarksObtained}</td>
               <td>{mark.Grade}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      {gpa && <p className='gpa-show'>Semester GPA:{gpa.gpa}</p>}
+}
+      {gpa && <center><p className='gpa-show'>Semester GPA:{gpa.gpa}</p></center>}
     </div>}
+    </div>
     </div>
         </>
     )

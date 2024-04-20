@@ -771,7 +771,7 @@ textarea:focus {
   background-color: white;
   padding: 20px;
   margin: auto;
-  width: 75%;
+  width: 80%;
   border-radius: 25px;
   margin-top: 20px;
 }
@@ -824,8 +824,7 @@ textarea:focus {
   margin:10px;
 }
 
-#student-edit-academic .marks-view{
-  background-color: red;
+#student-edit-academic .marks-view, #student-view-academic .marks-view{
   background-color: white;
   padding: 20px;
   margin: auto;
@@ -849,15 +848,19 @@ textarea:focus {
   text-align: center;
 }
 
-#student-edit-academic .marks-table{
-  border-collapse: collapse;
+#student-edit-academic .marks-table, #student-view-academic .marks-table{
+  border-collapse: separate;
   border-spacing: 0;
   border-radius: 10px;
   color: #10465C;
-  box-shadow: 0px 10px 50px 3px black;
+  /* border: 3px solid black; */
 }
 
 #student-edit-academic .marks-table tbody td, .marks-table thead th{
+  text-align: center;
+}
+
+#student-view-academic .marks-table tbody td, .marks-table thead th{
   text-align: center;
 }
 
@@ -866,19 +869,54 @@ textarea:focus {
   transform: scale(1.01);
 } */
 
-#student-edit-academic .marks-table tr{
-  border-radius: 20px;
-  transition: transform 0.3s ease-in-out;
-}
 
 #staff-login .login-container{
   transform: scale(1.3);
 }
 
 #student-edit-academic, #student-view-academic{
-  background-color: rgb(221, 246, 255);
+  background-color: #7ba6b0;
+  min-height: 100vh;
 }
 
-#student-view-academic .school-table-container p{
-  color: black;
+#student-view-academic .school-table #td1, #student-view-academic .school-table #td2{
+  width:30%;
+}
+
+#student-view-academic .marks-view table{
+  margin-top: 20px;
+  border-radius: 10px;
+}
+
+
+#student-view-academic .marks-table thead tr, #student-edit-academic .marks-table thead tr{
+  background: #113559;
+  height: 50px;
+}
+
+#student-view-academic .marks-table tbody tr, #student-edit-academic .marks-table tbody tr{
+  height: 50px;
+}
+
+#student-view-academic .marks-table tbody tr:nth-child(even), #student-edit-academic .marks-table tbody tr:nth-child(even){
+  background-color: #f0f0f0;
+}
+
+#student-view-academic .marks-table tbody tr:nth-child(odd), #student-edit-academic .marks-table tbody tr:nth-child(odd){
+  background-color: #ffffff;
+}
+
+#student-view-academic .marks-table tbody tr:hover, #student-edit-academic .marks-table tbody tr:hover{
+  background-color: #b3efff;
+}
+
+#student-edit-academic #gradeSelect{
+  background-color: white;
+  padding: 10px;
+  width: 70px;
+  border-radius: 5px;
+}
+
+#student-edit-academic .marks-table input{
+  
 }
