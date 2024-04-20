@@ -13,7 +13,7 @@ function EditStudentAcademic() {
     const [tenthMarks, setTenthMarks] = useState('');
     const [higherSecondaryMarks, setHigherSecondaryMarks] = useState('');
     const [cutoff, setCutoff] = useState('');
-
+    const [gpa, setgpa] = useState('');
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         if (name === 'semester') {
@@ -60,6 +60,11 @@ function EditStudentAcademic() {
                     .catch(err => {
                         console.log(err);
                     });
+                    axios.get(`http://localhost:5000/getsemestergpa/${userRef.current}/${sem}`)
+                    .then(response => {
+                     console.log('sem gpa',response.data);
+                     setgpa(response.data);
+                    })
           
     }, [sem]);
 
@@ -287,6 +292,7 @@ function EditStudentAcademic() {
                         </tbody>
                     </table>}
                 </div>}
+                {gpa && <center><p className='gpa-show'>Semester GPA:{gpa.gpa}</p></center>}
             </div>
             </div>
         </>

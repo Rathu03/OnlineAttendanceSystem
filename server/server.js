@@ -1306,7 +1306,7 @@ const storage=multer.diskStorage(
     const rollNumber = req.params.rollNumber;
     const subjectID = req.params.subjectID;
     const newMarks = req.body.marks;
-    const query = `UPDATE marks SET MarksObtained = ?, WHERE RollNumber = ? AND SubjectID = ?`;
+    const query = `UPDATE marks SET MarksObtained = ? WHERE RollNumber = ? AND SubjectID = ?`;
     db.query(query, [newMarks, rollNumber, subjectID], (error, results) => {
       if (error) {
         console.error("Error updating marks:", error);
@@ -1348,7 +1348,6 @@ const storage=multer.diskStorage(
   app.put('/editbasicacademic/:rollNumber', (req, res) => {
     const rollNumber = req.params.rollNumber;
     const { CurrentSemester, TenthMarks, HigherSecondaryMarks, Cutoff } = req.body;
-  
     const query = `UPDATE student_academic_details 
                    SET CurrentSemester = ?, TenthMarks = ?, HigherSecondaryMarks = ?, Cutoff = ? 
                    WHERE RollNumber = ?`;
