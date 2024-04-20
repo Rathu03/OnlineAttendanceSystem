@@ -1297,8 +1297,7 @@ const storage=multer.diskStorage(
     const query = `select *,subjects.SubjectName,subjects.credits from marks INNER JOIN subjects on marks.SubjectID=subjects.SubjectID  WHERE marks.Semester = ? AND marks.RollNumber = ? order by credits`;
     db.query(query, [semester, rollNumber], (error, results) => {
       if (error) throw error;
-      console.log("Results = ");
-      console.log(results);
+
       res.json(results);
     });
   });
@@ -1500,3 +1499,64 @@ const storage=multer.diskStorage(
     
   })
 
+
+  app.post('/calculategpa/:rollnumber/:sem', (req, res) => {
+    const rollNumber=req.params.rollnumber;
+    const semester=req.params.sem;
+    console.log(rollNumber, semester);
+    const query = `
+      SELECT m.MarksObtained, m.Grade, s.credits
+      FROM marks m
+      INNER JOIN subjects s ON m.SubjectID = s.SubjectID
+      WHERE m.RollNumber = ? AND m.Semester = ?
+    `;
+    db.query(query, [rollNumber, semester], (error, results) => {
+      if (error) {
+        console.error('Error querying database: ' + error.stack);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      let totalCredits = 0;
+      let totalPoints = 0;
+      var isfailed = false;
+      results.forEach(row => {
+        totalCredits += row.credits;
+        switch (row.Grade) {
+          case 'O':
+            totalPoints += 10 * row.credits;
+            break;
+          case 'A+':
+            totalPoints += 9 * row.credits;
+            break;
+          case 'A':
+            totalPoints += 8 * row.credits;
+            break;
+          case 'B+':
+            totalPoints += 7 * row.credits;
+            break;
+          case 'B':
+            totalPoints += 6 * row.credits;
+            break;
+          default:
+            isfailed = true;
+            totalPoints=0;
+            break;
+        }
+      });
+      if(isfailed){
+        totalPoints=0;
+      }
+      const gpa = (totalPoints / totalCredits).toFixed(2);;
+      const query1=`update gpa set gpa=? where rollnumber=? and semester=?`;
+      db.query(query1,[gpa,rollNumber,semester],(error,result)=>{
+        if (error) {
+          console.error('Error executing MySQL query: ' + error.stack);
+          res.status(500).json({ error: 'Internal server error' });
+          return;
+        }
+   
+     
+      })
+      res.json({ gpa });
+      console.log(gpa)
+    });
+  });
