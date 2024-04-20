@@ -1347,13 +1347,13 @@ const storage=multer.diskStorage(
   })
   app.put('/editbasicacademic/:rollNumber', (req, res) => {
     const rollNumber = req.params.rollNumber;
-    const { CurrentSemester, TenthMarks, HigherSecondaryMarks } = req.body;
+    const { CurrentSemester, TenthMarks, HigherSecondaryMarks, Cutoff } = req.body;
   
     const query = `UPDATE student_academic_details 
-                   SET CurrentSemester = ?, TenthMarks = ?, HigherSecondaryMarks = ? 
+                   SET CurrentSemester = ?, TenthMarks = ?, HigherSecondaryMarks = ?, Cutoff = ? 
                    WHERE RollNumber = ?`;
     
-    db.query(query, [CurrentSemester, TenthMarks, HigherSecondaryMarks, rollNumber], (error, results) => {
+    db.query(query, [CurrentSemester, TenthMarks, HigherSecondaryMarks, Cutoff, rollNumber], (error, results) => {
         if (error) {
             console.error("Error updating basic academic details:", error);
             res.status(500).json({ error: "An error occurred while updating basic academic details" });

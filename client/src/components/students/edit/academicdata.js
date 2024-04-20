@@ -12,6 +12,7 @@ function EditStudentAcademic() {
     const [semester, setSemester] = useState('');
     const [tenthMarks, setTenthMarks] = useState('');
     const [higherSecondaryMarks, setHigherSecondaryMarks] = useState('');
+    const [cutoff, setCutoff] = useState('');
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -23,6 +24,8 @@ function EditStudentAcademic() {
             setHigherSecondaryMarks(value);
         } else if (name === 'sem'){
             setSem(value);
+        } else if (name === 'cutoff'){
+            setCutoff(value);
         }
     };
 
@@ -37,6 +40,7 @@ function EditStudentAcademic() {
                             setSemester(response.data.CurrentSemester);
                             setTenthMarks(response.data.TenthMarks);
                             setHigherSecondaryMarks(response.data.HigherSecondaryMarks);
+                            setCutoff(response.data.Cutoff);
                         } else {
                             alert('No academic data found');
                         }
@@ -107,12 +111,13 @@ function EditStudentAcademic() {
     };
     const handleEditBasicAcademic = () => {
         // Make API call to edit basic academic details
-        if(tenthMarks<=100 && higherSecondaryMarks<=100 && tenthMarks>=0 && higherSecondaryMarks>=0){
+        if(tenthMarks<=100 && higherSecondaryMarks<=100 && tenthMarks>=0 && higherSecondaryMarks>=0 && cutoff>=0 && cutoff <=200){
 
         axios.put(`http://localhost:5000/editbasicacademic/${userRef.current}`, {
             CurrentSemester: semester,
             TenthMarks: tenthMarks,
-            HigherSecondaryMarks: higherSecondaryMarks
+            HigherSecondaryMarks: higherSecondaryMarks,
+            Cutoff: cutoff
         })
         .then(response => {
             console.log('Basic academic details edited successfully');
@@ -120,7 +125,8 @@ function EditStudentAcademic() {
                 ...basicacademic,
                 CurrentSemester: semester,
                 TenthMarks: tenthMarks,
-                HigherSecondaryMarks: higherSecondaryMarks
+                HigherSecondaryMarks: higherSecondaryMarks,
+                Cutoff: cutoff
                 
             });
             toast.success("Basic Academic Details Updated",{
@@ -154,7 +160,7 @@ function EditStudentAcademic() {
                     <table border={'0'} className='school-table'>
 
                         <tr>
-                            <td colSpan={'2'}>
+                            <td colSpan={'3'}>
                                 <h2>BASIC ACADEMIC DETAILS</h2>
                             </td>
                             <td>
@@ -184,6 +190,16 @@ function EditStudentAcademic() {
                                     placeholder='12th/HSC'
                                     value={higherSecondaryMarks}
                                     onChange={handleInputChange}
+                                />
+                            </td>
+                            <td>
+                                <p className='topic'><span id='hide-text'>00</span>Cut-off Marks : </p><br/>
+                                <input
+                                type="number"
+                                name="cutoff"
+                                placeholder='out of 200'
+                                value={cutoff}
+                                onChange={handleInputChange}
                                 />
                             </td>
                             <td>

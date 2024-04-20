@@ -213,7 +213,7 @@ body {
   width: 100%;
   opacity: 0; /* Hide text initially */
   transition: opacity 0.5s; /* Add opacity transition */
-  color: skyblue; /* Set font color to sky blue */
+  color: #1E7CC0; /* Set font color to sky blue */
   font-style: italic; /* Set font style to italic */
 }
 
