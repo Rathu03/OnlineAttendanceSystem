@@ -14,6 +14,7 @@ function EditStudentAcademic() {
     const [higherSecondaryMarks, setHigherSecondaryMarks] = useState('');
     const [cutoff, setCutoff] = useState('');
     const [gpa, setgpa] = useState('');
+
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         if (name === 'semester') {
@@ -294,13 +295,13 @@ function EditStudentAcademic() {
                                         />
                                     </td>
                                     <td>
-                                    <select id="gradeSelect" name="grade" value={mark.Grade} 
+                                    <select id="gradeSelect" name="grade" value={mark.Grade || ""}
                                     onChange={(e) => {
                                         const newGrade = e.target.value;
                                         handleEditGrade(mark.SubjectID, newGrade);
                                     }}
                                     >
-                                        <option value="">Select Grade</option>
+                                        <option disabled value="">Select Grade</option>
                                         <option value="O">O</option>
                                         <option value="A+">A+</option>
                                         <option value="A">A</option>

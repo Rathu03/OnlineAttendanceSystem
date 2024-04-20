@@ -1545,18 +1545,48 @@ const storage=multer.diskStorage(
       if(isfailed){
         totalPoints=0;
       }
-      const gpa = (totalPoints / totalCredits).toFixed(2);;
-      const query1=`update gpa set gpa=? where rollnumber=? and semester=?`;
-      db.query(query1,[gpa,rollNumber,semester],(error,result)=>{
-        if (error) {
-          console.error('Error executing MySQL query: ' + error.stack);
-          res.status(500).json({ error: 'Internal server error' });
-          return;
-        }
-   
-     
-      })
-      res.json({ gpa });
+    const gpa = (totalPoints / totalCredits).toFixed(2);
+    const checkQuery = `SELECT * FROM gpa WHERE rollnumber=? AND semester=?`;
+
+    db.query(checkQuery, [rollNumber, semester], (error, results) => {
+    if (error) {
+        console.error('Error executing MySQL query: ' + error.stack);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+    }
+
+    if (results.length > 0) {
+        // Record exists, execute the UPDATE query
+        const updateQuery = `UPDATE gpa SET gpa=? WHERE rollnumber=? AND semester=?`;
+
+        db.query(updateQuery, [gpa, rollNumber, semester], (updateError, updateResult) => {
+          if (updateError) {
+              console.error('Error executing MySQL update query: ' + updateError.stack);
+              res.status(500).json({ error: 'Internal server error' });
+              return;
+          }
+
+          res.status(200).json({ message: 'Record updated successfully' , gpa: gpa});
+        });
+          } 
+          else {
+            // Record does not exist, execute the INSERT query
+            const insertQuery = `INSERT INTO gpa (rollnumber, gpa, semester) VALUES (?, ?, ?)`;
+            console.log("GPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+            console.log(gpa)
+            db.query(insertQuery, [rollNumber, gpa, semester], (insertError, insertResult) => {
+                if (insertError) {
+                    console.error('Error executing MySQL insert query: ' + insertError.stack);
+                    res.status(500).json({ error: 'Internal server error' });
+                    return;
+                }
+
+                res.status(200).json({ message: 'Record inserted successfully' , gpa: gpa});
+            });
+          }   
+});
+
+      //res.json({ gpa });
       console.log(gpa)
     });
   });
