@@ -1340,6 +1340,17 @@ const storage=multer.diskStorage(
       res.json(results[0]);
     });
   })
+
+  app.get('/getcgpa/:rollNumber/', (req, res) => {
+    const rollNumber = req.params.rollNumber;
+    const query = `SELECT sum(gpa)/count(gpa) AS cgpa FROM gpa WHERE gpa!=0 AND rollnumber=?`;
+    db.query(query, [rollNumber], (error, results) => {
+      if (error) throw error;
+      console.log("Fetched cgpa", results[0])
+      res.json(results[0]);
+    });
+  })
+  
   app.put('/editbasicacademic/:rollNumber', (req, res) => {
     const rollNumber = req.params.rollNumber;
     const { CurrentSemester, TenthMarks, HigherSecondaryMarks, Cutoff } = req.body;
