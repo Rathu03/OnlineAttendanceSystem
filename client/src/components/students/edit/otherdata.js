@@ -585,11 +585,11 @@ const handleAddEvents = async() => {
                                         </tr>
                                     </table> 
                     </div>
+                    <button className="delete-btn"  onClick={() => handleDeleteInternship(internship.id)}>Delete</button>
                     <button onClick={() => setInternViewModal(false)}>Close</button>
                 </div>
             </Modal>
-            </>  
-                
+            </>   
 ))}         </div>
             <button className="add-btn" onClick={() => setInternFillModal(true)}>Add Internship</button>
 
@@ -660,19 +660,40 @@ const handleAddEvents = async() => {
                     <button onClick={() => setInternFillModal(false)}>Close</button>
                 </div>
             </Modal>
-
+            <div className='custom-card-container'>
             {!scholarships&&<h3>No Scholarship details found</h3>}
             {scholarships && scholarships.map((Scholarship, index) => (
-                <div>
-                    <div className='view-form' key={index}>
-                        <h2>Scholarship Details {index + 1}</h2>
-                        <p className='view-field'><strong>Scholarship Provider:</strong> {Scholarship.ScholarshipProvider}</p>
-                        <p className='view-field'><strong>Amount:</strong> {Scholarship.amount}</p>
-                        
-                    </div>
-                    <button className="delete-btn"  onClick={() => handleDeleteScholarship(Scholarship.id)}>Delete</button>
+                <>
+                <CustomCard
+                    type='scholarship'
+                    details={Scholarship}
+                    onClick={()=>setScholarshipViewModal(true)}
+                />
+                <Modal isOpen={scholarshipViewModal} onRequestClose={() => setScholarshipViewModal(false)} className={'modal-content'} >
+                    <div id='intern-modal'>
+                        <h1>Scholarship Details</h1>
+                            <div id='modal-input-table'>
+                                <table border={'0'} className='view-table'>
+                                    <tr>
+                                        <td id='topic-td'>Provider Name :
+                                        </td>
+                                        <td id='input-td'><label>{Scholarship.ScholarshipProvider}</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td id='topic-td'>Amount :
+                                        </td>
+                                        <td id='input-td'><label>{Scholarship.amount}</label>
+                                        </td>
+                                    </tr>
+                                </table> 
                 </div>
-))}
+                <button className="delete-btn"  onClick={() => handleDeleteScholarship(Scholarship.id)}>Delete</button>
+                <button onClick={() => setScholarshipViewModal(false)}>Close</button>
+            </div>
+        </Modal>
+        </>  
+))}     </div>
             <button className="add-btn" onClick={() => setScholarshipFillModal(true)}>Add Scholarship</button>
             <Modal isOpen={scholarshipFillModal} onRequestClose={() => setScholarshipFillModal(false)} className={'modal-content'} >
                 <div id='scholarship-modal'>
@@ -699,19 +720,46 @@ const handleAddEvents = async() => {
                 </div>
             </Modal>
 
+            <div className='custom-card-container'>
             {!projects&&<h3>No Project details found</h3>}
             {projects && projects.map((Project, index) => (
-                <div>
-                <div className='view-form' key={index}>
-                    <h2>Project Details {index + 1}</h2>
-                    <p className='view-field'><strong>Project Name:</strong> {Project.title}</p>
-                    <p className='view-field'><strong>Guide:</strong> {Project.guide}</p>
-                    <p className='view-field'><strong>Description:</strong> {Project.project_desc}</p>
-                    
-                </div>
-                <button className="delete-btn" onClick={() => handleDeleteProject(Project.id)}>Delete</button>
-                </div>
-            ))}
+                 <>
+                 <CustomCard
+                     type='project'
+                     details={Project}
+                     onClick={()=>setProjectViewModal(true)}
+                 />
+                 <Modal isOpen={projectViewModal} onRequestClose={() => setProjectViewModal(false)} className={'modal-content'} >
+                     <div id='project-modal'>
+                         <h1>Project Details</h1>
+                             <div id='modal-input-table'>
+                                 <table border={'0'} className='view-table'>
+                                     <tr>
+                                         <td id='topic-td'>Project Name :
+                                         </td>
+                                         <td id='input-td'><label>{Project.title}</label>
+                                         </td>
+                                     </tr>
+                                     <tr>
+                                         <td id='topic-td'>Guide :
+                                         </td>
+                                         <td id='input-td'><label>{Project.guide}</label>
+                                         </td>
+                                     </tr>
+                                     <tr>
+                                         <td id='topic-td'>Description :
+                                         </td>
+                                         <td id='input-td'><label>{Project.project_desc}</label>
+                                         </td>
+                                     </tr>
+                                 </table> 
+                 </div>
+                 <button className="delete-btn"  onClick={() => handleDeleteProject(Project.id)}>Delete</button>
+                 <button onClick={() => setProjectViewModal(false)}>Close</button>
+             </div>
+         </Modal>
+         </>  
+            ))}</div>
             <button className='add-btn' onClick={()=> setProjectFillModal(true)}>Add Project</button>
             <Modal isOpen={projectFillModal} onRequestClose={() => setProjectFillModal(false)} className={'modal-content'} >
                 <div id='project-modal'>
@@ -746,18 +794,40 @@ const handleAddEvents = async() => {
                 </div>
             </Modal>
 
+            <div className='custom-card-container'>
             {!sports &&<h3>No sports details found</h3>}
             {sports && sports.map((sport, index) => (
-                <div>
-                    <div className='view-form' key={index}>
-                        <h2>Sports Details {index + 1}</h2>
-                        <p className='view-field'><strong>Event Name:</strong> {sport.event_name}</p>
-                        <p className='view-field'><strong>Award:</strong> {sport.award}</p>
-                        
-                    </div>
-                    <button className="delete-btn" onClick={() => handleDeleteSports(sport.id)}>Delete</button>
+                <>
+                <CustomCard
+                    type='sports'
+                    details={sport}
+                    onClick={()=>setSportsViewModal(true)}
+                />
+                <Modal isOpen={sportsViewModal} onRequestClose={() => setSportsViewModal(false)} className={'modal-content'} >
+                    <div id='sports-modal'>
+                        <h1>Sports Details</h1>
+                            <div id='modal-input-table'>
+                                <table border={'0'} className='view-table'>
+                                    <tr>
+                                        <td id='topic-td'>Event Name :
+                                        </td>
+                                        <td id='input-td'><label>{sport.event_name}</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td id='topic-td'>Award :
+                                        </td>
+                                        <td id='input-td'><label>{sport.award}</label>
+                                        </td>
+                                    </tr>
+                                </table> 
                 </div>
-))}
+                <button className="delete-btn"  onClick={() => handleDeleteSports(sport.id)}>Delete</button>
+                <button onClick={() => setSportsViewModal(false)}>Close</button>
+            </div>
+        </Modal>
+        </>  
+))}         </div>
             <button className="add-btn" onClick={()=>setSportsFillModal(true)}>Add Sports</button>
             <Modal isOpen={sportsFillModal} onRequestClose={() => setSportsFillModal(false)} className={'modal-content'} >
                 <div id='sports-modal'>
@@ -787,7 +857,7 @@ const handleAddEvents = async() => {
             </Modal>
 
 
-            {!exams&&<h3>No Exam details found</h3>}
+            {/* {!exams&&<h3>No Exam details found</h3>} */}
             {exams && exams.map((exam, index) => (
             <div className='view-form'>
                 <h2>Exams Attended</h2>
@@ -802,20 +872,52 @@ const handleAddEvents = async() => {
 
 
 
-
+        <div className='custom-card-container'>     
         {!papers && <h3>No Papers Published</h3>}       
         {papers && papers.map((paper, index) => (
-            <div>
-                <div className='view-form' key={index}>
-                    <h2>Papers Presented {index + 1}</h2>
-                    <p className='view-field'><strong>Title:</strong> {paper.title}</p>
-                    <p className='view-field'><strong>Journal:</strong> {paper.journal}</p>
-                    <p className='view-field'><strong>Date:</strong> {paper.date_year}</p>
-                    <p className='view-field'><strong>DOI link:</strong> {paper.DOI_link}</p>
-                </div>
-            <button className="delete-btn" onClick={() => handleDeletePapers(paper.id)}>Delete</button>
+            <>
+            <CustomCard
+                type='papers'
+                details={paper}
+                onClick={()=>setPapersViewModal(true)}
+            />
+            <Modal isOpen={papersViewModal} onRequestClose={() => setPapersViewModal(false)} className={'modal-content'} >
+                <div id='paper-modal'>
+                    <h1>Paper Details</h1>
+                        <div id='modal-input-table'>
+                            <table border={'0'} className='view-table'>
+                                <tr>
+                                    <td id='topic-td'>Title :
+                                    </td>
+                                    <td id='input-td'><label>{paper.title}</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td id='topic-td'>Journal :
+                                    </td>
+                                    <td id='input-td'><label>{paper.journal}</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td id='topic-td'>Date Year :
+                                    </td>
+                                    <td id='input-td'><label>{paper.date_year}</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td id='topic-td'>DOI Link :
+                                    </td>
+                                    <td id='input-td'><label>{paper.DOI_link}</label>
+                                    </td>
+                                </tr>
+                            </table> 
             </div>
-        ))}
+            <button className="delete-btn"  onClick={() => handleDeletePapers(paper.id)}>Delete</button>
+            <button onClick={() => setPapersViewModal(false)}>Close</button>
+        </div>
+    </Modal>
+    </>  
+        ))}</div>
         <button className="add-btn" onClick={()=>setPapersFillModal(true)}>Add Papers</button>
             <Modal isOpen={papersFillModal} onRequestClose={() => setPapersFillModal(false)} className={'modal-content'} >
                 <div id='papers-modal'>
@@ -857,21 +959,58 @@ const handleAddEvents = async() => {
                 </div>
             </Modal>
             
-
+        <div className='custom-card-container'>
         {!events && <h3>No Events Participated</h3>}
         {events && events.map((event, index) => (
-                <div>
-                    <div className='view-form' key={index}>
-                        <h2>Events Details {index + 1}</h2>
-                        <p className='view-field'><strong>Event Name:</strong> {event.event_name}</p>
-                        <p className='view-field'><strong>Institution Name:</strong> {event.institution}</p>
-                        <p className='view-field'><strong>Role:</strong> {event.role}</p>
-                        <p className='view-field'><strong>Date:</strong> {event.date}</p>
-                        <p className='view-field'><strong>Awards:</strong> {event.awards}</p>
-                    </div>
-                    <button className="delete-btn" onClick={() => handleDeleteEvents(event.id)}>Delete</button>
+                <>
+                <CustomCard
+                    type='events'
+                    details={event}
+                    onClick={()=>setEventsViewModal(true)}
+                />
+                <Modal isOpen={eventsViewModal} onRequestClose={() => setEventsViewModal(false)} className={'modal-content'} >
+                    <div id='event-modal'>
+                        <h1>Event Details</h1>
+                            <div id='modal-input-table'>
+                                <table border={'0'} className='view-table'>
+                                    <tr>
+                                        <td id='topic-td'>Event Name :
+                                        </td>
+                                        <td id='input-td'><label>{event.event_name}</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td id='topic-td'>Institution :
+                                        </td>
+                                        <td id='input-td'><label>{event.institution}</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td id='topic-td'>Date :
+                                        </td>
+                                        <td id='input-td'><label>{event.date}</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td id='topic-td'>Role :
+                                        </td>
+                                        <td id='input-td'><label>{event.role}</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td id='topic-td'>Awards :
+                                        </td>
+                                        <td id='input-td'><label>{event.awards}</label>
+                                        </td>
+                                    </tr>
+                                </table> 
                 </div>
-        ))}
+                <button className="delete-btn"  onClick={() => handleDeleteEvents(event.id)}>Delete</button>
+                <button onClick={() => setEventsViewModal(false)}>Close</button>
+            </div>
+        </Modal>
+        </> 
+        ))}</div>
             <button className="add-btn" onClick={()=>setEventsFillModal(true)}>Add Events</button>
             <Modal isOpen={eventsFillModal} onRequestClose={() => setEventsFillModal(false)} className={'modal-content'}>
                 <div id='events-modal'>
