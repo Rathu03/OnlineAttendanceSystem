@@ -5,6 +5,8 @@ import styles from '../../CSS/edit_otherdata.css'
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import Modal from 'react-modal'
+import CustomCard from '../../cards/CustomCard';
+
 Modal.setAppElement('#root');
 
 function EditStudentOther() {
@@ -25,13 +27,21 @@ function EditStudentOther() {
     const [addpaper,setaddpaper] = useState(false);
     const [addevent,setaddevent] = useState(false);
 
-    const [internModal, setInternModal] = useState(false);
-    const [scholarshipModal, setScholarshipModal] = useState(false);
-    const [projectModal, setProjectModal] = useState(false);
-    const [sportsModal, setSportsModal] = useState(false);
-    const [examsModal, setExamsModal] = useState(false);
-    const [papersModal, setPapersModal] = useState(false);
-    const [eventsModal, setEventsModal] = useState(false);
+    const [interFillModal, setInternFillModal] = useState(false);
+    const [scholarshipFillModal, setScholarshipFillModal] = useState(false);
+    const [projectFillModal, setProjectFillModal] = useState(false);
+    const [sportsFillModal, setSportsFillModal] = useState(false);
+    const [examsFillModal, setExamsFillModal] = useState(false);
+    const [papersFillModal, setPapersFillModal] = useState(false);
+    const [eventsFillModal, setEventsFillModal] = useState(false);
+
+    const [interViewModal, setInternViewModal] = useState(false);
+    const [scholarshipViewModal, setScholarshipViewModal] = useState(false);
+    const [projectViewModal, setProjectViewModal] = useState(false);
+    const [sportsViewModal, setSportsViewModal] = useState(false);
+    const [examsViewModal, setExamsViewModal] = useState(false);
+    const [papersViewModal, setPapersViewModal] = useState(false);
+    const [eventsViewModal, setEventsViewModal] = useState(false);
 
     const userRef = useRef(null);
 
@@ -490,26 +500,100 @@ const handleAddEvents = async() => {
         <div id='student-edit-other'>
 
             <Navbar />
+
+        {/* <div className="custom-card-container">
+        <CustomCard
+          type='internship'
+          title="Intership At Amazon"
+          description="This is the description for Card 1."
+          imageUrl="https://png.pngtree.com/png-clipart/20210915/ourlarge/pngtree-user-avatar-placeholder-black-png-image_3918427.jpg"
+        />
+        <CustomCard
+          type='internship'
+          title="Intership At Amazon"
+          description="This is the description for Card 2."
+          imageUrl="https://png.pngtree.com/png-clipart/20210915/ourlarge/pngtree-user-avatar-placeholder-black-png-image_3918427.jpg"
+        />
+        <CustomCard
+            title="Intership At Amazon"
+            description="This is the description for Card 2."
+            imageUrl="https://png.pngtree.com/png-clipart/20210915/ourlarge/pngtree-user-avatar-placeholder-black-png-image_3918427.jpg"
+            onClick={()=>setInternFillModal(true)}
+        />
+      </div> */}
+
+            <div className='custom-card-container'>
             {!internships&&<h3>No Internship details found</h3>}
             {internships && internships.map((internship, index) => (
-                <div>
-                    <div className='view-form' key={index}>
-                        <h2>Internship Details {index + 1}</h2>
-                        <p className='view-field'><strong>Roll Number:</strong> {internship.roll_number}</p>
-                        <p className='view-field'><strong>Employer:</strong> {internship.employer_name}</p>
-                        <p className='view-field'><strong>On/Off campus:</strong> {internship.on_off_campus}</p>
-                        <p className='view-field'><strong>CTC:</strong> {internship.ctc}</p>
-                        <p className='view-field'><strong>Internship Duration:</strong> {internship.InternshipDuration}</p>
-                        <p className='view-field'><strong>Internship StartDate:</strong> {internship.InternshipStartDate}</p>
-                        <p className='view-field'><strong>Internship EndDate:</strong> {internship.InternshipEndDate}</p>
-                        <p className='view-field'><strong>Product/Service Based :</strong> {internship.product_service_based}</p>
+                <>
+                    <CustomCard
+                        type='internship'
+                        details={internship}
+                        onClick={()=>setInternViewModal(true)}
+                    />
+                    <Modal isOpen={interViewModal} onRequestClose={() => setInternViewModal(false)} className={'modal-content'} >
+                        <div id='intern-modal'>
+                            <h1>Internship Details</h1>
+                                <div id='modal-input-table'>
+                                    <table border={'0'} className='view-table'>
+                                        <tr>
+                                            <td id='topic-td'>Employer Name :
+                                            </td>
+                                            <td id='input-td'><label>{internship.employer_name}</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id='topic-td'>Mode :
+                                            </td>
+                                            <td id='input-td'><label>{internship.on_off_campus}</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id='topic-td'>CTC :
+                                            </td>
+                                            <td id='input-td'><label>{internship.ctc}</label>
+                                        
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id='topic-td'>Duration :
+                                            </td>
+                                            <td id='input-td'><label>{internship.InternshipDuration}</label>
+                                        
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id='topic-td'>Start Date :
+                                            </td>
+                                            <td id='input-td'><label>{internship.InternshipStartDate}</label>
+                                        
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id='topic-td'>End Date :
+                                            </td>
+                                            <td id='input-td'><label>{internship.InternshipEndDate}</label>
+                                        
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id='topic-td'>Product/Service Based :
+                                            </td>
+                                            
+                                            <td id='input-td'><label>{internship.product_service_based}</label>
+                                            </td>
+                                        </tr>
+                                    </table> 
                     </div>
-                    <button className="delete-btn" onClick={() => handleDeleteInternship(index)}>Delete</button>
+                    <button onClick={() => setInternViewModal(false)}>Close</button>
                 </div>
-))}
-            <button className="add-btn" onClick={() => setInternModal(true)}>Add Internship</button>
+            </Modal>
+            </>  
+                
+))}         </div>
+            <button className="add-btn" onClick={() => setInternFillModal(true)}>Add Internship</button>
 
-            <Modal isOpen={internModal} onRequestClose={() => setInternModal(false)} contentLabel="Example Modal" className={'modal-content'} >
+            <Modal isOpen={interFillModal} onRequestClose={() => setInternFillModal(false)} contentLabel="Example Modal" className={'modal-content'} >
                 <div id='intern-modal'>
                     <h1>Add Internship Details</h1>
                     <div id='modal-input-table'>
@@ -573,7 +657,7 @@ const handleAddEvents = async() => {
                         
                         <button className="add-btn" onClick={handleAddInternship}>Submit</button>
                     </div>
-                    <button onClick={() => setInternModal(false)}>Close</button>
+                    <button onClick={() => setInternFillModal(false)}>Close</button>
                 </div>
             </Modal>
 
@@ -589,8 +673,8 @@ const handleAddEvents = async() => {
                     <button className="delete-btn"  onClick={() => handleDeleteScholarship(Scholarship.id)}>Delete</button>
                 </div>
 ))}
-            <button className="add-btn" onClick={() => setScholarshipModal(true)}>Add Scholarship</button>
-            <Modal isOpen={scholarshipModal} onRequestClose={() => setScholarshipModal(false)} className={'modal-content'} >
+            <button className="add-btn" onClick={() => setScholarshipFillModal(true)}>Add Scholarship</button>
+            <Modal isOpen={scholarshipFillModal} onRequestClose={() => setScholarshipFillModal(false)} className={'modal-content'} >
                 <div id='scholarship-modal'>
                     <h1>Add Scholarship Details</h1>
                     <div id='modal-input-table'>
@@ -611,7 +695,7 @@ const handleAddEvents = async() => {
                         
                         <button className="add-btn" onClick={handleAddScholarship}>Submit</button>
                     </div>
-                    <button onClick={() => setScholarshipModal(false)}>Close</button>
+                    <button onClick={() => setScholarshipFillModal(false)}>Close</button>
                 </div>
             </Modal>
 
@@ -628,8 +712,8 @@ const handleAddEvents = async() => {
                 <button className="delete-btn" onClick={() => handleDeleteProject(Project.id)}>Delete</button>
                 </div>
             ))}
-            <button className='add-btn' onClick={()=> setProjectModal(true)}>Add Project</button>
-            <Modal isOpen={projectModal} onRequestClose={() => setProjectModal(false)} className={'modal-content'} >
+            <button className='add-btn' onClick={()=> setProjectFillModal(true)}>Add Project</button>
+            <Modal isOpen={projectFillModal} onRequestClose={() => setProjectFillModal(false)} className={'modal-content'} >
                 <div id='project-modal'>
                     <h1>Add Project Details</h1>
                     <div id='modal-input-table'>
@@ -658,7 +742,7 @@ const handleAddEvents = async() => {
                         
                         <button className="add-btn" onClick={handleAddProject}>Submit</button>
                     </div>
-                    <button onClick={() => setProjectModal(false)}>Close</button>
+                    <button onClick={() => setProjectFillModal(false)}>Close</button>
                 </div>
             </Modal>
 
@@ -674,8 +758,8 @@ const handleAddEvents = async() => {
                     <button className="delete-btn" onClick={() => handleDeleteSports(sport.id)}>Delete</button>
                 </div>
 ))}
-            <button className="add-btn" onClick={()=>setSportsModal(true)}>Add Sports</button>
-            <Modal isOpen={sportsModal} onRequestClose={() => setSportsModal(false)} className={'modal-content'} >
+            <button className="add-btn" onClick={()=>setSportsFillModal(true)}>Add Sports</button>
+            <Modal isOpen={sportsFillModal} onRequestClose={() => setSportsFillModal(false)} className={'modal-content'} >
                 <div id='sports-modal'>
                     <h1>Add Sports Details</h1>
                     <div id='modal-input-table'>
@@ -698,7 +782,7 @@ const handleAddEvents = async() => {
                         
                         <button className="add-btn" onClick={handleAddSports}>Submit</button>
                     </div>
-                    <button onClick={() => setSportsModal(false)}>Close</button>
+                    <button onClick={() => setSportsFillModal(false)}>Close</button>
                 </div>
             </Modal>
 
@@ -732,8 +816,8 @@ const handleAddEvents = async() => {
             <button className="delete-btn" onClick={() => handleDeletePapers(paper.id)}>Delete</button>
             </div>
         ))}
-        <button className="add-btn" onClick={()=>setPapersModal(true)}>Add Papers</button>
-            <Modal isOpen={papersModal} onRequestClose={() => setPapersModal(false)} className={'modal-content'} >
+        <button className="add-btn" onClick={()=>setPapersFillModal(true)}>Add Papers</button>
+            <Modal isOpen={papersFillModal} onRequestClose={() => setPapersFillModal(false)} className={'modal-content'} >
                 <div id='papers-modal'>
                     <h1>Add Paper Details</h1>
                     <div id='modal-input-table'>
@@ -769,7 +853,7 @@ const handleAddEvents = async() => {
                         
                         <button className="add-btn" onClick={handleAddPapers}>Submit</button>
                     </div>
-                    <button onClick={() => setPapersModal(false)}>Close</button>
+                    <button onClick={() => setPapersFillModal(false)}>Close</button>
                 </div>
             </Modal>
             
@@ -788,8 +872,8 @@ const handleAddEvents = async() => {
                     <button className="delete-btn" onClick={() => handleDeleteEvents(event.id)}>Delete</button>
                 </div>
         ))}
-            <button className="add-btn" onClick={()=>setEventsModal(true)}>Add Events</button>
-            <Modal isOpen={eventsModal} onRequestClose={() => setEventsModal(false)} className={'modal-content'}>
+            <button className="add-btn" onClick={()=>setEventsFillModal(true)}>Add Events</button>
+            <Modal isOpen={eventsFillModal} onRequestClose={() => setEventsFillModal(false)} className={'modal-content'}>
                 <div id='events-modal'>
                     <h1>Add Event Details</h1>
                     <div id='modal-input-table'>
@@ -834,7 +918,7 @@ const handleAddEvents = async() => {
                         
                         <button className="add-btn" onClick={handleAddEvents}>Submit</button>
                     </div>
-                    <button onClick={() => setEventsModal(false)}>Close</button>
+                    <button onClick={() => setEventsFillModal(false)}>Close</button>
                 </div>
             </Modal>
 

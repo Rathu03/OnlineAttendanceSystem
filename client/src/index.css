@@ -938,6 +938,9 @@ textarea:focus {
 .modal-content table{
   border-spacing: 10px;
 }
+.modal-content .view-table{
+  border-spacing: 20px;
+}
 
 .modal-content table #topic-td{
   text-align: right;
@@ -949,6 +952,12 @@ textarea:focus {
 
  .modal-content table input, .modal-content table select{
   font-size: 1.1em;
+  width: 100%;
+  border-radius: 8px;
+ }
+ 
+ .modal-content table label{
+  font-size: 1.2em;
   width: 100%;
   border-radius: 8px;
  }

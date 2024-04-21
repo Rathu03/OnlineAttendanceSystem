@@ -980,7 +980,7 @@ const storage=multer.diskStorage(
   
   app.get('/InternshipDetails/:username', (req, res) => {
     const { username } = req.params;
-    const sql = 'SELECT * FROM internship WHERE roll_number = ?';
+    const sql = 'SELECT internship.*, studentdetails.Name, studentdetails.Phone FROM internship  INNER JOIN studentdetails ON internship.roll_number = studentdetails.RollNumber WHERE internship.roll_number = ?';
     db.query(sql, [username], (err, result) => {
         if (err) {
             throw err;
