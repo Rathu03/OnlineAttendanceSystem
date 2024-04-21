@@ -1590,3 +1590,18 @@ const storage=multer.diskStorage(
       console.log(gpa)
     });
   });
+
+
+app.get('/getstudentlist/:teacherid/:subjectid',(req, res) =>{
+const teacherid = req.params.teacherid;
+const subjectid = req.params.subjectid;
+const query0=`select * from marks where SubjectID=? and teacherId=? `;
+db.query(query0,[subjectid, teacherid],(error,result)=>{
+  if(error){
+    console.error('Error executing MySQL query: ' + error.stack);
+    res.status(500).json({ error: 'Internal server error' });
+    return;
+  }
+  res.json(result);
+})
+})
