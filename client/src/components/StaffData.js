@@ -83,6 +83,7 @@ const StaffData = () => {
       })
       const data = await response.json()
       setRoomdata(data)
+      console.log(data)
       
     }
     if(isClicked){
@@ -130,9 +131,9 @@ const StaffData = () => {
           <>
             {stafflist.map((item, index) =>(
             <div>
-            <div className='list-card'>
+            <div className='list-card' onClick = {() => getData(item.email)}>
               <div style={{width:"100px"}}>{item.teacherid}</div>
-              <div style={{ width: "100px", cursor: "pointer"}} onClick = {() => getData(item.email)}>{item.teacher_name}</div> 
+              <div style={{ width: "100px"}} >{item.teacher_name}</div> 
               <div style={{width:"100px"}}>{item.email}</div>
             </div>
             <div style={{ borderTop: "1px solid white" }}></div>
@@ -144,9 +145,9 @@ const StaffData = () => {
             <>
               {searchStafflist.map((item, index) =>(
               <div>
-              <div className='list-card'>
+              <div className='list-card' onClick = {() => getData(item.email)}>
                 <div style={{width:"100px"}}>{item.teacherid}</div>
-                <div style={{ width: "100px", cursor: "pointer"}} onClick = {() => getData(item.email)}>{item.teacher_name}</div> 
+                <div style={{ width: "100px", cursor: "pointer"}} >{item.teacher_name}</div> 
                 <div style={{width:"100px"}}>{item.email}</div>
               </div>
               <div style={{ borderTop: "1px solid white" }}></div>
@@ -187,7 +188,7 @@ const StaffData = () => {
               </>}
                 </> : 
                 <>
-                  <div className='room-data-container' style={{transform:"scale(1.4)"}}>
+                  <div >
                     <div className='tables'>
                       <table className='attendance-list'>
                         <thead>
@@ -249,3 +250,4 @@ const StaffData = () => {
 }
 
 export default StaffData
+

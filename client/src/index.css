@@ -681,6 +681,7 @@ textarea:focus {
 
 .list-card:hover {
   background-color: rgb(226, 233, 235);
+  cursor: pointer;
 }
 
 #student-view-personal{

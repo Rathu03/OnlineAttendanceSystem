@@ -24,7 +24,7 @@ const dbConfig = {
     host: 'localhost',
     user: 'root',
     // password: '',
-    password:'',
+    password:'password',
     database: 'istdept'
 };
 
