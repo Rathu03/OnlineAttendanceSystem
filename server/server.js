@@ -13,18 +13,14 @@ const app = express();
 
 app.use(express.static('prof-image'));
 app.use(express.json());
-app.use(cors({
-    origin: 'http://localhost:3000', 
-    methods:["POST","GET","PUT","DELETE"],
-    credentials: true 
-  }));
+app.use(cors());
 app.use(body_parser.urlencoded({ extended: true }));
 
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    // password: '',
-    password:'password',
+    password: '',
+    // password:'password',
     database: 'istdept'
 };
 
