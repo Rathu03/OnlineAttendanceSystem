@@ -40,6 +40,8 @@ import StudentData from './components/StudentData'
 import StaffData from './components/StaffData'
 import PDFData from './components/PDF/PDFGenerator'
 import PDFData2 from './components/PDF/PDFGenerator2'
+import ViewAttendance from './components/ViewAttendance'
+import PrintAttendance from './components/PrintAttendance'
 
 
 const App = () => {
@@ -55,6 +57,7 @@ const App = () => {
         <Route path='student/attendance' element={<StudentDashboard />} />
         <Route path='admin-dashboard' element={<AdminDashboard />}/>
         <Route path='staff/attendance' element={<StaffDashboard />}/>
+        <Route path = 'staff/attendance/print' element={<PrintAttendance />}/>
         <Route path='create-room' element={<CreateRoom />}/>
         <Route path='reset-password/:role/:token' element={<ResetPassword />}/>
         <Route path="/student" element={<Student />} />

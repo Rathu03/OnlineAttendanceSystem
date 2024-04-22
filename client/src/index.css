@@ -484,8 +484,28 @@ a:hover {
   row-gap: 2rem;
 }
 
+.print-data-container {
+  box-shadow: rgba(80, 196, 246, 0.974) 0px 5px 15px;
+  border-radius: 6px;
+  margin: 70px;
+  margin-left: 200px;
+  margin-right: 200px; 
+  font-size: 20px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 2rem;
+}
+
 .room-data {
   padding-left: 6rem;
+  font-size: 20px;
+  display: flex;
+  column-gap: 4rem;
+}
+
+.print-data {
+  padding-left: 17rem;
   font-size: 20px;
   display: flex;
   column-gap: 4rem;

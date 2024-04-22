@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { json, useNavigate } from 'react-router-dom'
 import { CiCirclePlus } from "react-icons/ci";
 import { MdCheck } from "react-icons/md";
@@ -6,6 +6,7 @@ import Navbar from './Navbar';
 
 const StaffDashboard = () => {
 
+  const componentRef = useRef()
   const email = localStorage.getItem('email');
   const teacher_id = localStorage.getItem('teacherid');
   const [data, setData] = useState([]);
@@ -135,6 +136,11 @@ const handleAbsentSubmit = async(e) => {
   setNumofhours("");
   setTextarea("")
 };
+
+const handlePrint = () => {
+  localStorage.setItem('roomdata',JSON.stringify(roomdata))
+  navigate('print')
+}
 
 const handleTemp = (data) => {
  
@@ -625,7 +631,9 @@ const handleTemp = (data) => {
                     </>}
                     
                 </table>
+                
                 </div>
+                <button className='submit-button' style={{width:"20%"}} onClick={handlePrint}>Print Attendance</button>
             </div>
                 
           </>
