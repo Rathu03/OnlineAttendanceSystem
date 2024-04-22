@@ -91,15 +91,17 @@ const StaffDashboard = () => {
     const inputValue = e.target.value;
     setTextarea(inputValue);
     const splitValues = inputValue.split(',').map(value => value.trim());
+    // console.log("sp",splitValues)
     setAbsenteeData(splitValues);
 };
 
 
 const handleAbsentSubmit = async(e) => {
+  //Some error to be fixed
   e.preventDefault();  
   var absent = [];
   absenteeData.map(item => (
-    absent.push(roomdata.filter(obj => item.includes(obj.rollnumber))[0])
+    absent.push(roomdata.filter(obj => item.includes(obj.rollnumber % 1000))[0])
   ))
 
   var absentroll = []
@@ -107,7 +109,7 @@ const handleAbsentSubmit = async(e) => {
     absentroll.push(absent[i].rollnumber)
   }
 
-  console.log(absentroll)
+  // console.log("ab",absentroll)
   const absentStudents = roomdata.filter(obj => absentroll.includes(obj.rollnumber));
   const presentStudents = roomdata.filter(obj => !absentroll.includes(obj.rollnumber));
 
@@ -134,7 +136,10 @@ const handleAbsentSubmit = async(e) => {
     alert("Marked successfully")
   }
   setNumofhours("");
-  setTextarea("")
+  setTextarea("");
+  setAbsentStudentData([])
+  setPresentStudentData([])
+  setAbsenteeData([])
 };
 
 const handlePrint = () => {
@@ -641,6 +646,7 @@ const handleTemp = (data) => {
           </>
            : 
           <>
+            <h1 style={{padding:"20px",textAlign:"center",fontSize:"45px"}}>Create Room</h1>
             <form className='attendance-section' onSubmit={handleAbsentSubmit}>
               <div className='atten-login-cont'>
                 <div className='login'>
@@ -649,6 +655,7 @@ const handleTemp = (data) => {
                   </div>
                   <div className='l2'>
                     <input 
+                      style={{width:"50%"}}
                       type='text'
                       name='numofhours'
                       id='numofhours'
@@ -673,7 +680,7 @@ const handleTemp = (data) => {
                 </div>
                 <div className='text-area'>
                   <div>
-                    <label htmlFor='absentees'>Enter absentees</label>
+                    <label htmlFor='absentees'>Enter absentees(last 3 digits) separated by comma</label>
                   </div>
                   <div >
                   <textarea 

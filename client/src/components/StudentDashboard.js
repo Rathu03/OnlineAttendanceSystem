@@ -141,6 +141,8 @@ const StudentDashboard = () => {
 
         </div>
         </> :
+        <div>
+          <h1 style={{padding:"20px",textAlign:"center",fontSize:"45px"}}>Attendance Details</h1>
         <div className='room-data-container'>
           <div className='room-data'>
             <div style={{width:"30%"}}>Subject code: </div>
@@ -172,7 +174,7 @@ const StudentDashboard = () => {
               </div>
           </div>
         </div>
-        
+        </div>
       }
       
     </div>
