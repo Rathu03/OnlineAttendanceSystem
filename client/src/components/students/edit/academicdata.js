@@ -12,6 +12,8 @@ function EditStudentAcademic() {
     const [semester, setSemester] = useState('');
     const [tenthMarks, setTenthMarks] = useState('');
     const [higherSecondaryMarks, setHigherSecondaryMarks] = useState('');
+    const [cutoff, setCutoff] = useState('');
+    const [gpa, setgpa] = useState('');
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -23,6 +25,8 @@ function EditStudentAcademic() {
             setHigherSecondaryMarks(value);
         } else if (name === 'sem'){
             setSem(value);
+        } else if (name === 'cutoff'){
+            setCutoff(value);
         }
     };
 
@@ -37,6 +41,7 @@ function EditStudentAcademic() {
                             setSemester(response.data.CurrentSemester);
                             setTenthMarks(response.data.TenthMarks);
                             setHigherSecondaryMarks(response.data.HigherSecondaryMarks);
+                            setCutoff(response.data.Cutoff);
                         } else {
                             alert('No academic data found');
                         }
@@ -56,6 +61,23 @@ function EditStudentAcademic() {
                     .catch(err => {
                         console.log(err);
                     });
+                    axios.get(`http://localhost:5000/getsemestergpa/${userRef.current}/${sem}`)
+                    .then(response => {
+                 
+                     setgpa(response.data);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+                    axios.post(`http://localhost:5000/calculategpa/${userRef.current}/${sem}`)
+                    .then(response => {
+                     console.log('gpa',response.data);
+                     setgpa(response.data.gpa);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+                   
           
     }, [sem]);
 
@@ -107,12 +129,13 @@ function EditStudentAcademic() {
     };
     const handleEditBasicAcademic = () => {
         // Make API call to edit basic academic details
-        if(tenthMarks<=100 && higherSecondaryMarks<=100 && tenthMarks>=0 && higherSecondaryMarks>=0){
+        if(tenthMarks<=100 && higherSecondaryMarks<=100 && tenthMarks>=0 && higherSecondaryMarks>=0 && cutoff>=0 && cutoff <=200){
 
         axios.put(`http://localhost:5000/editbasicacademic/${userRef.current}`, {
             CurrentSemester: semester,
             TenthMarks: tenthMarks,
-            HigherSecondaryMarks: higherSecondaryMarks
+            HigherSecondaryMarks: higherSecondaryMarks,
+            Cutoff: cutoff
         })
         .then(response => {
             console.log('Basic academic details edited successfully');
@@ -120,7 +143,8 @@ function EditStudentAcademic() {
                 ...basicacademic,
                 CurrentSemester: semester,
                 TenthMarks: tenthMarks,
-                HigherSecondaryMarks: higherSecondaryMarks
+                HigherSecondaryMarks: higherSecondaryMarks,
+                Cutoff: cutoff
                 
             });
             toast.success("Basic Academic Details Updated",{
@@ -142,7 +166,19 @@ function EditStudentAcademic() {
                 position:'top-center'
             });
         }
+        
     };
+    const handlegpa=()=>{
+        axios.post(`http://localhost:5000/calculategpa/${userRef.current}/${sem}`)
+                    .then(response => {
+                     console.log('gpa',response.data.gpa);
+                   
+                     setgpa(response.data);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+    }
     return (
         <>  
         <div id='student-edit-academic'>
@@ -154,8 +190,8 @@ function EditStudentAcademic() {
                     <table border={'0'} className='school-table'>
 
                         <tr>
-                            <td colSpan={'2'}>
-                                <h2>BASIC ACADEMIC DETAILS</h2>
+                            <td colSpan={'3'}>
+                                <h2>SCHOOL EDUCATION DETAILS</h2>
                             </td>
                             <td>
                             <button className="submit-button" onClick={handleEditBasicAcademic}>
@@ -187,6 +223,16 @@ function EditStudentAcademic() {
                                 />
                             </td>
                             <td>
+                                <p className='topic'><span id='hide-text'>00</span>Cut-off Marks : </p><br/>
+                                <input
+                                type="number"
+                                name="cutoff"
+                                placeholder='out of 200'
+                                value={cutoff}
+                                onChange={handleInputChange}
+                                />
+                            </td>
+                            <td>
                                 <p className='topic'><span id='hide-text'>00</span>Current Semester : </p><br/>
                                 <input
                                 type="number"
@@ -215,7 +261,7 @@ function EditStudentAcademic() {
                         ))}
                     </select></td>
                             <td><h2>Marks Table</h2></td>
-                            <td><button className="submit-button" style={{fontSize:"1.5em"}} onClick={handleEditBasicAcademic}>
+                            <td><button className="submit-button" style={{fontSize:"1.5em"}} onClick={handlegpa}>
                                 Save
                             </button></td>
                         </tr>
@@ -249,18 +295,18 @@ function EditStudentAcademic() {
                                         />
                                     </td>
                                     <td>
-                                    <select id="gradeSelect" name="grade" value={mark.Grade} 
+                                    <select id="gradeSelect" name="grade" value={mark.Grade || ""}
                                     onChange={(e) => {
                                         const newGrade = e.target.value;
                                         handleEditGrade(mark.SubjectID, newGrade);
                                     }}
                                     >
-                                        <option value="">Select Grade</option>
+                                        <option disabled value="">Select Grade</option>
                                         <option value="O">O</option>
-                                        <option value="A">A</option>
                                         <option value="A+">A+</option>
-                                        <option value="B">B</option>
+                                        <option value="A">A</option>
                                         <option value="B+">B+</option>
+                                        <option value="B">B</option>
                                         <option value="C">C</option>
   
                                         </select>
@@ -271,6 +317,7 @@ function EditStudentAcademic() {
                         </tbody>
                     </table>}
                 </div>}
+                {gpa && <center><p className='gpa-show'>Semester GPA:{gpa.gpa}</p></center>}
             </div>
             </div>
         </>

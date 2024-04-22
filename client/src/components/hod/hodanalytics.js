@@ -12,12 +12,17 @@ function Hodanalytics() {
     const [gpa, setGpa] = useState(null);
     const [stafflist, setStafflist] = useState(null);
     const [staffclicked,setstaffclicked] = useState(false);
+    const [subjectclicked,setSubjectclicked] =useState(false);
     const [staffsubjects,setstaffsubjects] = useState(null);
+    const [studentlist,setstudentlist] = useState(null);
+    const [selectedsubjectid,setselectedsubjectid] = useState(null);
+    const [selectedteacherid,setselectedteacherid]=useState(null);
     const handleInputChange1 = (event) => {
         setRollNumber(event.target.value);
     };
     const handlestaffclick=(teacherId) => {
         setstaffclicked(true);
+        setselectedteacherid(teacherId);
         axios.get(`http://localhost:5000/getstaffsubjects/${teacherId}`)
         .then((response) =>{
          setstaffsubjects(response.data);
@@ -25,6 +30,16 @@ function Hodanalytics() {
         .catch((error) => {
             console.log(error);
         });
+    }
+    const subjectclick=(subjectId)=>{
+        setselectedsubjectid(subjectId);
+axios.get(`http://localhost:5000/getstudentlist/${selectedteacherid}/${subjectId}`)
+.then((response)=>{
+setstudentlist(response.data);
+})
+.catch((error) => {
+    console.log(error);
+})
     }
     useEffect(() => {
        axios.get(`http://localhost:5000/getstafflist`)
@@ -196,12 +211,17 @@ function Hodanalytics() {
 ))}
 {staffclicked && <button className="delete-btn" onClick={()=>{setstaffclicked(false)}}>Back</button>}
             {staffclicked && staffsubjects && staffsubjects.map((subject, index) => (
-                <div className='view-form' key={index}>
+                <div onClick={subjectclick(subject.SubjectID)} className='view-form' key={index}>
                     <h2>{index + 1}</h2>
                     <p className='view-field'><strong>Subject ID:</strong> {subject.SubjectId}</p>
                     <p className='view-field'><strong>Subject Name:</strong> {subject.SubjectName}</p>
                     </div>
                 ))}
+                {subjectclicked && <button className="delete-btn" onClick={()=>{setSubjectclicked(false)}}>Back</button>
+                }
+                {subjectclicked && <div>
+                    
+                    </div>}
         </>
     )
 }
