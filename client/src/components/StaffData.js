@@ -188,7 +188,23 @@ const StaffData = () => {
               </>}
                 </> : 
                 <>
-                  <div >
+                {roomdata.length > 0 && 
+                <div>
+                  <div style={{margin:"30px",display:"flex",columnGap:"50px"}}>
+                    <div>Subject Code: </div>
+                    <div>{roomdata[0].subject_code}</div>
+                  </div>
+                  <div style={{margin:"30px",display:"flex",columnGap:"50px"}}>
+                    <div>Subject Name: </div>
+                    <div>{roomdata[0].subject_name}</div>
+                  </div>
+                  <div style={{margin:"30px",display:"flex",columnGap:"50px"}}>
+                    <div>Total number of classes taken: </div>
+                    <div>{roomdata[0].class_taken}</div>
+                  </div>
+                </div>
+                }
+                  <div>
                     <div className='tables'>
                       <table className='attendance-list'>
                         <thead>

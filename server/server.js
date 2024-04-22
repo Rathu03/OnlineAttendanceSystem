@@ -450,7 +450,7 @@ app.post('/student-room', async (req, res) => {
 
 app.post('/get-staff-data', async (req, res) => {
     const { subject_code, subject_name, credits, email } = req.body;
-    const query1 = `SELECT student_roll_number from enrolledsubjects WHERE subjectid = ? AND teacher_email = ?`;
+    const query1 = `SELECT student_roll_number from enrolledsubjects WHERE subjectid = ? AND teacher_email = ? ORDER BY student_roll_number`;
     const query2 = `SELECT username from students WHERE rollnumber = ?`;
     const query3 = `SELECT class_attended,class_taken FROM enrolledsubjects WHERE student_roll_number = ? AND subjectid = ?`;
     const query4 = `select doc,attendance_status,num_of_hours from dates where  subject_code=? and staff_email=? and rollnumber=? and doc in (select doc from dates where subject_code=? and staff_email=? and rollnumber=?);`
