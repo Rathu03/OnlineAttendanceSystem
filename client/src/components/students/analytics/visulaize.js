@@ -122,6 +122,15 @@ function Visualization() {
                     legend: {
                         display: true
                     }
+                },
+                scales: {
+                    y: {
+                        min: 6, // Set minimum value
+                    max: 10, // Set maximum value
+                    ticks: {
+                        stepSize: 0.5 // Set step size
+                    }
+                    }
                 }
             }
         });
@@ -144,10 +153,10 @@ function Visualization() {
                 </select>
                 <p>Semester: {sem}</p>
             </div>
-            <div>
+            <div style={{  height: '300px' }}>
                 <canvas id="marksChart"></canvas>
             </div>
-            <div>
+            <div style={{  height: '300px' }}>
                 <canvas id="gpaChart"></canvas>
             </div>
         </>
