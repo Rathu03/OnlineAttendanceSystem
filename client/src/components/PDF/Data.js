@@ -236,7 +236,7 @@ function Data(){
             </div>
 
            </div>
-           <div className="student-view-academic">
+           <div id="student-view-academic">
            {basicacademic &&<div className='basic-detail'>
 
             <div className='school-table-container'>
@@ -296,7 +296,11 @@ function Data(){
             </tbody>
           </table>
         }
-        {Object.keys(gpaData).length > 0 && 
+        
+      </div>
+
+           </div>
+           {Object.keys(gpaData).length > 0 && 
           <div className='gpa-show'>
             <h2>Semester GPA</h2>
             {gpaData.map((gpa, sem) => (
@@ -304,9 +308,6 @@ function Data(){
             ))}
           </div>
         }
-      </div>
-
-           </div>
            <div className="other-details">
 
            {internships && internships.map((internship, index) => (
