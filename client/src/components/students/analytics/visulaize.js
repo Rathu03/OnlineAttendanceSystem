@@ -82,8 +82,8 @@ function Visualization() {
   
     return (
       <Chart
-        width={'75%'} // Set width to 75% of the screen width
-        height={'300px'}
+        width={'90%'} // Set width to 75% of the screen width
+        height={'90%'}
         chartType="BarChart"
         loader={<div>Loading Chart</div>}
         data={chartData}
@@ -110,8 +110,8 @@ function Visualization() {
 
     return (
       <Chart
-        width={'500px'}
-        height={'300px'}
+        width={'90%'}
+        height={'90%'}
         chartType="LineChart"
         loader={<div>Loading Chart</div>}
         data={chartData}

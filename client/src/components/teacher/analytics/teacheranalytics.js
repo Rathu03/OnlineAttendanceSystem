@@ -1,7 +1,7 @@
 import { React, useState, useRef, useEffect } from "react";
 import Navbar from "../../Navbar";
 import axios from "axios";
-import Chart from 'chart.js/auto';
+import { Chart } from "react-google-charts";
 
 function Teacheranalytics() {
     const userRef = useRef(null);
@@ -14,13 +14,7 @@ function Teacheranalytics() {
         setRollNumber(event.target.value);
     };
     useEffect(() => {
-        axios.get('http://localhost:5000/session')
-            .then(response => {
-                userRef.current = response.data.username;
-            })
-            .catch(error => {
-                console.log(error);
-            });
+       
             axios.get(`http://localhost:5000/getgpa/${rollNumber}`)
             .then(response => {
                 if (response.data) {
@@ -74,79 +68,55 @@ function Teacheranalytics() {
     };
 
     const renderChart = (marksData) => {
-        const ctx = document.getElementById('marksChart');
-        const subjectIDs = marksData.map(mark => mark.SubjectID);
-        const marksObtained = marksData.map(mark => mark.MarksObtained);
-        if (Chart.instances && typeof Chart.instances === 'object') {
-            Object.keys(Chart.instances).forEach(key => {
-                const instance = Chart.instances[key];
-                instance.destroy();
-            });
-        }
-
-
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: subjectIDs,
-                datasets: [{
-                    label: 'Marks Obtained',
-                    data: marksObtained,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                indexAxis: 'x', 
-                maintainAspectRatio: false,
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true
-                    }
-                }
-            }
+        const chartData = [['SubjectID', 'Marks Obtained']];
+        marksData.forEach((mark) => {
+          chartData.push([mark.SubjectID.toString(), mark.MarksObtained]);
         });
-    };
-    const renderGpaChart = (gpaData) => {
-        
-        const ctx1 = document.getElementById('gpaChart');
-        const semesters = gpaData.map(gpa => gpa.semester);
-        const gpas = gpaData.map(gpa => gpa.gpa);
-        console.log("render",semesters);
-        new Chart(ctx1, {
-            type: 'line',
-            data: {
-                labels: semesters,
-                datasets: [{
-                    label: 'GPA',
-                    data: gpas,
-                    borderColor: 'rgba(100, 245, 132, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                indexAxis: 'x', 
-                maintainAspectRatio: false,
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true
-                    }
-                },
-                scales: {
-                    y: {
-                        min: 6, // Set minimum value
-                    max: 10, // Set maximum value
-                    ticks: {
-                        stepSize: 0.5 // Set step size
-                    }
-                    }
-                }
-            }
+      
+        return (
+          <Chart
+            width={'90%'} // Set width to 75% of the screen width
+            height={'90%'}
+            chartType="BarChart"
+            loader={<div>Loading Chart</div>}
+            data={chartData}
+            options={{
+              title: 'Marks Obtained',
+              chartArea: { width: '75%', height: '70%' }, // Set chart area width to 75%
+              hAxis: { 
+                title: 'Marks Obtained',
+                slantedText: true, // Rotate axis labels
+                slantedTextAngle: 90, // Angle for rotated labels
+              },
+              vAxis: { title: 'SubjectID', minValue: 0 },
+            }}
+          />
+        );
+      };
+      
+    
+      const renderGpaChart = (gpaData) => {
+        const chartData = [['Semester', 'GPA']];
+        gpaData.forEach((gpa) => {
+          chartData.push([gpa.semester.toString(), gpa.gpa]);
         });
-    };
+    
+        return (
+          <Chart
+            width={'90%'}
+            height={'90%'}
+            chartType="LineChart"
+            loader={<div>Loading Chart</div>}
+            data={chartData}
+            options={{
+              title: 'GPA',
+              chartArea: { width: '50%' },
+              hAxis: { title: 'Semester' },
+              vAxis: { title: 'GPA', minValue: 6, maxValue: 10, ticks: [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10] },
+            }}
+          />
+        );
+      };
 
     return (
         <>
@@ -173,12 +143,12 @@ function Teacheranalytics() {
                 </select>
                 <p>Semester: {sem}</p>
             </div>
-            <div style={{  height: '300px' }}>
-                <canvas id="marksChart"></canvas>
-            </div>
-            <div style={{  height: '300px' }}>
-                <canvas id="gpaChart"></canvas>
-            </div>
+            <div>
+        {marks && renderChart(marks)}
+      </div>
+      <div>
+        {gpa && renderGpaChart(gpa)}
+      </div>
         </>
     )
 }

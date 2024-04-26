@@ -91,7 +91,7 @@ function Staffviewacademic(){
             console.log(error);
         })
     }
-    const un=()=>{
+    const Unapprove=()=>{
         axios.get(`http://localhost:5000/unapprove/${rollNumber}/${sem}`)
         .then(response => {
             setverifiedstatus(false);
@@ -161,6 +161,15 @@ function Staffviewacademic(){
             </select>
             <p>Semester: {sem}</p>
         </div>
+       
+        {verifiedstatus && <div>
+            <button className='delete-btn'onClick={Unapprove}>Unapprove</button>
+            <p>Marks are verified</p>
+            </div>}
+            {marks && !verifiedstatus && <div>
+            <button className='add-btn' onClick={Approve}>Approve</button>
+            <p>Marks are not verified</p>
+            </div>}
         {marks &&  <div>
       <h2>Marks Table</h2>
       <table className='marks-table'>
