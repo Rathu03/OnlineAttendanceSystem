@@ -1,0 +1,20 @@
+RATISH VVVVV.IMPORTANT:
+    remove 3 detail login
+
+STUDENT:
+    1. Details (lateral/regular), income, club, community, specialcateg, scholarship
+    2. Supporting docs
+    3. Analytics (bar graph fo marks with max, avg), (line plot for gpa)
+    4. Arrear table
+
+STAFF:
+    1. view all students
+    2. Analytics(class average, class max, # of arrears)
+    3. verify
+
+HOD:
+    1. view all students
+    2. Analytics(class average, class max, # of arreas)
+    3. Staff Analytics
+    3. Attendance table formatting
+    4. Attendance table rewrite css

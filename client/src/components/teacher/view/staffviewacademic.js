@@ -91,7 +91,7 @@ function Staffviewacademic(){
             console.log(error);
         })
     }
-    const unApprove=()=>{
+    const un=()=>{
         axios.get(`http://localhost:5000/unapprove/${rollNumber}/${sem}`)
         .then(response => {
             setverifiedstatus(false);
