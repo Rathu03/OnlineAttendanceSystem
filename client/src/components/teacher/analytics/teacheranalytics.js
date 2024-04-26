@@ -6,13 +6,70 @@ import { Chart } from "react-google-charts";
 function Teacheranalytics() {
     const userRef = useRef(null);
     const [rollNumber, setRollNumber] = useState('');
+    var teacherid=useRef(null);
     const [basicacademic, setbasicacademic] = useState(null);
     const [marks, setMarks] = useState(null);
     const [sem, setSem] = useState(null);
     const [gpa, setGpa] = useState(null);
+    const [studentlist,setstudentlist] = useState(null);
+    const [selectedsubjectid,setselectedsubjectid] = useState(null);
+    const [subjectclicked, setsubjectclicked] = useState(false);
+    const [statistics, setstatistics] = useState([]);
+    var maxmark,avgmark;
     const handleInputChange1 = (event) => {
         setRollNumber(event.target.value);
     };
+    const [subjectlist,setSubjectlist]=useState([]);
+    const subjectclick=(subjectId)=>{
+        setselectedsubjectid(subjectId);
+        teacherid=localStorage.getItem('teacherid');
+axios.get(`http://localhost:5000/getstudentlist/${teacherid}/${subjectId}`)
+.then((response)=>{
+    console.log('student list',response.data);
+setstudentlist(response.data);
+})
+.catch((error) => {
+    console.log(error);
+})
+axios.get(`http://localhost:5000/getstudentstatistics/${teacherid}/${subjectId}`)
+.then((response)=>{
+if(response.data){
+    console.log('student statistics',response.data[0].average_mark);
+    avgmark=response.data[0].average_mark;
+    maxmark=response.data[0].max_mark;
+    setstatistics(response.data[0]);
+   
+}
+})
+.catch((error) => {
+    console.log(error);
+})
+    }
+    useEffect(()=>{
+        teacherid.current=localStorage.getItem('teacherid');
+        
+        axios.get(`http://localhost:5000/getstaffsubjects/${teacherid.current}`)
+        .then(response => {
+            if(response.data){
+                console.log('response data', response.data)
+                
+                setSubjectlist(response.data);
+              
+                console.log('subjectlist', subjectlist)
+                
+            }
+            else{
+                alert('no subjects found');
+            }
+        })
+        .catch(err => {
+        console.log(err);
+        })
+    },[])
+    useEffect(()=>{
+
+    },[subjectlist])
+  
     useEffect(() => {
        
             axios.get(`http://localhost:5000/getgpa/${rollNumber}`)
@@ -29,7 +86,25 @@ function Teacheranalytics() {
             .catch(err => {
                 console.log(err);
             });
+            axios.get(`http://localhost:5000/getstaffsubjects/${teacherid.current}`)
+        .then(response => {
+            if(response.data){
+                console.log('response data', response.data)
+                setSubjectlist(response.data);
+              
+                console.log('subjectlist', subjectlist)
+                
+            }
+            else{
+                alert('no subjects found');
+            }
+        })
+        .catch(err => {
+        console.log(err);
+        })
+           
     }, [sem]);
+ 
     const fetchStudentDetails=(event) => {
 
     }
@@ -117,11 +192,13 @@ function Teacheranalytics() {
           />
         );
       };
+   
 
     return (
         <>
             <Navbar />
             
+          
         <input
                 type="number"
                 placeholder="Enter Roll Number"
@@ -149,6 +226,41 @@ function Teacheranalytics() {
       <div>
         {gpa && renderGpaChart(gpa)}
       </div>
+      
+      
+      {!subjectclicked && subjectlist.map((subject, index) => (
+        <>
+        
+    <div onClick={()=>{subjectclick(subject.SubjectId);
+    setsubjectclicked(true)
+    }} className="view-form" key={index}>
+        <p>{subject.SubjectId}</p>
+        <p>{subject.SubjectName}</p>
+    </div>
+    </>
+))}
+{ subjectclicked &&<button className='delete-btn' onClick={()=>setsubjectclicked(!subjectclicked)}>Back</button>}
+{subjectclicked && studentlist && studentlist.map((student, index) => 
+     (
+        <>
+       
+            <div className="view-form" key={index}>
+                <p>RollNumber:{student.RollNumber}</p>
+                <p>Semester:{student.Semester}</p>
+                <p>Marks:{student.MarksObtained}</p>
+                <p>Grade:{student.Grade}</p>
+
+            </div>
+        </>
+    )
+)}
+{subjectclicked && <div>
+    <p>Class Average Mark:{statistics.average_mark}</p>
+    <p>Maximum Mark:{statistics.max_mark}</p>
+    </div>}
+  
+
+     
         </>
     )
 }

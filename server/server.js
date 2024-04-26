@@ -1467,15 +1467,23 @@ const storage=multer.diskStorage(
 
 
   app.get('/getstaffsubjects/:teacherId', (req, res) => {
-    const teacherId = req.params.teacherId;
+    
+    
+    {const teacherId = req.params.teacherId;
     const query0 = `SELECT email FROM teachers WHERE teacherId = ?`;
     db.query(query0, [teacherId], (error, results0) => {
+      
       if (error) {
         console.error('Error executing MySQL query: ' + error.stack);
         res.status(500).json({ error: 'Internal server error' });
         return;
       }
+      if(results0.length==0){
+        console.log('error in email')
+        return;
+      }
       // Assuming results0 is an array with a single object containing the teacher's email
+     
       const teacherEmail = results0[0].email;
       const query = `SELECT DISTINCT subjectid FROM enrolledsubjects WHERE teacher_email = ?`;
       db.query(query, [teacherEmail], (error, results) => {
@@ -1498,8 +1506,10 @@ const storage=multer.diskStorage(
         })
       })
     })
-  })
-  
+  }
+}
+)
+
   
 
   app.get('/getstaffsubjectmarks', (req, res) => {
@@ -1602,13 +1612,40 @@ const storage=multer.diskStorage(
 app.get('/getstudentlist/:teacherid/:subjectid',(req, res) =>{
 const teacherid = req.params.teacherid;
 const subjectid = req.params.subjectid;
+
 const query0=`select * from marks where SubjectID=? and teacherId=? `;
 db.query(query0,[subjectid, teacherid],(error,result)=>{
   if(error){
     console.error('Error executing MySQL query: ' + error.stack);
     res.status(500).json({ error: 'Internal server error' });
-    return;
+    return
   }
+  console.log('student lsit',result);
   res.json(result);
 })
+})
+
+app.get('/getstudentstatistics/:teacherid/:subjectid',(req,res)=>{
+  const teacherid = req.params.teacherid;
+const subjectid = req.params.subjectid;
+
+const query=`SELECT 
+AVG(MarksObtained) AS average_mark,
+MAX(MarksObtained) AS max_mark
+FROM 
+marks
+WHERE 
+SubjectID = ? AND teacherId = ?;
+`;
+
+db.query(query,[subjectid, teacherid],(error,result)=>{
+  if(error){
+    console.error('Error executing MySQL query: ' + error.stack);
+    res.status(500).json({ error: 'Internal server error' });
+    return
+  }
+  console.log('student statistics',result);
+  res.json(result);
+})
+
 })

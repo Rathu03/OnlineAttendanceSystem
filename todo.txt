@@ -10,7 +10,7 @@ STUDENT:
 STAFF:
     1. view all students
     2. Analytics(class average, class max, # of arrears)
-    3. verify
+    
 
 HOD:
     1. view all students

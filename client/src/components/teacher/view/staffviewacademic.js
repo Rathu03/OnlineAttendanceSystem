@@ -4,6 +4,7 @@ import Navbar from '../../Navbar';
 
 function Staffviewacademic(){
     const userRef = useRef(null);
+    const teacherid=useRef(null);
     const [rollNumber, setRollNumber] = useState('');
     const cursemRef= useRef(null);
     const  [basicacademic,setbasicacademic]=useState(null);
@@ -15,6 +16,7 @@ function Staffviewacademic(){
         setsem(event.target.value);
        
     };
+    const [subjectlist,setsubjectlist]=useState(null);
     const handleInputChange = (event) => {
         setRollNumber(event.target.value);
     };
@@ -66,12 +68,26 @@ function Staffviewacademic(){
         console.log(err);
         })
         
+        
     }
 
     useEffect(() => {
        
-       
+
             userRef.current = rollNumber;
+            teacherid.current=localStorage.getItem('teacherid');
+            axios.get(`http://localhost:5000/getstaffsubjects/${teacherid.current}`)
+        .then(response => {
+            if(response.data){
+                setsubjectlist(response.data);
+            }
+            else{
+                alert('no subjects found');
+            }
+        })
+        .catch(err => {
+        console.log(err);
+        })
             if(rollNumber){
             fetchdata();
         }
@@ -106,6 +122,7 @@ function Staffviewacademic(){
         <>
          <div id='student-view-academic'>
          <Navbar/>
+        
          <input
                 type="number"
                 placeholder="Enter Roll Number"
