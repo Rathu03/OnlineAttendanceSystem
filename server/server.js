@@ -1290,7 +1290,23 @@ const storage=multer.diskStorage(
     const semester = req.params.sem;
     const rollNumber = req.params.rollNumber;
     console.log(semester, rollNumber);
-    const query = `select *,subjects.SubjectName,subjects.credits from marks INNER JOIN subjects on marks.SubjectID=subjects.SubjectID  WHERE marks.Semester = ? AND marks.RollNumber = ? order by credits`;
+    const query = `SELECT *,
+                  subjects.SubjectName,
+                  subjects.credits,
+                  (
+                      SELECT AVG(MarksObtained)
+                      FROM marks AS m
+                      WHERE m.SubjectID = marks.SubjectID
+                  ) AS AverageMark,
+                  (
+                      SELECT MAX(MarksObtained)
+                      FROM marks AS m
+                      WHERE m.SubjectID = marks.SubjectID
+                  ) AS MaximumMark
+                  FROM marks
+                  INNER JOIN subjects ON marks.SubjectID = subjects.SubjectID
+                  WHERE marks.Semester = ? AND marks.RollNumber = ?
+                  ORDER BY subjects.credits;`;
     db.query(query, [semester, rollNumber], (error, results) => {
       if (error) throw error;
 
@@ -1371,7 +1387,7 @@ const storage=multer.diskStorage(
   app.get('/getgpa/:rollNumber', (req, res) => {
     const rollNumber = req.params.rollNumber;
     console.log(rollNumber);
-    const query = `SELECT * FROM gpa WHERE rollnumber =?`;
+    const query = `SELECT * FROM gpa WHERE rollnumber =? and gpa!=0`;
     db.query(query, [rollNumber], (error, results) => {
       if (error) throw error;
       res.json(results);

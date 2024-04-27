@@ -75,31 +75,30 @@ function Visualization() {
   };
 
   const renderChart = (marksData) => {
-    const chartData = [['SubjectID', 'Marks Obtained']];
+    const chartData = [['SubjectID', 'Marks Obtained', 'Average Mark', 'Maximum Mark']];
     marksData.forEach((mark) => {
-      chartData.push([mark.SubjectID.toString(), mark.MarksObtained]);
+      chartData.push([mark.SubjectID.toString(), mark.MarksObtained, mark.AverageMark, mark.MaximumMark]);
     });
   
     return (
       <Chart
-        width={'90%'} // Set width to 75% of the screen width
+        width={'90%'}
         height={'90%'}
-        chartType="BarChart"
+        chartType="ColumnChart"
         loader={<div>Loading Chart</div>}
         data={chartData}
         options={{
-          title: 'Marks Obtained',
-          chartArea: { width: '75%', height: '70%' }, // Set chart area width to 75%
+          title: 'Marks Obtained, Average Mark, and Maximum Mark',
           hAxis: { 
-            title: 'Marks Obtained',
-            slantedText: true, // Rotate axis labels
-            slantedTextAngle: 90, // Angle for rotated labels
+            title: 'SubjectID',
+            minValue: 0,
           },
-          vAxis: { title: 'SubjectID', minValue: 0 },
+          vAxis: { title: 'Values', minValue: 0 },
         }}
       />
     );
-  };
+};
+
   
 
   const renderGpaChart = (gpaData) => {
@@ -117,7 +116,7 @@ function Visualization() {
         data={chartData}
         options={{
           title: 'GPA',
-          chartArea: { width: '50%' },
+          chartArea: { width: '70%' },
           hAxis: { title: 'Semester' },
           vAxis: { title: 'GPA', minValue: 6, maxValue: 10, ticks: [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10] },
         }}
@@ -146,8 +145,8 @@ function Visualization() {
         {marks && renderChart(marks)}
       </div>
       <div>
-        {gpa && renderGpaChart(gpa)}
-      </div>
+          {gpa && renderGpaChart(gpa)}
+        </div>
     </>
   );
 }
