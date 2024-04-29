@@ -94,17 +94,19 @@ function ViewStudentAcademic(){
             <div className='marks-view'>
             <center><h2>Marks Table</h2></center>
             <div>
-            <label htmlFor="semSelect">Select Semester:</label>
-            <select
-                id="semSelect"
-                value={sem || ''}
-                onChange={handleInputChange}
-            >
-                <option value="">Select Semester</option>
-                {[...Array(8).keys()].map((num) => (
-                    <option key={num + 1} value={num + 1}>{num + 1}</option>
-                ))}
-            </select>
+            <div className='sem-selector'>
+                <label htmlFor="semSelect">Select Semester:</label>
+                <select
+                    id="semSelect"
+                    value={sem || ''}
+                    onChange={handleInputChange}
+                >
+                    <option value="">Select Semester</option>
+                    {[...Array(8).keys()].map((num) => (
+                        <option key={num + 1} value={num + 1}>{num + 1}</option>
+                    ))}
+                </select>
+            </div>
         </div>
         {marks &&  <div>
 

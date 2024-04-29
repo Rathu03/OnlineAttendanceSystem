@@ -75,27 +75,29 @@ function Visualization() {
   };
 
   const renderChart = (marksData) => {
-    const chartData = [['SubjectID', 'Marks Obtained', 'Average Mark', 'Maximum Mark']];
+    const chartData = [['SubjectID', 'Marks', 'Avg. Mark', 'Max. Mark']];
     marksData.forEach((mark) => {
       chartData.push([mark.SubjectID.toString(), mark.MarksObtained, mark.AverageMark, mark.MaximumMark]);
     });
   
     return (
+      <center>
       <Chart
-        width={'90%'}
-        height={'90%'}
+        className="graph-view"
         chartType="ColumnChart"
         loader={<div>Loading Chart</div>}
         data={chartData}
         options={{
-          title: 'Marks Obtained, Average Mark, and Maximum Mark',
+          chartArea: { width: '75%' },
+          title: 'Marks, Average Mark, and Maximum Mark',
           hAxis: { 
             title: 'SubjectID',
             minValue: 0,
           },
-          vAxis: { title: 'Values', minValue: 0 },
+          vAxis: { title: 'Marks', minValue: 0, maxValue: 100, ticks:[0,10,20,30,40,50,60,70,80,90,100]},
         }}
       />
+      </center>
     );
 };
 
@@ -109,14 +111,13 @@ function Visualization() {
 
     return (
       <Chart
-        width={'90%'}
-        height={'90%'}
+      className="graph-view"
         chartType="LineChart"
-        loader={<div>Loading Chart</div>}
+        loader={<div><center>Loading Chart</center></div>}
         data={chartData}
         options={{
           title: 'GPA',
-          chartArea: { width: '70%' },
+          chartArea: { width: '80%' },
           hAxis: { title: 'Semester' },
           vAxis: { title: 'GPA', minValue: 6, maxValue: 10, ticks: [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10] },
         }}
@@ -127,26 +128,41 @@ function Visualization() {
   return (
     <>
       <Navbar />
-      <div>
-        <label htmlFor="semSelect">Select Semester:</label>
-        <select
-          id="semSelect"
-          value={sem || ''}
-          onChange={handleInputChange}
-        >
-          <option value="">Select Semester</option>
-          {[...Array(8).keys()].map((num) => (
-            <option key={num + 1} value={num + 1}>{num + 1}</option>
-          ))}
-        </select>
-        <p>Semester: {sem}</p>
-      </div>
-      <div>
-        {marks && renderChart(marks)}
-      </div>
-      <div>
-          {gpa && renderGpaChart(gpa)}
+
+      <div id='analytics-student'>
+        
+        <div className="gpa-analytics">
+            <center><h1>Your GPA Trend</h1></center>
+          <div>
+            {gpa && renderGpaChart(gpa)}
+          </div>
         </div>
+
+        <div className="mark-analytics">
+          <center><h1>Semester-wise Marks</h1></center>
+          <div className="sem-selector">
+            <b><label htmlFor="semSelect">Select Semester : </label></b>
+            <select
+              id="semSelect"
+              value={sem || ''}
+              onChange={handleInputChange}
+            >
+              <option value="">Select Semester</option>
+              {[...Array(8).keys()].map((num) => (
+                <option key={num + 1} value={num + 1}>{num + 1}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mark-graph">
+            {marks && renderChart(marks)}
+          </div>
+        </div>
+
+
+
+      </div>
+      
     </>
   );
 }

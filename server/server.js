@@ -1601,7 +1601,7 @@ const storage=multer.diskStorage(
 
           res.status(200).json({ message: 'Record updated successfully' , gpa: gpa});
         });
-          } 
+    }
           else {
             // Record does not exist, execute the INSERT query
             const insertQuery = `INSERT INTO gpa (rollnumber, gpa, semester) VALUES (?, ?, ?)`;
