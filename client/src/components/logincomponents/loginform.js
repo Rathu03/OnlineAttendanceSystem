@@ -7,7 +7,7 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('student');
-axios.defaults.withCredentials = true; 
+
 useEffect(() => {
   // Delete session if present
   const deleteSession = async () => {

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import ViewAttendance from './ViewAttendance';
 
 const PrintAttendance = () => {
+  
   const navigate = useNavigate();
   const componentRef = useRef();
   const handlePrint = useReactToPrint({

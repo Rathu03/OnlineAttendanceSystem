@@ -23,7 +23,7 @@ function ViewStudentOther(){
     const [examsViewModal, setExamsViewModal] = useState(false);
     const [papersViewModal, setPapersViewModal] = useState(false);
     const [eventsViewModal, setEventsViewModal] = useState(false);
-    axios.defaults.withCredentials = true; 
+    
     useEffect(() => {
        
                 const username =localStorage.getItem('rollnumber');
@@ -203,9 +203,7 @@ function ViewStudentOther(){
                 </div>
             </Modal>
             </>   
-))}         </div>
-            
-            <div className='custom-card-container'>
+))}         
             {!Scholarships&&<h3>No Scholarship details found</h3>}
             {Scholarships && Scholarships.map((Scholarship, index) => (
                 <>
@@ -237,9 +235,7 @@ function ViewStudentOther(){
             </div>
         </Modal>
         </>  
-))}     </div>
-
-            <div className='custom-card-container'>
+))}     
             {!projects&&<h3>No Project details found</h3>}
             {projects && projects.map((Project, index) => (
                  <>
@@ -277,9 +273,7 @@ function ViewStudentOther(){
              </div>
          </Modal>
          </>  
-            ))}</div>
-
-            <div className='custom-card-container'>
+            ))}
             {!sports &&<h3>No sports details found</h3>}
             {sports && sports.map((sport, index) => (
                 <>
@@ -311,7 +305,7 @@ function ViewStudentOther(){
             </div>
         </Modal>
         </>  
-))}         </div>
+))}         
             
 
 
@@ -329,7 +323,7 @@ function ViewStudentOther(){
 
 
 
-        <div className='custom-card-container'>     
+             
         {!papers && <h3>No Papers Published</h3>}       
         {papers && papers.map((paper, index) => (
             <>
@@ -373,9 +367,8 @@ function ViewStudentOther(){
         </div>
     </Modal>
     </>  
-        ))}</div>
+        ))}
             
-        <div className='custom-card-container'>
         {!events && <h3>No Events Participated</h3>}
         {events && events.map((event, index) => (
                 <>

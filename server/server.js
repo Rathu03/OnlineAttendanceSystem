@@ -1289,7 +1289,23 @@ const storage=multer.diskStorage(
     const semester = req.params.sem;
     const rollNumber = req.params.rollNumber;
     console.log(semester, rollNumber);
-    const query = `select *,subjects.SubjectName,subjects.credits from marks INNER JOIN subjects on marks.SubjectID=subjects.SubjectID  WHERE marks.Semester = ? AND marks.RollNumber = ? order by credits`;
+    const query = `SELECT *,
+                  subjects.SubjectName,
+                  subjects.credits,
+                  (
+                      SELECT AVG(MarksObtained)
+                      FROM marks AS m
+                      WHERE m.SubjectID = marks.SubjectID
+                  ) AS AverageMark,
+                  (
+                      SELECT MAX(MarksObtained)
+                      FROM marks AS m
+                      WHERE m.SubjectID = marks.SubjectID
+                  ) AS MaximumMark
+                  FROM marks
+                  INNER JOIN subjects ON marks.SubjectID = subjects.SubjectID
+                  WHERE marks.Semester = ? AND marks.RollNumber = ?
+                  ORDER BY subjects.credits;`;
     db.query(query, [semester, rollNumber], (error, results) => {
       if (error) throw error;
 
@@ -1339,6 +1355,17 @@ const storage=multer.diskStorage(
       res.json(results[0]);
     });
   })
+
+  app.get('/getcgpa/:rollNumber/', (req, res) => {
+    const rollNumber = req.params.rollNumber;
+    const query = `SELECT sum(gpa)/count(gpa) AS cgpa FROM gpa WHERE gpa!=0 AND rollnumber=?`;
+    db.query(query, [rollNumber], (error, results) => {
+      if (error) throw error;
+      console.log("Fetched cgpa", results[0])
+      res.json(results[0]);
+    });
+  })
+  
   app.put('/editbasicacademic/:rollNumber', (req, res) => {
     const rollNumber = req.params.rollNumber;
     const { CurrentSemester, TenthMarks, HigherSecondaryMarks, Cutoff } = req.body;
@@ -1359,7 +1386,7 @@ const storage=multer.diskStorage(
   app.get('/getgpa/:rollNumber', (req, res) => {
     const rollNumber = req.params.rollNumber;
     console.log(rollNumber);
-    const query = `SELECT * FROM gpa WHERE rollnumber =?`;
+    const query = `SELECT * FROM gpa WHERE rollnumber =? and gpa!=0`;
     db.query(query, [rollNumber], (error, results) => {
       if (error) throw error;
       res.json(results);
@@ -1455,15 +1482,23 @@ const storage=multer.diskStorage(
 
 
   app.get('/getstaffsubjects/:teacherId', (req, res) => {
-    const teacherId = req.params.teacherId;
+    
+    
+    {const teacherId = req.params.teacherId;
     const query0 = `SELECT email FROM teachers WHERE teacherId = ?`;
     db.query(query0, [teacherId], (error, results0) => {
+      
       if (error) {
         console.error('Error executing MySQL query: ' + error.stack);
         res.status(500).json({ error: 'Internal server error' });
         return;
       }
+      if(results0.length==0){
+        console.log('error in email')
+        return;
+      }
       // Assuming results0 is an array with a single object containing the teacher's email
+     
       const teacherEmail = results0[0].email;
       const query = `SELECT DISTINCT subjectid FROM enrolledsubjects WHERE teacher_email = ?`;
       db.query(query, [teacherEmail], (error, results) => {
@@ -1486,8 +1521,10 @@ const storage=multer.diskStorage(
         })
       })
     })
-  })
-  
+  }
+}
+)
+
   
 
   app.get('/getstaffsubjectmarks', (req, res) => {
@@ -1563,7 +1600,7 @@ const storage=multer.diskStorage(
 
           res.status(200).json({ message: 'Record updated successfully' , gpa: gpa});
         });
-          } 
+    }
           else {
             // Record does not exist, execute the INSERT query
             const insertQuery = `INSERT INTO gpa (rollnumber, gpa, semester) VALUES (?, ?, ?)`;
@@ -1590,13 +1627,40 @@ const storage=multer.diskStorage(
 app.get('/getstudentlist/:teacherid/:subjectid',(req, res) =>{
 const teacherid = req.params.teacherid;
 const subjectid = req.params.subjectid;
+
 const query0=`select * from marks where SubjectID=? and teacherId=? `;
 db.query(query0,[subjectid, teacherid],(error,result)=>{
   if(error){
     console.error('Error executing MySQL query: ' + error.stack);
     res.status(500).json({ error: 'Internal server error' });
-    return;
+    return
   }
+  console.log('student lsit',result);
   res.json(result);
 })
+})
+
+app.get('/getstudentstatistics/:teacherid/:subjectid',(req,res)=>{
+  const teacherid = req.params.teacherid;
+const subjectid = req.params.subjectid;
+
+const query=`SELECT 
+AVG(MarksObtained) AS average_mark,
+MAX(MarksObtained) AS max_mark
+FROM 
+marks
+WHERE 
+SubjectID = ? AND teacherId = ?;
+`;
+
+db.query(query,[subjectid, teacherid],(error,result)=>{
+  if(error){
+    console.error('Error executing MySQL query: ' + error.stack);
+    res.status(500).json({ error: 'Internal server error' });
+    return
+  }
+  console.log('student statistics',result);
+  res.json(result);
+})
+
 })
