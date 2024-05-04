@@ -122,49 +122,64 @@ function Staffviewacademic(){
         <>
          <div id='student-view-academic'>
          <Navbar/>
-        
-         <input
+
+         <div className='mark-search-head'>
+            <center>
+                <h1>Enter Roll Number Of Student</h1>
+            </center>
+            <input
+                className='rollnumber-input'
                 type="number"
                 placeholder="Enter Roll Number"
                 value={rollNumber}
                 onChange={handleInputChange}
             />
             <button className='add-btn' onClick={fetchdata}>Search</button>
+        </div>
+        
+         
+            
        
         
 
-        {basicacademic &&<div className='basic-detail'>
+                {basicacademic &&<div className='basic-detail'>
 
-            <div className='school-table-container'>
-            <table border={'1'} className='school-table'>
+<div className='school-table-container'>
+<table border={'0'} className='school-table'>
 
-                        <tr>
-                            <td colSpan={'3'}>
-                                <h2>BASIC ACADEMIC DETAILS</h2>
-                            </td>
-                        </tr>
+            <tr>
+                <td colSpan={'4'}>
+                    <h2>SCHOOL EDUCATION DETAILS</h2>
+                </td>
+            </tr>
 
-                        <tr>
-                            <td>
-                                <p className='topic'><span id='hide-text'>00</span>Secondary Percentage : {basicacademic.TenthMarks}</p><br/>
-                            </td>
-                            
-                            <td>
-                                <p className='topic'><span id='hide-text'>000</span>Higher Secondary Percentage : {basicacademic.HigherSecondaryMarks}</p><br/>
-                                
-                            </td>
+            <tr>
+                <td id='td1'>
+                    <p className='topic'>Secondary Percentage : {basicacademic.TenthMarks}%</p><br/>
+                </td>
+                
+                <td id='td2'>
+                    <p className='topic'>Higher Secondary Percentage : {basicacademic.HigherSecondaryMarks}%</p><br/>
+                    
+                </td>
+                <td id='td3'>
+                    <p className='topic'>Cutoff Marks : {basicacademic.Cutoff}</p><br/>
+                </td>
+                <td id='td4'>
+                    <p className='topic'>Current Semester : {basicacademic.CurrentSemester}</p><br/>
+                </td>
 
-                            <td>
-                                <p className='topic'><span id='hide-text'>00</span>Current Semester : {basicacademic.CurrentSemester}</p><br/>
-                            </td>
+                
+            </tr>
+        </table>
 
-                            
-                        </tr>
-                    </table>
-            
-            </div>
-            </div>}
-            <div>
+</div>
+</div>}
+        
+
+      {marks &&  <div className='staff-marks'>
+
+        <div style={{textAlign: 'right'}}>
             <label htmlFor="semSelect">Select Semester:</label>
             <select
                 id="semSelect"
@@ -176,19 +191,9 @@ function Staffviewacademic(){
                     <option key={num + 1} value={num + 1}>{num + 1}</option>
                 ))}
             </select>
-            <p>Semester: {sem}</p>
         </div>
-       
-        {verifiedstatus && <div>
-            <button className='delete-btn'onClick={Unapprove}>Unapprove</button>
-            <p>Marks are verified</p>
-            </div>}
-            {marks && !verifiedstatus && <div>
-            <button className='add-btn' onClick={Approve}>Approve</button>
-            <p>Marks are not verified</p>
-            </div>}
-        {marks &&  <div>
-      <h2>Marks Table</h2>
+
+      <center><h2>Marks Table</h2></center>
       <table className='marks-table'>
         <thead>
           <tr>
@@ -207,9 +212,25 @@ function Staffviewacademic(){
           ))}
         </tbody>
       </table>
-      {gpa && <p className='gpa-show'>Semester GPA:{gpa.gpa}</p>}
+      {gpa && <center><p className='gpa-show'>Semester GPA:{gpa.gpa}</p></center>}
+
+        <div className='approve'>
+            {verifiedstatus && <div>
+            <button className='delete-btn'onClick={Unapprove}>Unapprove</button>
+            <p>Marks are verified</p>
+            </div>}
+            {marks && !verifiedstatus && <div>
+            <button className='add-btn' onClick={Approve}>Approve</button>
+            <p>Marks are not verified</p>
+            </div>}
+        </div>
+
+    
     </div>}
     </div>
+
+
+    
         </>
     )
 }

@@ -44,20 +44,24 @@ function Staffviewpersonal() {
         <div>
             <Navbar />
             <div id='student-view-personal'>
-            <div className='view-container'>
-            <h2>Teacher View Student Personal Details</h2>
-            <input
-                type="number"
-                placeholder="Enter Roll Number"
-                value={rollNumber}
-                onChange={handleInputChange}
-            />
-            <button className='add-btn' onClick={fetchStudentDetails}>Search</button>
-                <h1 className='view-heading'>Student Personal Details</h1>
+                <div className='student-search-head'>
+                    <center>
+                        <h1>Search a Student</h1>
+                    </center>
+                    <input
+                        className='rollnumber-input'
+                        type="number"
+                        placeholder="Enter Roll Number"
+                        value={rollNumber}
+                        onChange={handleInputChange}
+                    />
+                    <button className='add-btn' onClick={fetchStudentDetails}>Search</button>
+                </div>
                 <br/>
                 {errorMessage && <p>{errorMessage}</p>}
                 {studentDetails && (
                     <>
+                    <h1 className='view-heading'>Student Personal Details</h1>
                     <center>
                    <img className='prof-pic' width={'300px'} src={`http://localhost:5000/getImage/${studentDetails.RollNumber}`} alt='img'/>
                    </center>
@@ -113,7 +117,6 @@ function Staffviewpersonal() {
                     </center>
                     </>
                 )}
-            </div>
             </div>
         </div>
     );

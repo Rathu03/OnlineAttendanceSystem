@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../../Navbar';
 import styles from '../../CSS/viewotherdata.css'
+import Modal from 'react-modal'
+import CustomCard from '../../cards/CustomCard';
 function Staffviewother(){
     const [Username,setUsername]=useState(null);
     const [rollNumber, setRollNumber] = useState('');
@@ -13,6 +15,14 @@ function Staffviewother(){
     const [papers,setPapers]=useState(null);
     const [events,setEvents]=useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [interViewModal, setInternViewModal] = useState(false);
+    const [scholarshipViewModal, setScholarshipViewModal] = useState(false);
+    const [projectViewModal, setProjectViewModal] = useState(false);
+    const [sportsViewModal, setSportsViewModal] = useState(false);
+    const [examsViewModal, setExamsViewModal] = useState(false);
+    const [papersViewModal, setPapersViewModal] = useState(false);
+    const [eventsViewModal, setEventsViewModal] = useState(false);
+    
     
     const handleInputChange = (event) => {
         setRollNumber(event.target.value);
@@ -76,20 +86,20 @@ function Staffviewother(){
                     .catch(error => {
                         console.error('Error fetching Sports details:', error);
                     });
-                    axios.get(`http://localhost:5000/ExamDetails/${username}`)
-                    .then(response => {
-                        if (response.data) {
-                            console.log(response.data);
+                    // axios.get(`http://localhost:5000/ExamDetails/${username}`)
+                    // .then(response => {
+                    //     if (response.data) {
+                    //         console.log(response.data);
                            
-                            setExams(response.data);
-                        } else {
-                            setErrorMessage('No Sports details available');
-                        }
+                    //         setExams(response.data);
+                    //     } else {
+                    //         setErrorMessage('No Sports details available');
+                    //     }
                         
-                    })
-                    .catch(error => {
-                        console.error('Error fetching Exams details:', error);
-                    });
+                    // })
+                    // .catch(error => {
+                    //     console.error('Error fetching Exams details:', error);
+                    // });
 
                     axios.get(`http://localhost:5000/PaperDetails/${username}`)
                     .then(response => {
@@ -128,93 +138,308 @@ function Staffviewother(){
     return(
         <>
         <Navbar/>
-        <input
+
+        <div className='mark-search-head'>
+            <center>
+                <h1>Enter Roll Number Of Student</h1>
+            </center>
+            <input
+                className='rollnumber-input'
                 type="number"
                 placeholder="Enter Roll Number"
                 value={rollNumber}
                 onChange={handleInputChange}
             />
             <button className='add-btn' onClick={fetchStudentDetails}>Search</button>
-        {internships && internships.map((internship, index) => (
-    <div className='view-form' key={index}>
-        <h2>Internship Details {index + 1}</h2>
-        <p className='view-field'><strong>Roll Number:</strong> {internship.roll_number}</p>
-        <p className='view-field'><strong>Employer:</strong> {internship.employer_name}</p>
-        <p className='view-field'><strong>On/Off campus:</strong> {internship.on_off_campus}</p>
-        <p className='view-field'><strong>CTC:</strong> {internship.ctc}</p>
-        <p className='view-field'><strong>Internship Duration:</strong> {internship.internship_duration}</p>
-        <p className='view-field'><strong>Internship StartDate:</strong> {internship.internship_start_date}</p>
-        <p className='view-field'><strong>Internship EndDate:</strong> {internship.internship_end_date}</p>
-        <p className='view-field'><strong>Product/Service Based :</strong> {internship.product_service_based}</p>
-        
-    </div>
-))}
-        {!Scholarships&&<h3 className='nodatamsg'>No Scholarshp details found</h3>}
-{Scholarships && Scholarships.map((Scholarship, index) => (
-    <div className='view-form' key={index}>
-        <h2>Scholarship Details {index + 1}</h2>
-        <p className='view-field'><strong>Scholarship Provider:</strong> {Scholarship.ScholarshipProvider}</p>
-        <p className='view-field'><strong>Amount:</strong> {Scholarship.amount}</p>
-   
-    </div>
-))}
-
-{projects && projects.map((project, index) => (
-    <div className='view-form' key={index}>
-        <h2>Project Details {index + 1}</h2>
-        <p className='view-field'><strong>Project Name:</strong> {project.title}</p>
-        <p className='view-field'><strong>Guide:</strong> {project.guide}</p>
-        <p className='view-field'><strong>Description:</strong> {project.project_desc}</p>
-   
-    </div>
-))}
-            {!projects && <h3 className='nodatamsg'>No Project details found</h3>}
-
+        </div>
+        {/* {!internships && !Scholarships && !projects && !sports && !papers && !events && <div>
+            
+            No extra
+            </div>} */}
+        <div className='custom-card-container'>
+            {/* {!internships&&<h3>No Internship details found</h3>} */}
+            {internships && internships.map((internship, index) => (
+                <>
+                    <CustomCard
+                        type='internship'
+                        details={internship}
+                        onClick={()=>setInternViewModal(true)}
+                    />
+                    <Modal isOpen={interViewModal} onRequestClose={() => setInternViewModal(false)} className={'modal-content'} >
+                        <div id='intern-modal'>
+                            <h1>Internship Details</h1>
+                                <div id='modal-input-table'>
+                                    <table border={'0'} className='view-table'>
+                                        <tr>
+                                            <td id='topic-td'>Employer Name :
+                                            </td>
+                                            <td id='input-td'><label>{internship.employer_name}</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id='topic-td'>Mode :
+                                            </td>
+                                            <td id='input-td'><label>{internship.on_off_campus}</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id='topic-td'>CTC :
+                                            </td>
+                                            <td id='input-td'><label>{internship.ctc}</label>
+                                        
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id='topic-td'>Duration :
+                                            </td>
+                                            <td id='input-td'><label>{internship.InternshipDuration}</label>
+                                        
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id='topic-td'>Start Date :
+                                            </td>
+                                            <td id='input-td'><label>{internship.InternshipStartDate}</label>
+                                        
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id='topic-td'>End Date :
+                                            </td>
+                                            <td id='input-td'><label>{internship.InternshipEndDate}</label>
+                                        
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id='topic-td'>Product/Service Based :
+                                            </td>
+                                            
+                                            <td id='input-td'><label>{internship.product_service_based}</label>
+                                            </td>
+                                        </tr>
+                                    </table> 
+                    </div>
+                    <button onClick={() => setInternViewModal(false)}>Close</button>
+                </div>
+            </Modal>
+            </>   
+))}         
+            {/* {!Scholarships&&<h3>No Scholarship details found</h3>} */}
+            {Scholarships && Scholarships.map((Scholarship, index) => (
+                <>
+                <CustomCard
+                    type='scholarship'
+                    details={Scholarship}
+                    onClick={()=>setScholarshipViewModal(true)}
+                />
+                <Modal isOpen={scholarshipViewModal} onRequestClose={() => setScholarshipViewModal(false)} className={'modal-content'} >
+                    <div id='intern-modal'>
+                        <h1>Scholarship Details</h1>
+                            <div id='modal-input-table'>
+                                <table border={'0'} className='view-table'>
+                                    <tr>
+                                        <td id='topic-td'>Provider Name :
+                                        </td>
+                                        <td id='input-td'><label>{Scholarship.ScholarshipProvider}</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td id='topic-td'>Amount :
+                                        </td>
+                                        <td id='input-td'><label>{Scholarship.amount}</label>
+                                        </td>
+                                    </tr>
+                                </table> 
+                </div>
+                <button onClick={() => setScholarshipViewModal(false)}>Close</button>
+            </div>
+        </Modal>
+        </>  
+))}     
+            {/* {!projects&&<h3>No Project details found</h3>} */}
+            {projects && projects.map((Project, index) => (
+                 <>
+                 <CustomCard
+                     type='project'
+                     details={Project}
+                     onClick={()=>setProjectViewModal(true)}
+                 />
+                 <Modal isOpen={projectViewModal} onRequestClose={() => setProjectViewModal(false)} className={'modal-content'} >
+                     <div id='project-modal'>
+                         <h1>Project Details</h1>
+                             <div id='modal-input-table'>
+                                 <table border={'0'} className='view-table'>
+                                     <tr>
+                                         <td id='topic-td'>Project Name :
+                                         </td>
+                                         <td id='input-td'><label>{Project.title}</label>
+                                         </td>
+                                     </tr>
+                                     <tr>
+                                         <td id='topic-td'>Guide :
+                                         </td>
+                                         <td id='input-td'><label>{Project.guide}</label>
+                                         </td>
+                                     </tr>
+                                     <tr>
+                                         <td id='topic-td'>Description :
+                                         </td>
+                                         <td id='input-td'><label>{Project.project_desc}</label>
+                                         </td>
+                                     </tr>
+                                 </table> 
+                 </div>
+                 <button onClick={() => setProjectViewModal(false)}>Close</button>
+             </div>
+         </Modal>
+         </>  
+            ))}
+            {/* {!sports &&<h3>No sports details found</h3>} */}
             {sports && sports.map((sport, index) => (
-    <div className='view-form' key={index}>
-        <h2>Sports Details {index + 1}</h2>
-        <p className='view-field'><strong>Event Name:</strong> {sport.event_name}</p>
-        <p className='view-field'><strong>Award:</strong> {sport.award}</p>
-    </div>
-))}
-            {!sports &&<h3 className='nodatamsg'>No sports details found</h3>}
-            {exams && (
-    <div className='view-form'>
-        <h2>Exams Attended</h2>
-        <p className='view-field'><strong>GATE Score:</strong> {exams.GATE_score}</p>
-        <p className='view-field'><strong>GRE Score:</strong> {exams.GRE_score}</p>
-        <p className='view-field'><strong>TOEFL Score:</strong> {exams.TOEFL_score}</p>
-        <p className='view-field'><strong>IELTS Score:</strong> {exams.IELTS_score}</p>
-        <p className='view-field'><strong>UPSC Score:</strong> {exams.UPSC_score}</p>
-        <p className='view-field'><strong>NET Score:</strong> {exams.NET_score}</p>
-    </div>
-)}
-            {!exams &&<h3 className='nodatamsg'>No exam details found</h3>}
+                <>
+                <CustomCard
+                    type='sports'
+                    details={sport}
+                    onClick={()=>setSportsViewModal(true)}
+                />
+                <Modal isOpen={sportsViewModal} onRequestClose={() => setSportsViewModal(false)} className={'modal-content'} >
+                    <div id='sports-modal'>
+                        <h1>Sports Details</h1>
+                            <div id='modal-input-table'>
+                                <table border={'0'} className='view-table'>
+                                    <tr>
+                                        <td id='topic-td'>Event Name :
+                                        </td>
+                                        <td id='input-td'><label>{sport.event_name}</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td id='topic-td'>Award :
+                                        </td>
+                                        <td id='input-td'><label>{sport.award}</label>
+                                        </td>
+                                    </tr>
+                                </table> 
+                </div>
+                <button onClick={() => setSportsViewModal(false)}>Close</button>
+            </div>
+        </Modal>
+        </>  
+))}         
+            
+
+
+            {/* {exams && exams.map((exam, index) => (
+            <div className='view-form'>
+                <h2>Exams Attended</h2>
+                <p className='view-field'><strong>GATE Score:</strong> {exam.GATE_score}</p>
+                <p className='view-field'><strong>GRE Score:</strong> {exam.GRE_score}</p>
+                <p className='view-field'><strong>TOEFL Score:</strong> {exam.TOEFL_score}</p>
+                <p className='view-field'><strong>IELTS Score:</strong> {exam.IELTS_score}</p>
+                <p className='view-field'><strong>UPSC Score:</strong> {exam.UPSC_score}</p>
+                <p className='view-field'><strong>NET Score:</strong> {exam.NET_score}</p>
+            </div>
+))} */}
+
+
 
              
-       {papers && papers.map((paper, index) => (
-        <div className='view-form' key={index}>
-            <h2>Papers Presented {index + 1}</h2>
-            <p className='view-field'><strong>Title:</strong> {paper.title}</p>
-            <p className='view-field'><strong>Journal:</strong> {paper.journal}</p>
-            <p className='view-field'><strong>Date:</strong> {paper.date_year}</p>
-            <p className='view-field'><strong>DOI link:</strong> {paper.DOI_link}</p>
-      
+        {/* {!papers && <h3>No Papers Published</h3>}        */}
+        {papers && papers.map((paper, index) => (
+            <>
+            <CustomCard
+                type='papers'
+                details={paper}
+                onClick={()=>setPapersViewModal(true)}
+            />
+            <Modal isOpen={papersViewModal} onRequestClose={() => setPapersViewModal(false)} className={'modal-content'} >
+                <div id='paper-modal'>
+                    <h1>Paper Details</h1>
+                        <div id='modal-input-table'>
+                            <table border={'0'} className='view-table'>
+                                <tr>
+                                    <td id='topic-td'>Title :
+                                    </td>
+                                    <td id='input-td'><label>{paper.title}</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td id='topic-td'>Journal :
+                                    </td>
+                                    <td id='input-td'><label>{paper.journal}</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td id='topic-td'>Date Year :
+                                    </td>
+                                    <td id='input-td'><label>{paper.date_year}</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td id='topic-td'>DOI Link :
+                                    </td>
+                                    <td id='input-td'><label>{paper.DOI_link}</label>
+                                    </td>
+                                </tr>
+                            </table> 
+            </div>
+            <button onClick={() => setPapersViewModal(false)}>Close</button>
         </div>
-    ))}
-            {!papers &&<h3 className='nodatamsg'>No paper details found</h3>}
-            {events && events.map((event, index) => (
-    <div className='view-form' key={index}>
-        <h2>Events Details {index + 1}</h2>
-        <p className='view-field'><strong>Event Name:</strong> {event.event_name}</p>
-        <p className='view-field'><strong>Institution Name:</strong> {event.institution}</p>
-        <p className='view-field'><strong>Role:</strong> {event.role}</p>
-        <p className='view-field'><strong>Date:</strong> {event.date}</p>
-        <p className='view-field'><strong>Awards:</strong> {event.awards}</p>
-  
-    </div>
-))}
-                {!events &&<h3 className='nodatamsg'>No events details found</h3>}
+    </Modal>
+    </>  
+        ))}
+            
+        {/* {!events && <h3>No Events Participated</h3>} */}
+        {events && events.map((event, index) => (
+                <>
+                <CustomCard
+                    type='events'
+                    details={event}
+                    onClick={()=>setEventsViewModal(true)}
+                />
+                <Modal isOpen={eventsViewModal} onRequestClose={() => setEventsViewModal(false)} className={'modal-content'} >
+                    <div id='event-modal'>
+                        <h1>Event Details</h1>
+                            <div id='modal-input-table'>
+                                <table border={'0'} className='view-table'>
+                                    <tr>
+                                        <td id='topic-td'>Event Name :
+                                        </td>
+                                        <td id='input-td'><label>{event.event_name}</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td id='topic-td'>Institution :
+                                        </td>
+                                        <td id='input-td'><label>{event.institution}</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td id='topic-td'>Date :
+                                        </td>
+                                        <td id='input-td'><label>{event.date}</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td id='topic-td'>Role :
+                                        </td>
+                                        <td id='input-td'><label>{event.role}</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td id='topic-td'>Awards :
+                                        </td>
+                                        <td id='input-td'><label>{event.awards}</label>
+                                        </td>
+                                    </tr>
+                                </table> 
+                </div>
+                
+                <button onClick={() => setEventsViewModal(false)}>Close</button>
+            </div>
+        </Modal>
+        </> 
+        ))}</div>
         </>
     )
 }

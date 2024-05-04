@@ -1006,3 +1006,29 @@ textarea:focus {
 .delete-btn{
   font-size: 1.1em;
  }
+ .student-search-head, .mark-search-head{
+  background-color: white;
+  padding:30px;
+  text-align: center;
+  width: 80%;
+  margin: auto;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  margin-top: 30px;
+ }
+ #student-view-personal .rollnumber-input, #student-view-academic .rollnumber-input{
+  width: 20%;
+  text-align: center;
+ }
+ .staff-marks{
+  background-color: white;
+  padding: 20px;
+  margin: auto;
+  width: 80%;
+  border-radius: 25px;
+  margin-top: 20px;
+}
+.approve{
+  text-align: right;
+  margin-right: 50px;
+}
