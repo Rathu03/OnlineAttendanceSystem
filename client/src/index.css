@@ -528,7 +528,41 @@ a:hover {
   overflow: auto;
 }
 
+
+.attendance-list thead tr{
+  background: #113559;
+  height: 50px;
+  color: white;
+  text-align: left;
+  text-align: center;
+}
+
+.attendance-list tbody tr{
+  height: 50px;
+}
+
+.attendance-list tbody tr:nth-child(even){
+  background-color: #f0f0f0;
+  text-align: left;
+  text-align: center;
+}
+
+.attendance-list tbody tr:nth-child(odd){
+  background-color: #ffffff;
+  text-align: left;
+  text-align: center;
+}
+
+.attendance-list tbody tr:hover{
+  background-color: #d5eef5;
+}
+
 .attendance-list {
+  width: 100%;
+  overflow: auto;
+}
+
+/* .attendance-list {
   width: 100%;
   border-collapse: collapse;
   overflow: auto;
@@ -549,10 +583,11 @@ a:hover {
 
 .attendance-list td {
   background-color: rgb(213, 228, 226)
-}
+} */
 
 .attendance-list input[type="checkbox"] {
   margin-right: 5px;
+  cursor: pointer;
 }
 
 .attendance-section input[type="text"] {
