@@ -19,7 +19,7 @@ app.use(body_parser.urlencoded({ extended: true }));
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    password: 'password',
+    password: '',
     database: 'istdept'
 };
 
